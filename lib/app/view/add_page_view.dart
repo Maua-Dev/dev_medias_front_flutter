@@ -5,8 +5,8 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key, required this.title});
+class AddPage extends StatelessWidget {
+  const AddPage({super.key, required this.title});
   final String title;
 
   @override
@@ -15,7 +15,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Padding(
-        padding: const EdgeInsets.all(42),
+        padding: const EdgeInsets.all(30),
         child: Center(
           child: FractionallySizedBox(
             widthFactor: 1,
@@ -30,73 +30,72 @@ class HomePage extends StatelessWidget {
                 // Botão Adicionar Matérias
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 11),
-                  child: ElevatedButton(
+                  child: TextField(
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: "Buscar Matéria",
+                      fillColor: AppColors.white,
+                      filled: true,
+                      suffixIcon: Icon(Icons.search),
+                      suffixIconColor: AppColors.red,
+                      border: OutlineInputBorder(
+                        borderRadius: Round.primary,
+                        borderSide: BorderSide.none,
+                      )
+                    ),
                     // height: 50,
                     // decoration: BoxDecoration(
                     //   color: AppColors.white,
                     //   borderRadius: Round.primary
                     // ),
-                    style: TextButton.styleFrom(backgroundColor: AppColors.white, shape: RoundedRectangleBorder(borderRadius: Round.primary), minimumSize: Size(0, 50), padding: EdgeInsets.symmetric(horizontal: 10)),
-                    onPressed: () {},
-                    child: Row(
-                      children: [
-                        Opacity(opacity: 0.7, child: const Text("Adicionar Matéria", style: TextStyle(fontSize: 20.0, color: AppColors.black),)),
-                        Expanded(child: Container()),
-                        SvgPicture.asset('lib/app/assets/icons/add_button.svg', height: 30, width: 30,),
-                      ],
-                    ),
+                    // style: TextButton.styleFrom(backgroundColor: AppColors.white, shape: RoundedRectangleBorder(borderRadius: Round.primary), minimumSize: Size(0, 50), padding: EdgeInsets.symmetric(horizontal: 10)),
+                    // onPressed: () {},
+                    // child: Row(
+                    //   children: [
+                    //     Opacity(opacity: 0.7, child: const Text("Buscar Matéria", style: TextStyle(fontSize: 20.0, color: AppColors.black),)),
+                    //     Expanded(child: Container()),
+                    //     SvgPicture.asset('lib/app/assets/icons/add_button.svg', height: 30, width: 30,),
+                    //   ],
+                    // ),
                   ),
                 ),
                 // Lista de Matérias
                 Container(
-                  height: 500,
                   child: Column(
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: ClipRRect(
                           borderRadius: Round.primary,
-                          child: Dismissible(
-                            key: Key("test"),
-                            direction: DismissDirection.endToStart,
-                            background: Container(
-                              color: AppColors.red,
-                              child: Align(alignment: AlignmentDirectional.centerEnd, child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Icon(Icons.delete, color: AppColors.white,),
-                                )
-                              ),
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: Round.primary
                             ),
-                            child: Container(
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: AppColors.white,
-                                borderRadius: Round.primary
-                              ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 2,horizontal: 12),
                               child: Row(
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(5),
-                                    child: Container(
-                                      width: 40,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        borderRadius: Round.secondary,
-                                        color: AppColors.red
-                                      ),
-                                      child: Center(child: Text("6.5", style: TextStyle(fontSize: 18, color: AppColors.white),)),
-                                    ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      FittedBox(fit: BoxFit.contain, child: Text("Nome da Disciplina", style: TextStyle(fontSize: 18),)),
+                                      FittedBox(fit: BoxFit.contain, child: Text("Código da disciplina - Tipo (Anual)", style: TextStyle(fontSize: 12),)),
+                                    ],
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 2,horizontal: 7),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        FittedBox(fit: BoxFit.contain, child: Text("Matéria 1", style: TextStyle(fontSize: 20),)),
-                                        FittedBox(fit: BoxFit.contain, child: Text("Matéria 2", style: TextStyle(fontSize: 12),)),
-                                      ],
+                                  Expanded(child: Container()),
+                                  IconButton(
+                                    onPressed: () {}, 
+                                    icon: Icon(
+                                      Icons.add_box, 
+                                      color: AppColors.red, 
+                                      size: 30,
                                     ),
-                                  )                        
+                                    style: TextButton.styleFrom(shape: CircleBorder()),
+                                  )
                                 ],
                               ),
                             ),
@@ -125,7 +124,7 @@ class HomePage extends StatelessWidget {
                           ],
                         ),
                       Expanded(child: Container()),
-                      ElevatedButton(style: TextButton.styleFrom(backgroundColor: AppColors.purpleButton) ,onPressed: () {}, child: Text("Suporte", style: TextStyle(color: AppColors.white),))
+                      ElevatedButton(style: TextButton.styleFrom(backgroundColor: AppColors.purpleButton, shape: RoundedRectangleBorder(borderRadius: Round.primary)) ,onPressed: () {}, child: Text("Suporte", style: TextStyle(color: AppColors.white),))
                       ],
                     ),
                   ),

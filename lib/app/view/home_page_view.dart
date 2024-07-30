@@ -1,21 +1,27 @@
 import 'package:dev_medias_front_flutter/app/controller/home_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
+import 'package:dev_medias_front_flutter/app/widgets/added_course_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key, required this.title});
-  final String title;
+HomePageController controller = HomePageController();
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
   Widget build(BuildContext context) {
-    HomePageController controller = HomePageController();
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Padding(
-        padding: const EdgeInsets.all(30),
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
         child: Center(
           child: FractionallySizedBox(
             widthFactor: 1,
@@ -25,121 +31,142 @@ class HomePage extends StatelessWidget {
                 // Logo DevMédias
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 11),
-                  child: const Image(image: AssetImage('lib/app/assets/images/dev_medias_logo.png')),
+                  child: const Image(
+                      image: AssetImage(
+                          'lib/app/assets/images/dev_medias_logo.png')),
                 ),
                 // Botão Adicionar Matérias
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 11),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   child: ElevatedButton(
-                    // height: 50,
-                    // decoration: BoxDecoration(
-                    //   color: AppColors.white,
-                    //   borderRadius: Round.primary
-                    // ),
-                    style: TextButton.styleFrom(backgroundColor: AppColors.white, shape: RoundedRectangleBorder(borderRadius: Round.primary), minimumSize: Size(0, 63), padding: EdgeInsets.symmetric(horizontal: 10)),
-                    onPressed: () {},
+                    style: TextButton.styleFrom(
+                        backgroundColor: AppColors.white,
+                        shape:
+                            RoundedRectangleBorder(borderRadius: Round.primary),
+                        minimumSize: Size(0, 63),
+                        padding: EdgeInsets.symmetric(horizontal: 10)),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/add');
+                    },
                     child: Row(
                       children: [
-                        Opacity(opacity: 0.7, child: const Text("Adicionar Matéria", style: TextStyle(fontSize: 20.0, color: AppColors.black),)),
+                        Opacity(
+                            opacity: 0.7,
+                            child: const Text(
+                              "Adicionar Matéria",
+                              style: TextStyle(
+                                  fontSize: 20.0, color: AppColors.black),
+                            )),
                         Expanded(child: Container()),
-                        SvgPicture.asset('lib/app/assets/icons/add_button.svg', height: 30, width: 30,),
+                        SvgPicture.asset(
+                          'lib/app/assets/icons/add_button.svg',
+                          height: 30,
+                          width: 30,
+                        ),
                       ],
                     ),
                   ),
                 ),
                 // Lista de Matérias
-                Container(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: ClipRRect(
+                Observer(
+                  builder: (_) => Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      itemCount: controller.current_courses.courses.length,
+                      itemBuilder: (context, index) {
+                        return ClipRRect(
                           borderRadius: Round.primary,
                           child: Dismissible(
-                            key: Key("test"),
+                            key: UniqueKey(),
                             direction: DismissDirection.endToStart,
+                            onDismissed: (direction) {
+                              controller.removeCourse(index);
+                            },
                             background: Container(
-                              color: AppColors.red,
-                              child: Align(alignment: AlignmentDirectional.centerEnd, child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Icon(Icons.delete, color: AppColors.white,),
-                                )
-                              ),
-                            ),
-                            child: Container(
-                              height: 50,
+                              margin: EdgeInsets.only(bottom: 12),
                               decoration: BoxDecoration(
-                                color: AppColors.white,
-                                borderRadius: Round.primary
-                              ),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(5),
-                                    child: Container(
-                                      width: 40,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        borderRadius: Round.secondary,
-                                        color: AppColors.red
-                                      ),
-                                      child: Center(child: Text("6.5", style: TextStyle(fontSize: 18, color: AppColors.white),)),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 2,horizontal: 7),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        FittedBox(fit: BoxFit.contain, child: Text("Matéria 1", style: TextStyle(fontSize: 20),)),
-                                        FittedBox(fit: BoxFit.contain, child: Text("Matéria 2", style: TextStyle(fontSize: 12),)),
-                                      ],
-                                    ),
-                                  )                        
-                                ],
-                              ),
+                                  color: AppColors.red,
+                                  borderRadius: Round.primary),
+                              child: Align(
+                                  alignment: AlignmentDirectional.centerEnd,
+                                  child: Icon(
+                                    Icons.delete,
+                                    color: AppColors.white,
+                                  )),
+                            ),
+                            child: AddedCourseCard(
+                              index: index,
+                              controller: controller,
+                              courseName: controller
+                                  .current_courses.courses[index]["name"],
+                              courseDesc: controller
+                                  .current_courses.courses[index]["desc"],
+                              courseGrade: controller
+                                  .current_courses.courses[index]["grade"],
                             ),
                           ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Expanded(child: Container()),
-                // Seção de Suporte
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.backgroundLight,
-                    borderRadius: Round.primary,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                    child: Row(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Precisa de Ajuda?", style: TextStyle(color: AppColors.white, fontSize: 15),),
-                            Text("Entre em contato com a Dev", style: TextStyle(color: AppColors.white, fontSize: 10),),
-                          ],
-                        ),
-                      Expanded(child: Container()),
-                      ElevatedButton(style: TextButton.styleFrom(backgroundColor: AppColors.purpleButton, shape: RoundedRectangleBorder(borderRadius: Round.primary)) ,onPressed: () {}, child: Text("Suporte", style: TextStyle(color: AppColors.white),))
-                      ],
+                        );
+                      },
                     ),
                   ),
+                ),
+                // Seção de Suporte
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: const SupportBox(),
                 )
-            
               ],
             ),
           ),
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () => controller.incrementCounter(),
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ),
+    );
+  }
+}
+
+class SupportBox extends StatelessWidget {
+  const SupportBox({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.backgroundLight,
+        borderRadius: Round.primary,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+        child: Row(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Precisa de Ajuda?",
+                  style: TextStyle(color: AppColors.white, fontSize: 15),
+                ),
+                Text(
+                  "Entre em contato com a Dev",
+                  style: TextStyle(color: AppColors.white, fontSize: 10),
+                ),
+              ],
+            ),
+            Expanded(child: Container()),
+            ElevatedButton(
+                style: TextButton.styleFrom(
+                    backgroundColor: AppColors.purpleButton,
+                    shape: RoundedRectangleBorder(borderRadius: Round.primary)),
+                onPressed: () {},
+                child: Text(
+                  "Suporte",
+                  style: TextStyle(color: AppColors.white),
+                ))
+          ],
+        ),
+      ),
     );
   }
 }

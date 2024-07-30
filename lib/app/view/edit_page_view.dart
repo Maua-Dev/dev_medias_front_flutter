@@ -6,8 +6,7 @@ import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class EditPage extends StatelessWidget {
-  const EditPage({super.key, required this.title});
-  final String title;
+  const EditPage({super.key});
 
   @override
   Widget build(BuildContext context) {

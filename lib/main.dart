@@ -15,18 +15,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'DevMédias',
-      theme: ThemeData(
-        useMaterial3: true,
-        fontFamily: 'Poppins'
-      ),
+      theme: ThemeData(useMaterial3: true, fontFamily: 'Poppins'),
       initialRoute: '/',
       routes: {
-        '/': (_) => HomePage(),
-        '/add': (context) => AddPage(title: "DevMédias"),
-        '/edit': (context) => EditPage(title: "DevMédias"),
+        '/': (_) => const HomePage(),
+        '/add': (_) => const AddPage(),
+        '/edit': (context) => EditPage(),
       },
       // home: const HomePage(title: 'DevMédias'),
     );
   }
 }
-

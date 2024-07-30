@@ -1,8 +1,7 @@
 import 'package:dev_medias_front_flutter/app/model/course.dart';
-import 'package:mobx/mobx.dart';
 
-class CurrentCourses {
+class AvailableCourses {
   final List<Course> courses;
 
-  CurrentCourses({required this.courses});
+  AvailableCourses({required this.courses});
 }

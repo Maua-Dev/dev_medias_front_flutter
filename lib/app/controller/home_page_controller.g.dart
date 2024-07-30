@@ -9,19 +9,19 @@ part of 'home_page_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$HomePageController on HomePageControllerBase, Store {
-  late final _$current_coursesAtom =
-      Atom(name: 'HomePageControllerBase.current_courses', context: context);
+  late final _$currentCoursesAtom =
+      Atom(name: 'HomePageControllerBase.currentCourses', context: context);
 
   @override
-  CurrentCourses get current_courses {
-    _$current_coursesAtom.reportRead();
-    return super.current_courses;
+  ObservableList<Course> get currentCourses {
+    _$currentCoursesAtom.reportRead();
+    return super.currentCourses;
   }
 
   @override
-  set current_courses(CurrentCourses value) {
-    _$current_coursesAtom.reportWrite(value, super.current_courses, () {
-      super.current_courses = value;
+  set currentCourses(ObservableList<Course> value) {
+    _$currentCoursesAtom.reportWrite(value, super.currentCourses, () {
+      super.currentCourses = value;
     });
   }
 
@@ -29,11 +29,11 @@ mixin _$HomePageController on HomePageControllerBase, Store {
       ActionController(name: 'HomePageControllerBase', context: context);
 
   @override
-  void removeCourse(dynamic index) {
+  void removeCurrentCourse(dynamic id) {
     final _$actionInfo = _$HomePageControllerBaseActionController.startAction(
-        name: 'HomePageControllerBase.removeCourse');
+        name: 'HomePageControllerBase.removeCurrentCourse');
     try {
-      return super.removeCourse(index);
+      return super.removeCurrentCourse(id);
     } finally {
       _$HomePageControllerBaseActionController.endAction(_$actionInfo);
     }
@@ -42,7 +42,7 @@ mixin _$HomePageController on HomePageControllerBase, Store {
   @override
   String toString() {
     return '''
-current_courses: ${current_courses}
+currentCourses: ${currentCourses}
     ''';
   }
 }

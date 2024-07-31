@@ -3,6 +3,7 @@ import 'package:dev_medias_front_flutter/app/controller/add_page_controller.dart
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
+import 'package:dev_medias_front_flutter/app/view/add_page_view.dart';
 import 'package:flutter/material.dart';
 
 class AddCourseCard extends StatefulWidget {

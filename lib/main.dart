@@ -22,6 +22,26 @@ class MyApp extends StatelessWidget {
         '/add': (_) => const AddPage(),
         '/edit': (context) => EditPage(),
       },
+      // onGenerateRoute: (settings) {
+      //   if (settings.name == '/add') {
+      //     return PageRouteBuilder(
+      //       settings: settings,
+      //       pageBuilder: (context, animation, secondaryAnimation) => const AddPage(),
+      //       transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      //         const begin = Offset(0.0, 1.0);
+      //         const end = Offset.zero;
+      //         const curve = Curves.ease;
+
+      //         var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      //         return SlideTransition(
+      //           position: animation.drive(tween),
+      //           child: child,
+      //         );
+      //       },
+      //     );
+      //   }
+      // },
       // home: const HomePage(title: 'DevMédias'),
     );
   }

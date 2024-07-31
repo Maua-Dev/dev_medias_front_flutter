@@ -29,11 +29,11 @@ mixin _$HomePageController on HomePageControllerBase, Store {
       ActionController(name: 'HomePageControllerBase', context: context);
 
   @override
-  void removeCurrentCourse(dynamic id) {
+  void removeCurrentCourse(Course course) {
     final _$actionInfo = _$HomePageControllerBaseActionController.startAction(
         name: 'HomePageControllerBase.removeCurrentCourse');
     try {
-      return super.removeCurrentCourse(id);
+      return super.removeCurrentCourse(course);
     } finally {
       _$HomePageControllerBaseActionController.endAction(_$actionInfo);
     }

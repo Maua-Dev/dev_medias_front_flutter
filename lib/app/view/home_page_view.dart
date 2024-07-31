@@ -20,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.background,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
@@ -43,7 +44,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 // Lista de Matérias
                 Observer(
-                  builder: (_) => Expanded(
+                  builder: (_) => homeController.currentCourses.isNotEmpty ? Expanded(
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
                       shrinkWrap: true,
@@ -57,7 +58,7 @@ class _HomePageState extends State<HomePage> {
                             key: UniqueKey(),
                             direction: DismissDirection.endToStart,
                             onDismissed: (direction) {
-                              homeController.removeCurrentCourse(course.id);
+                              homeController.removeCurrentCourse(course);
                             },
                             background: Container(
                               margin: const EdgeInsets.only(bottom: 12),
@@ -79,14 +80,18 @@ class _HomePageState extends State<HomePage> {
                             ),
                             child: CurrentCourseCard(
                               index: index,
-                              courseId: course.id,
-                              courseName: course.name,
-                              courseDesc: course.desc,
-                              courseGrade: course.grade,
+                              course: course,
                             ),
                           ),
                         );
                       },
+                    ),
+                  ) : const Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Você não tem matérias cadastradas :(", style: TextStyle(fontSize: 12.0, color: AppColors.gray),),
+                      ],
                     ),
                   ),
                 ),

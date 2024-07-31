@@ -1,5 +1,4 @@
 import 'package:dev_medias_front_flutter/app/controller/home_page_controller.dart';
-import 'package:dev_medias_front_flutter/app/model/available_courses.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:mobx/mobx.dart';
 part 'add_page_controller.g.dart';
@@ -9,7 +8,7 @@ class AddPageController = AddPageControllerBase with _$AddPageController;
 abstract class AddPageControllerBase with Store {
   AddPageControllerBase();
 
-  static List<Course> testCourses = [
+  static List<Course> testAvailableCourses = [
     Course(
         id: "2", name: "Matéria 2", desc: "Descrição da Matéria", grade: "2.5"),
     Course(
@@ -24,13 +23,18 @@ abstract class AddPageControllerBase with Store {
 
   @observable
   ObservableList<Course> availableCourses =
-      ObservableList<Course>.of(testCourses);
+      ObservableList<Course>.of(testAvailableCourses);
   // AvailableCourses availableCourses = AvailableCourses(courses: testCourses);
 
   @action
   void addCurrentCourse(Course course) {
     homeController.currentCourses.add(course);
     removeAvailableCourse(course);
+  }
+
+  @action
+  void addAvailableCourse(Course course) {
+    availableCourses.add(course);
   }
 
   @action

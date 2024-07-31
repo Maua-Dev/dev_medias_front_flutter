@@ -9,12 +9,12 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 
 class AddPage extends StatelessWidget {
-
   const AddPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.background,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
@@ -35,21 +35,23 @@ class AddPage extends StatelessWidget {
                   child: SearchCourseField(),
                 ),
                 // Lista de Matérias
-                ListView.builder(
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      itemCount: addController.availableCourses.length,
-                      itemBuilder: (context, index) {
-                        Course course = addController.availableCourses[index];
-                        return Observer(
-                          builder: (_) => AddCourseCard(
-                            key: UniqueKey(),
-                            index: index,
-                            course: course,
-                          ),
-                        );
-                      },
-                    ),
+                Observer(
+                  builder: (_) => ListView.builder(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        itemCount: addController.availableCourses.length,
+                        itemBuilder: (context, index) {
+                          Course course = addController.availableCourses[index];
+                          return Observer(
+                            builder: (_) => AddCourseCard(
+                              key: UniqueKey(),
+                              index: index,
+                              course: course,
+                            ),
+                          );
+                        },
+                      ),
+                ),
                 Expanded(child: Container()),
                 // Seção de Suporte
                 const Padding(

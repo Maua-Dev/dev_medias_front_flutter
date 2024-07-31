@@ -29,22 +29,33 @@ mixin _$AddPageController on AddPageControllerBase, Store {
       ActionController(name: 'AddPageControllerBase', context: context);
 
   @override
-  void addCurrentCourse(dynamic id) {
+  void addCurrentCourse(Course course) {
     final _$actionInfo = _$AddPageControllerBaseActionController.startAction(
         name: 'AddPageControllerBase.addCurrentCourse');
     try {
-      return super.addCurrentCourse(id);
+      return super.addCurrentCourse(course);
     } finally {
       _$AddPageControllerBaseActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  void removeAvailableCourse(dynamic id) {
+  void addAvailableCourse(Course course) {
+    final _$actionInfo = _$AddPageControllerBaseActionController.startAction(
+        name: 'AddPageControllerBase.addAvailableCourse');
+    try {
+      return super.addAvailableCourse(course);
+    } finally {
+      _$AddPageControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void removeAvailableCourse(Course course) {
     final _$actionInfo = _$AddPageControllerBaseActionController.startAction(
         name: 'AddPageControllerBase.removeAvailableCourse');
     try {
-      return super.removeAvailableCourse(id);
+      return super.removeAvailableCourse(course);
     } finally {
       _$AddPageControllerBaseActionController.endAction(_$actionInfo);
     }

@@ -12,6 +12,7 @@ class EditPage extends StatelessWidget {
   Widget build(BuildContext context) {
     HomePageController controller = HomePageController();
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.background,
       body: Padding(
         padding: const EdgeInsets.all(30),
@@ -22,9 +23,9 @@ class EditPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 // Logo DevMédias
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 11),
-                  child: const Image(image: AssetImage('lib/app/assets/images/dev_medias_logo.png')),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 11),
+                  child: Image(image: AssetImage('lib/app/assets/images/dev_medias_logo.png')),
                 ),
                 // Botão Adicionar Matérias
                 Padding(

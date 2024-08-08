@@ -20,7 +20,10 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (_) => const HomePage(),
         '/add': (_) => const AddPage(),
-        '/edit': (context) => EditPage(),
+        '/edit': (context) {
+          final args = ModalRoute.of(context)?.settings.arguments as Map;
+          return EditPage(course: args['course']);
+        },
       },
       // onGenerateRoute: (settings) {
       //   if (settings.name == '/add') {

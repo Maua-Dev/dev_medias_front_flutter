@@ -30,6 +30,11 @@ abstract class HomePageControllerBase with Store {
     currentCourses.remove(course);
     addController.addAvailableCourse(course);
   }
+
+  @action
+  void loadUserCourses() {
+    
+  }
 }
 
 HomePageController homeController = HomePageController();

@@ -40,6 +40,7 @@ dependencies:
   mobx_codegen: ^2.6.1
   flutter_mobx: ^2.2.1+1
   flutter_svg: ^2.0.10+1
+  path: ^1.9.0
 
 dev_dependencies:
   flutter_test:

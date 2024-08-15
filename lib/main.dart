@@ -2,6 +2,7 @@ import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/view/add_page_view.dart';
 import 'package:dev_medias_front_flutter/app/view/edit_page_view.dart';
 import 'package:dev_medias_front_flutter/app/view/home_page_view.dart';
+import 'package:dev_medias_front_flutter/app/view/intro_page_view.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -18,7 +19,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(useMaterial3: true, fontFamily: 'Poppins'),
       initialRoute: '/',
       routes: {
-        '/': (_) => const HomePage(),
+        '/': (_) => const IntroPage(),
+        '/home': (_) => const HomePage(),
         '/add': (_) => const AddPage(),
         '/edit': (context) {
           final args = ModalRoute.of(context)?.settings.arguments as Map;

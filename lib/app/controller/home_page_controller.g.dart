@@ -40,6 +40,17 @@ mixin _$HomePageController on HomePageControllerBase, Store {
   }
 
   @override
+  void loadUserCourses() {
+    final _$actionInfo = _$HomePageControllerBaseActionController.startAction(
+        name: 'HomePageControllerBase.loadUserCourses');
+    try {
+      return super.loadUserCourses();
+    } finally {
+      _$HomePageControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 currentCourses: ${currentCourses}

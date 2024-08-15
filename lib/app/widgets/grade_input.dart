@@ -25,7 +25,7 @@ class GradeInput extends StatelessWidget {
             keyboardType: TextInputType.number,
             inputFormatters: [
               LengthLimitingTextInputFormatter(4),
-              FilteringTextInputFormatter.allow(RegExp(r'^[0-9,]*$')),
+              FilteringTextInputFormatter.allow(RegExp(r'^[0-9,.]*$')),
               ],
             decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(horizontal: 8),

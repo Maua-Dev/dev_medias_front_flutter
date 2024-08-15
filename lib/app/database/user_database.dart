@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dev_medias_front_flutter/app/model/user.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -36,7 +34,6 @@ class UserDatabase {
   }
 
   Future<Database> _initDatabase() async {
-    final databasePath = await getDatabasesPath();
     final path = join(await getDatabasesPath(), "user.db");
     return await openDatabase(
       path,

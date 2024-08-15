@@ -16,7 +16,7 @@ class GradeInput extends StatelessWidget {
         labelled ?
         Text(
           name,
-          style: TextStyle(fontSize: 12),
+          style: const TextStyle(fontSize: 12),
         ) : Container(),
         SizedBox(
           height: 35,
@@ -28,13 +28,13 @@ class GradeInput extends StatelessWidget {
               FilteringTextInputFormatter.allow(RegExp(r'^[0-9,.]*$')),
               ],
             decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                 fillColor: AppColors.white,
                 filled: true,
                 border: OutlineInputBorder(
                   borderRadius: Round.secondary,
                   borderSide:
-                      BorderSide(color: AppColors.purpleButton, width: 4),
+                      const BorderSide(color: AppColors.purpleButton, width: 4),
                 )),
           ),
         )

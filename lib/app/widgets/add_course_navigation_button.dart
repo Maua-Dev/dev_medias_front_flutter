@@ -20,7 +20,7 @@ class AddCourseNavigationButton extends StatelessWidget {
           minimumSize: const Size(0, 63),
           padding: const EdgeInsets.symmetric(horizontal: 10)),
       onPressed: () {
-        Navigator.of(context).push(HorizontalPush(exitPage: HomePage(), enterPage: AddPage(), routeName: "/add"));
+        Navigator.of(context).push(HorizontalPush(exitPage: const HomePage(), enterPage: const AddPage(), routeName: "/add"));
       },
       child: Row(
         children: [

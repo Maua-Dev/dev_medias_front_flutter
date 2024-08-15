@@ -37,7 +37,7 @@ class CurrentCourseCard extends StatelessWidget {
                       child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: Text(
-                      course.grade!,
+                      course.grade,
                       style:
                           const TextStyle(fontSize: 18, color: AppColors.white),
                     ),
@@ -52,13 +52,13 @@ class CurrentCourseCard extends StatelessWidget {
                     FittedBox(
                         fit: BoxFit.contain,
                         child: Text(
-                          course.name!,
+                          course.name,
                           style: const TextStyle(fontSize: 20),
                         )),
                     FittedBox(
                         fit: BoxFit.contain,
                         child: Text(
-                          course.desc!,
+                          course.desc,
                           style: const TextStyle(fontSize: 12),
                         )),
                   ],

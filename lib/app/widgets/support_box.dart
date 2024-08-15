@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +18,7 @@ class SupportBox extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
         child: Row(
           children: [
-            Column(
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -39,7 +37,7 @@ class SupportBox extends StatelessWidget {
                     backgroundColor: AppColors.purpleButton,
                     shape: RoundedRectangleBorder(borderRadius: Round.primary)),
                 onPressed: () {},
-                child: Text(
+                child: const Text(
                   "Suporte",
                   style: TextStyle(color: AppColors.white),
                 ))

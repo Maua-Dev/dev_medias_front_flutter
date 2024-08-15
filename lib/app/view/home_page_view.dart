@@ -36,8 +36,8 @@ class _HomePageState extends State<HomePage> {
                   child: Logo(),
                 ),
                 // Botão Adicionar Matérias
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
                   child: AddCourseNavigationButton(),
                 ),
                 // Lista de Matérias

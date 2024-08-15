@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 
 import 'package:dev_medias_front_flutter/app/controller/intro_page_controller.dart';
@@ -15,7 +17,7 @@ class IntroPage extends StatefulWidget {
 class _IntroPageState extends State<IntroPage> {
   @override
   void initState() {
-    Future.delayed(Duration(seconds: 2), () async {
+    Future.delayed(const Duration(seconds: 2), () async {
       bool dataCheck = false;
       dataCheck = await introPageController.checkUserData();
       if (!dataCheck == true) {
@@ -27,7 +29,7 @@ class _IntroPageState extends State<IntroPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: AppColors.background,
         body: Center(

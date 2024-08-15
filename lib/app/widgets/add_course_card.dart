@@ -1,9 +1,7 @@
-import 'package:dev_medias_front_flutter/app/animations/slide.dart';
 import 'package:dev_medias_front_flutter/app/controller/add_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
-import 'package:dev_medias_front_flutter/app/view/add_page_view.dart';
 import 'package:flutter/material.dart';
 
 class AddCourseCard extends StatefulWidget {
@@ -47,18 +45,18 @@ class _AddCourseCardState extends State<AddCourseCard>
     return SlideTransition(
       position: _offsetAnimation,
       child: AnimatedSize(
-        duration: Duration(milliseconds: 250),
+        duration: const Duration(milliseconds: 250),
         curve: Curves.easeOut,
-        child: Container(
+        child: SizedBox(
           height: _height,
           child: Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: ElevatedButton(
               onPressed: () async {
                 _controller.forward();
-                await Future.delayed(Duration(milliseconds: 500));
+                await Future.delayed(const Duration(milliseconds: 500));
                 _updateHeight(0);
-                await Future.delayed(Duration(milliseconds: 250));
+                await Future.delayed(const Duration(milliseconds: 250));
                 addController.addCurrentCourse(widget.course);
               },
               style: TextButton.styleFrom(
@@ -74,14 +72,14 @@ class _AddCourseCardState extends State<AddCourseCard>
                       FittedBox(
                           fit: BoxFit.contain,
                           child: Text(
-                            widget.course.name!,
+                            widget.course.name,
                             style: const TextStyle(
                                 fontSize: 18, color: AppColors.black),
                           )),
                       FittedBox(
                           fit: BoxFit.contain,
                           child: Text(
-                            widget.course.desc!,
+                            widget.course.desc,
                             style: const TextStyle(
                                 fontSize: 12, color: AppColors.black),
                           )),

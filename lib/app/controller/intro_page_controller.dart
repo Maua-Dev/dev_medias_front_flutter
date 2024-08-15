@@ -12,12 +12,13 @@ abstract class IntroPageControllerBase with Store {
   UserDatabase userDatabase = UserDatabase.instance;
 
   @observable
-  bool userDataMissing = true;
+  bool userDataMissing = false;
 
   @action
   Future<bool> checkUserData() async {
     UserModel? data = await userDatabase.getUserData();
-    if (data != null) userDataMissing = false;
+    if (data == null) userDataMissing = true;
+    print(userDataMissing);
     return userDataMissing;
   }
 }

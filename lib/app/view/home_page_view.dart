@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                                   key: UniqueKey(),
                                   direction: DismissDirection.endToStart,
                                   onDismissed: (direction) {
-                                    homeController.removeCurrentCourse(course!);
+                                    homeController.removeCurrentCourse(course);
                                   },
                                   background: Container(
                                     margin: const EdgeInsets.only(bottom: 12),

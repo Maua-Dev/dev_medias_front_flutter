@@ -1,5 +1,7 @@
 import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/home_page_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';
+import 'package:dev_medias_front_flutter/app/model/available_courses.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:mobx/mobx.dart';
 part 'add_page_controller.g.dart';
@@ -27,6 +29,9 @@ abstract class AddPageControllerBase with Store {
 
   @observable
   ObservableMap<String, dynamic>? availableCourses;
+
+  @observable
+  String userSearch = '';
   // AvailableCourses availableCourses = AvailableCourses(courses: testCourses);
 
   @action
@@ -41,9 +46,26 @@ abstract class AddPageControllerBase with Store {
   }
 
   @action
+  void searchAvailableCourses() {
+    Map<String, dynamic> aux = {};
+    coursesController.allCourses!.forEach((key, value) {
+      if (value.name.toLowerCase().contains(userSearch.toLowerCase()) |
+          value.code.toLowerCase().contains(userSearch.toLowerCase())) {
+        aux[key] = value;
+      }
+    });
+    availableCourses = ObservableMap<String, dynamic>.of(aux);
+  }
+
+  @action
   void addCurrentCourse(CourseModel course) {
     homeController.currentCourses.add(course);
     // removeAvailableCourse(course);
+  }
+
+  @action
+  void setSearchTerm(String value) {
+    userSearch = value;
   }
 
   // @action

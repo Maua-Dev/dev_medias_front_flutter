@@ -13,6 +13,9 @@ abstract class CoursesControllerBase with Store {
 
   final dio = Dio();
 
+  @observable
+  ObservableMap<String, dynamic>? allCourses;
+
   @action
   Future<Map<String, dynamic>> getCourses() async {
     try {
@@ -44,6 +47,7 @@ abstract class CoursesControllerBase with Store {
 
         Map<String, CourseModel> courses = aux;
         addController.setCoursesLoaded(true);
+        allCourses = ObservableMap<String, dynamic>.of(courses);
         return courses;
       } else {
         throw Exception('Erro na solicitação GET');

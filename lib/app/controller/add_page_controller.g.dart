@@ -41,6 +41,22 @@ mixin _$AddPageController on AddPageControllerBase, Store {
     });
   }
 
+  late final _$userSearchAtom =
+      Atom(name: 'AddPageControllerBase.userSearch', context: context);
+
+  @override
+  String get userSearch {
+    _$userSearchAtom.reportRead();
+    return super.userSearch;
+  }
+
+  @override
+  set userSearch(String value) {
+    _$userSearchAtom.reportWrite(value, super.userSearch, () {
+      super.userSearch = value;
+    });
+  }
+
   late final _$loadCoursesAsyncAction =
       AsyncAction('AddPageControllerBase.loadCourses', context: context);
 
@@ -64,6 +80,17 @@ mixin _$AddPageController on AddPageControllerBase, Store {
   }
 
   @override
+  void searchAvailableCourses() {
+    final _$actionInfo = _$AddPageControllerBaseActionController.startAction(
+        name: 'AddPageControllerBase.searchAvailableCourses');
+    try {
+      return super.searchAvailableCourses();
+    } finally {
+      _$AddPageControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void addCurrentCourse(CourseModel course) {
     final _$actionInfo = _$AddPageControllerBaseActionController.startAction(
         name: 'AddPageControllerBase.addCurrentCourse');
@@ -75,10 +102,22 @@ mixin _$AddPageController on AddPageControllerBase, Store {
   }
 
   @override
+  void setSearchTerm(String value) {
+    final _$actionInfo = _$AddPageControllerBaseActionController.startAction(
+        name: 'AddPageControllerBase.setSearchTerm');
+    try {
+      return super.setSearchTerm(value);
+    } finally {
+      _$AddPageControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 coursesLoaded: ${coursesLoaded},
-availableCourses: ${availableCourses}
+availableCourses: ${availableCourses},
+userSearch: ${userSearch}
     ''';
   }
 }

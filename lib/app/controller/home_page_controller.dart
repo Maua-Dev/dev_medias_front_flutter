@@ -1,8 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:dev_medias_front_flutter/app/controller/add_page_controller.dart';
-import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:mobx/mobx.dart';
 part 'home_page_controller.g.dart';

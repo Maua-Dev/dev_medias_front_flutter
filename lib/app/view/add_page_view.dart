@@ -3,13 +3,23 @@ import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/widgets/add_course_card.dart';
 import 'package:dev_medias_front_flutter/app/widgets/logo.dart';
 import 'package:dev_medias_front_flutter/app/widgets/search_course_field.dart';
-import 'package:dev_medias_front_flutter/app/widgets/support_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 
-class AddPage extends StatelessWidget {
+class AddPage extends StatefulWidget {
   const AddPage({super.key});
+
+  @override
+  State<AddPage> createState() => _AddPageState();
+}
+
+class _AddPageState extends State<AddPage> {
+  @override
+  void initState() {
+    addController.loadCourses();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,34 +40,41 @@ class AddPage extends StatelessWidget {
                   child: Logo(),
                 ),
                 // Campo de Pesquisar Matérias
-                const Padding(
+               const Padding(
                   padding: EdgeInsets.symmetric(vertical: 16),
                   child: SearchCourseField(),
                 ),
-                // Lista de Matérias
                 Observer(
-                  builder: (_) => ListView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        itemCount: addController.availableCourses.length,
-                        itemBuilder: (context, index) {
-                          Course course = addController.availableCourses[index];
-                          return Observer(
-                            builder: (_) => AddCourseCard(
-                              key: UniqueKey(),
-                              index: index,
-                              course: course,
-                            ),
-                          );
-                        },
+                  builder: (_) => addController.coursesLoaded ?
+                    Expanded(
+                      child: RawScrollbar(
+                        child: ListView.builder(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          itemCount: addController.availableCourses?.length,
+                          itemBuilder: (context, index) {
+                            String? key =
+                                addController.availableCourses?.keys.toList().elementAt(index);
+                            CourseModel course = addController.availableCourses?[key];
+                            return Observer(
+                              builder: (_) => AddCourseCard(
+                                key: UniqueKey(),
+                                index: index,
+                                course: course,
+                              ),
+                            );
+                            },
+                          ),
                       ),
-                ),
-                Expanded(child: Container()),
-                // Seção de Suporte
-                const Padding(
-                  padding: EdgeInsets.only(top: 16),
-                  child: SupportBox(),
-                ),
+                    ) : 
+                    Container(),
+                )
+                // Expanded(child: Container()),
+                // // Seção de Suporte
+                // const Padding(
+                //   padding: EdgeInsets.only(top: 16),
+                //   child: SupportBox(),
+                // ),
               ],
             ),
           ),

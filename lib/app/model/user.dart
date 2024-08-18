@@ -6,9 +6,11 @@ class UserModel {
   final String graduation;
 
   UserModel(
-      {this.name = "Sem nome",
+      {
+      this.name = "Sem nome",
+      this.graduation = "Sem graduação",
       this.year = 0,
-      this.graduation = "Sem graduação"});
+      });
 
   Map<String, Object?> toJson() => {
         UserFields.nameColumnName: name,
@@ -20,5 +22,16 @@ class UserModel {
         name: json[UserFields.nameColumnName] as String,
         year: json[UserFields.userYearColumnName] as int,
         graduation: json[UserFields.userGraduationColumnName] as String,
+      );
+
+  UserModel copy({
+    required String name,
+    required int year,
+    required String graduation,
+  }) =>
+      UserModel(
+        name: name,
+        year: year,
+        graduation: graduation,
       );
 }

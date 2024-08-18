@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class CurrentCourseCard extends StatelessWidget {
   final int index;
-  final Course course;
+  final CourseModel course;
 
   // TO-DO adicionar tratamento de atributos null
   const CurrentCourseCard({
@@ -37,7 +37,7 @@ class CurrentCourseCard extends StatelessWidget {
                       child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: Text(
-                      course.grade,
+                      course.code,
                       style:
                           const TextStyle(fontSize: 18, color: AppColors.white),
                     ),
@@ -58,7 +58,7 @@ class CurrentCourseCard extends StatelessWidget {
                     FittedBox(
                         fit: BoxFit.contain,
                         child: Text(
-                          course.desc,
+                          course.code,
                           style: const TextStyle(fontSize: 12),
                         )),
                   ],

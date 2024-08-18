@@ -1,3 +1,4 @@
+import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/home_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:mobx/mobx.dart';
@@ -8,39 +9,52 @@ class AddPageController = AddPageControllerBase with _$AddPageController;
 abstract class AddPageControllerBase with Store {
   AddPageControllerBase();
 
-  static List<Course> testAvailableCourses = [
-    Course(
-        id: "2", name: "Matéria 2", desc: "Descrição da Matéria", grade: "2.5"),
-    Course(
-        id: "3", name: "Matéria 3", desc: "Descrição da Matéria", grade: "9.5"),
-    Course(
-        id: "4", name: "Matéria 4", desc: "Descrição da Matéria", grade: "6.0"),
-    Course(
-        id: "5", name: "Matéria 5", desc: "Descrição da Matéria", grade: "4.5"),
-    Course(
-        id: "6", name: "Matéria 6", desc: "Descrição da Matéria", grade: "5.0"),
+  static List<CourseModel> testAvailableCourses = [
+    // CourseModel(
+    //     id: "2", name: "Matéria 2", desc: "Descrição da Matéria", grade: "2.5"),
+    // CourseModel(
+    //     id: "3", name: "Matéria 3", desc: "Descrição da Matéria", grade: "9.5"),
+    // CourseModel(
+    //     id: "4", name: "Matéria 4", desc: "Descrição da Matéria", grade: "6.0"),
+    // CourseModel(
+    //     id: "5", name: "Matéria 5", desc: "Descrição da Matéria", grade: "4.5"),
+    // CourseModel(
+    //     id: "6", name: "Matéria 6", desc: "Descrição da Matéria", grade: "5.0"),
   ];
 
   @observable
-  ObservableList<Course> availableCourses =
-      ObservableList<Course>.of(testAvailableCourses);
+  bool coursesLoaded = false;
+
+  @observable
+  ObservableMap<String, dynamic>? availableCourses;
   // AvailableCourses availableCourses = AvailableCourses(courses: testCourses);
 
   @action
-  void addCurrentCourse(Course course) {
+  Future<void> loadCourses() async {
+    final result = await coursesController.getCourses();
+    availableCourses = ObservableMap<String, dynamic>.of(result);
+  }
+
+  @action
+  void setCoursesLoaded(bool status) {
+    coursesLoaded = status;
+  }
+
+  @action
+  void addCurrentCourse(CourseModel course) {
     homeController.currentCourses.add(course);
-    removeAvailableCourse(course);
+    // removeAvailableCourse(course);
   }
 
-  @action
-  void addAvailableCourse(Course course) {
-    availableCourses.add(course);
-  }
+  // @action
+  // void addAvailableCourse(CourseModel course) {
+  //   availableCourses.add(course);
+  // }
 
-  @action
-  void removeAvailableCourse(Course course) {
-    availableCourses.remove(course);
-  }
+  // @action
+  // void removeAvailableCourse(CourseModel course) {
+  //   availableCourses.remove(course);
+  // }
 }
 
 AddPageController addController = AddPageController();

@@ -1,8 +1,11 @@
-class Grade {
-  final String id;
-  final String courseId;
+class GradeModel {
   final String name;
   final double weight;
 
-  Grade({this.id = "Sem ID", this.courseId = "Sem ID de curso", this.name = "Sem Nome", this.weight = 0.0});
+  GradeModel({this.name = "Sem Nome", this.weight = 0.0});
+
+  Map<String, Object?> toJson() => {"name": name, "weight": weight};
+
+  factory GradeModel.fromJson(Map<String, Object?> json) => GradeModel(
+      name: json["name"] as String, weight: json["weight"] as double);
 }

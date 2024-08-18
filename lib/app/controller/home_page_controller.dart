@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dev_medias_front_flutter/app/controller/add_page_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:mobx/mobx.dart';
 part 'home_page_controller.g.dart';
@@ -9,32 +13,35 @@ abstract class HomePageControllerBase with Store {
   HomePageControllerBase();
 
   static var testCurrentCourses = [
-    Course(id: "1", name: "materia 1", desc: "desc materia", grade: "1.0"),
-    Course(id: "7", name: "materia 7", desc: "desc materia", grade: "2.0"),
-    Course(id: "8", name: "materia 8", desc: "desc materia", grade: "3.0"),
+    CourseModel(),
+    CourseModel(),
+    CourseModel(),
   ];
 
-  // @observable
-  // Counter counter = Counter(value: 0);
   @observable
-  ObservableList<Course> currentCourses =
-      ObservableList<Course>.of(testCurrentCourses);
+  ObservableList<CourseModel?> currentCourses = ObservableList<CourseModel?>.of([]);
+  // ObservableList<CourseModel> currentCourses =
+  //     ObservableList<CourseModel>.of(testCurrentCourses);
+
+  @action
+  void removeCurrentCourse(CourseModel course) {
+    currentCourses.remove(course);
+    // addController.addAvailableCourse(course);
+  }
 
   // @action
-  // void incrementCounter() {
-  //   counter = Counter(value: counter.value + 1);
+  // Future<void> loadCourses() async {
+  //   final result = await coursesController.getCourses();
+  //   // currentCourses = ObservableList<CourseModel?>.of(result);
+  // }
+
+  // @action
+  // void loadAllCourses() {
+  //   readJsonFile("F:/dev/flutter/dev_medias/lib/app/allSubjects.json");
   // }
 
   @action
-  void removeCurrentCourse(Course course) {
-    currentCourses.remove(course);
-    addController.addAvailableCourse(course);
-  }
-
-  @action
-  void loadUserCourses() {
-    
-  }
+  void loadUserCourses() {}
 }
 
 HomePageController homeController = HomePageController();

@@ -1,4 +1,5 @@
 import 'package:dev_medias_front_flutter/app/animations/transitions/horizontal_push.dart';
+import 'package:dev_medias_front_flutter/app/controller/intro_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:dev_medias_front_flutter/app/view/add_page_view.dart';
@@ -6,7 +7,6 @@ import 'package:dev_medias_front_flutter/app/view/home_page_view.dart';
 import 'package:flutter/material.dart';
 
 class AddCourseNavigationButton extends StatelessWidget {
-
   const AddCourseNavigationButton({
     super.key,
   });
@@ -20,7 +20,10 @@ class AddCourseNavigationButton extends StatelessWidget {
           minimumSize: const Size(0, 63),
           padding: const EdgeInsets.symmetric(horizontal: 10)),
       onPressed: () {
-        Navigator.of(context).push(HorizontalPush(exitPage: const HomePage(), enterPage: const AddPage(), routeName: "/add"));
+        Navigator.of(context).push(HorizontalPush(
+            exitPage: const HomePage(),
+            enterPage: const AddPage(),
+            routeName: "/add"));
       },
       child: Row(
         children: [

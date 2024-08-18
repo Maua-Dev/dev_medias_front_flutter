@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 
 class EditPage extends StatelessWidget {
-  final Course course;
+  final CourseModel course;
 
   const EditPage({super.key, required this.course});
 

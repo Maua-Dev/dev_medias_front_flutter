@@ -13,13 +13,13 @@ mixin _$HomePageController on HomePageControllerBase, Store {
       Atom(name: 'HomePageControllerBase.currentCourses', context: context);
 
   @override
-  ObservableList<Course> get currentCourses {
+  ObservableList<CourseModel?> get currentCourses {
     _$currentCoursesAtom.reportRead();
     return super.currentCourses;
   }
 
   @override
-  set currentCourses(ObservableList<Course> value) {
+  set currentCourses(ObservableList<CourseModel?> value) {
     _$currentCoursesAtom.reportWrite(value, super.currentCourses, () {
       super.currentCourses = value;
     });
@@ -29,7 +29,7 @@ mixin _$HomePageController on HomePageControllerBase, Store {
       ActionController(name: 'HomePageControllerBase', context: context);
 
   @override
-  void removeCurrentCourse(Course course) {
+  void removeCurrentCourse(CourseModel course) {
     final _$actionInfo = _$HomePageControllerBaseActionController.startAction(
         name: 'HomePageControllerBase.removeCurrentCourse');
     try {

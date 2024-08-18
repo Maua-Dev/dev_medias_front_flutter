@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';
 import 'package:dev_medias_front_flutter/app/database/user_database.dart';
 import 'package:dev_medias_front_flutter/app/model/user.dart';
 import 'package:mobx/mobx.dart';
@@ -12,13 +13,32 @@ abstract class IntroPageControllerBase with Store {
   UserDatabase userDatabase = UserDatabase.instance;
 
   @observable
-  bool userDataMissing = true;
+  bool loggedIn = false;
 
   @action
-  Future<bool> checkUserData() async {
-    UserModel? data = await userDatabase.getUserData();
-    if (data != null) userDataMissing = false;
-    return userDataMissing;
+  void setLoginSuccesful(bool status) {
+    loggedIn = status;
+  }
+  //NÂO ESQUECER
+
+  @action
+  Future<bool> checkUserDataExists() async {
+    // UserModel? data = await getUserData();
+    // if (data == null) userDataMissing = true;
+    return await userController.checkUserDataExists();
+  }
+
+  @action
+  Future<UserModel?> getUserData() async {
+    UserModel? data = await userController.getUserData();
+    return data;
+  }
+
+  @action
+  Future<void> insertUserData(UserModel user) async {
+    // final id = await userDatabase.createUser(user);
+    // print(id);
+    userController.insertUserData(user);
   }
 }
 

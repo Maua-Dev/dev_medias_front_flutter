@@ -5,7 +5,7 @@ import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:flutter/material.dart';
 
 class AddCourseCard extends StatefulWidget {
-  final Course course;
+  final CourseModel course;
   final int index;
 
   const AddCourseCard({
@@ -64,41 +64,45 @@ class _AddCourseCardState extends State<AddCourseCard>
                   shape: RoundedRectangleBorder(borderRadius: Round.primary),
                   padding:
                       const EdgeInsets.symmetric(vertical: 7, horizontal: 7)),
-              child: Row(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      FittedBox(
-                          fit: BoxFit.contain,
+              child: Expanded(
+                child: Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 320,
                           child: Text(
                             widget.course.name,
+                            overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                                 fontSize: 18, color: AppColors.black),
-                          )),
-                      FittedBox(
-                          fit: BoxFit.contain,
-                          child: Text(
-                            widget.course.desc,
-                            style: const TextStyle(
-                                fontSize: 12, color: AppColors.black),
-                          )),
-                    ],
-                  ),
-                  Expanded(child: Container()),
-                  Stack(children: [
-                    Container(
-                      color: AppColors.white,
-                      height: 30,
-                      width: 30,
+                          ),
+                        ),
+                        FittedBox(
+                            fit: BoxFit.contain,
+                            child: Text(
+                              widget.course.code,
+                              style: const TextStyle(
+                                  fontSize: 12, color: AppColors.black),
+                            )),
+                      ],
                     ),
-                    const Icon(
-                      Icons.add_box,
-                      color: AppColors.red,
-                      size: 40,
-                    ),
-                  ]),
-                ],
+                    Expanded(child: Container()),
+                    Stack(children: [
+                      Container(
+                        color: AppColors.white,
+                        height: 30,
+                        width: 30,
+                      ),
+                      const Icon(
+                        Icons.add_box,
+                        color: AppColors.red,
+                        size: 40,
+                      ),
+                    ]),
+                  ],
+                ),
               ),
             ),
           ),

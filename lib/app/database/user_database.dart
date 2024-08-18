@@ -6,7 +6,7 @@ class UserFields {
   // Nome das Tabelas
   static const String gradesTableName = "grades";
   static const String addedCoursesTableName = "added_courses";
-  static const String userDataTableName = "user_data";
+  static const String userDataTableName = "user";
 
   // Colunas
   static const String idColumnName = "id";
@@ -35,29 +35,33 @@ class UserDatabase {
 
   Future<Database> _initDatabase() async {
     final path = join(await getDatabasesPath(), "user.db");
+    // databaseFactory.deleteDatabase(path);
     return await openDatabase(
       path,
       version: 1,
-      onCreate: _createDatabase,
+      onCreate: (Database db, int version) async {
+        await db.execute('''
+                CREATE TABLE courses (
+                  code TEXT NOT NULL PRIMARY KEY,
+                  name TEXT NOT NULL
+                );
+            ''');
+      },
     );
   }
 
-  Future<void> _createDatabase(Database db, int version) async {
-    return await db.execute('''
-        CREATE TABLE ${UserFields.userDataTableName} (
-          ${UserFields.idColumnName} INTEGER PRIMARY KEY,
-          ${UserFields.userGraduationColumnName} TEXT NOT NULL,
-          ${UserFields.userYearColumnName} INTEGER
-        )
-    ''');
-  }
-
-  Future<UserModel?> getUserData() async {
+  Future<UserModel?> getCourse(String code) async {
     final db = await instance.database;
-    final maps = await db.query(UserFields.userDataTableName);
+    final maps = await db.query("user_data");
     if (maps.isNotEmpty) {
       return UserModel.fromJson(maps.first);
     }
     return null;
+  }
+
+  Future<int?> createUser(UserModel user) async {
+    final db = await instance.database;
+    final id = await db.insert("user_data", user.toJson());
+    return id;
   }
 }

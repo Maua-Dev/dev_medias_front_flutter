@@ -9,34 +9,66 @@ part of 'intro_page_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$IntroPageController on IntroPageControllerBase, Store {
-  late final _$userDataMissingAtom =
-      Atom(name: 'IntroPageControllerBase.userDataMissing', context: context);
+  late final _$loggedInAtom =
+      Atom(name: 'IntroPageControllerBase.loggedIn', context: context);
 
   @override
-  bool get userDataMissing {
-    _$userDataMissingAtom.reportRead();
-    return super.userDataMissing;
+  bool get loggedIn {
+    _$loggedInAtom.reportRead();
+    return super.loggedIn;
   }
 
   @override
-  set userDataMissing(bool value) {
-    _$userDataMissingAtom.reportWrite(value, super.userDataMissing, () {
-      super.userDataMissing = value;
+  set loggedIn(bool value) {
+    _$loggedInAtom.reportWrite(value, super.loggedIn, () {
+      super.loggedIn = value;
     });
   }
 
-  late final _$checkUserDataAsyncAction =
-      AsyncAction('IntroPageControllerBase.checkUserData', context: context);
+  late final _$checkUserDataExistsAsyncAction = AsyncAction(
+      'IntroPageControllerBase.checkUserDataExists',
+      context: context);
 
   @override
-  Future<bool> checkUserData() {
-    return _$checkUserDataAsyncAction.run(() => super.checkUserData());
+  Future<bool> checkUserDataExists() {
+    return _$checkUserDataExistsAsyncAction
+        .run(() => super.checkUserDataExists());
+  }
+
+  late final _$getUserDataAsyncAction =
+      AsyncAction('IntroPageControllerBase.getUserData', context: context);
+
+  @override
+  Future<UserModel?> getUserData() {
+    return _$getUserDataAsyncAction.run(() => super.getUserData());
+  }
+
+  late final _$insertUserDataAsyncAction =
+      AsyncAction('IntroPageControllerBase.insertUserData', context: context);
+
+  @override
+  Future<void> insertUserData(UserModel user) {
+    return _$insertUserDataAsyncAction.run(() => super.insertUserData(user));
+  }
+
+  late final _$IntroPageControllerBaseActionController =
+      ActionController(name: 'IntroPageControllerBase', context: context);
+
+  @override
+  void setLoginSuccesful(bool status) {
+    final _$actionInfo = _$IntroPageControllerBaseActionController.startAction(
+        name: 'IntroPageControllerBase.setLoginSuccesful');
+    try {
+      return super.setLoginSuccesful(status);
+    } finally {
+      _$IntroPageControllerBaseActionController.endAction(_$actionInfo);
+    }
   }
 
   @override
   String toString() {
     return '''
-userDataMissing: ${userDataMissing}
+loggedIn: ${loggedIn}
     ''';
   }
 }

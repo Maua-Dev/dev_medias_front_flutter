@@ -66,8 +66,7 @@ class _AddPageState extends State<AddPage> {
                             },
                           ),
                       ),
-                    ) : 
-                    Container(),
+                    ) : const Expanded(child: Center(child: Text('carregando...', style: TextStyle(color: AppColors.white, fontSize: 20),))),
                 )
                 // Expanded(child: Container()),
                 // // Seção de Suporte

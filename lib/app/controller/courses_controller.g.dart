@@ -25,6 +25,22 @@ mixin _$CoursesController on CoursesControllerBase, Store {
     });
   }
 
+  late final _$loadedCoursesAtom =
+      Atom(name: 'CoursesControllerBase.loadedCourses', context: context);
+
+  @override
+  bool get loadedCourses {
+    _$loadedCoursesAtom.reportRead();
+    return super.loadedCourses;
+  }
+
+  @override
+  set loadedCourses(bool value) {
+    _$loadedCoursesAtom.reportWrite(value, super.loadedCourses, () {
+      super.loadedCourses = value;
+    });
+  }
+
   late final _$getCoursesAsyncAction =
       AsyncAction('CoursesControllerBase.getCourses', context: context);
 
@@ -33,10 +49,25 @@ mixin _$CoursesController on CoursesControllerBase, Store {
     return _$getCoursesAsyncAction.run(() => super.getCourses());
   }
 
+  late final _$CoursesControllerBaseActionController =
+      ActionController(name: 'CoursesControllerBase', context: context);
+
+  @override
+  void setLoadedCourses(bool status) {
+    final _$actionInfo = _$CoursesControllerBaseActionController.startAction(
+        name: 'CoursesControllerBase.setLoadedCourses');
+    try {
+      return super.setLoadedCourses(status);
+    } finally {
+      _$CoursesControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
-allCourses: ${allCourses}
+allCourses: ${allCourses},
+loadedCourses: ${loadedCourses}
     ''';
   }
 }

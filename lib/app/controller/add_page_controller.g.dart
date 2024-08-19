@@ -91,17 +91,6 @@ mixin _$AddPageController on AddPageControllerBase, Store {
   }
 
   @override
-  void addCurrentCourse(CourseModel course) {
-    final _$actionInfo = _$AddPageControllerBaseActionController.startAction(
-        name: 'AddPageControllerBase.addCurrentCourse');
-    try {
-      return super.addCurrentCourse(course);
-    } finally {
-      _$AddPageControllerBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   void setSearchTerm(String value) {
     final _$actionInfo = _$AddPageControllerBaseActionController.startAction(
         name: 'AddPageControllerBase.setSearchTerm');

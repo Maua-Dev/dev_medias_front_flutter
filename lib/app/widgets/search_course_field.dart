@@ -13,6 +13,7 @@ class SearchCourseField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) => TextField(
+        readOnly: !addController.coursesLoaded,
         onChanged: (value) => {
           addController.setSearchTerm(value),
           addController.searchAvailableCourses()

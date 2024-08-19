@@ -1,4 +1,5 @@
-import 'package:dev_medias_front_flutter/app/controller/home_page_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:dev_medias_front_flutter/app/widgets/add_course_navigation_button.dart';
@@ -18,6 +19,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
+    coursesController.getCourses();
+    userController.getCurrentCourses();
     super.initState();
   }
 
@@ -46,62 +49,70 @@ class _HomePageState extends State<HomePage> {
                 ),
                 // Lista de Matérias
                 Observer(
-                  builder: (_) => homeController.currentCourses.isNotEmpty
-                      ? Expanded(
-                          child: ListView.builder(
-                            padding: EdgeInsets.zero,
-                            shrinkWrap: true,
-                            itemCount: homeController.currentCourses.length,
-                            itemBuilder: (context, index) {
-                              CourseModel? course =
-                                  homeController.currentCourses[index];
-                              return ClipRRect(
-                                borderRadius: Round.primary,
-                                child: Dismissible(
-                                  key: UniqueKey(),
-                                  direction: DismissDirection.endToStart,
-                                  onDismissed: (direction) {
-                                    homeController.removeCurrentCourse(course);
-                                  },
-                                  background: Container(
-                                    margin: const EdgeInsets.only(bottom: 12),
-                                    decoration: BoxDecoration(
-                                        color: AppColors.red,
-                                        borderRadius: Round.primary),
-                                    child: Row(
-                                      children: [
-                                        Expanded(child: Container()),
-                                        const Padding(
-                                          padding: EdgeInsets.only(right: 12),
-                                          child: Icon(
-                                            Icons.delete,
-                                            color: AppColors.white,
-                                          ),
+                  builder: (_) => coursesController.loadedCourses
+                      ? userController.currentCourses.isNotEmpty
+                          ? Expanded(
+                              child: ListView.builder(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                itemCount: userController.currentCourses.length,
+                                itemBuilder: (context, index) {
+                                  CourseModel? course =
+                                      coursesController.allCourses?[
+                                          userController.currentCourses[index]];
+                                  return ClipRRect(
+                                    borderRadius: Round.primary,
+                                    child: Dismissible(
+                                      key: UniqueKey(),
+                                      direction: DismissDirection.endToStart,
+                                      onDismissed: (direction) {
+                                        userController
+                                            .removeCurrentCourse(course.code);
+                                      },
+                                      background: Container(
+                                        margin:
+                                            const EdgeInsets.only(bottom: 12),
+                                        decoration: BoxDecoration(
+                                            color: AppColors.red,
+                                            borderRadius: Round.primary),
+                                        child: Row(
+                                          children: [
+                                            Expanded(child: Container()),
+                                            const Padding(
+                                              padding:
+                                                  EdgeInsets.only(right: 12),
+                                              child: Icon(
+                                                Icons.delete,
+                                                color: AppColors.white,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
+                                      ),
+                                      child: CurrentCourseCard(
+                                        index: index,
+                                        course: course!,
+                                      ),
                                     ),
-                                  ),
-                                  child: CurrentCourseCard(
-                                    index: index,
-                                    course: course!,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        )
-                      : const Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Você não tem matérias cadastradas :(",
-                                style: TextStyle(
-                                    fontSize: 16.0, color: AppColors.textFaded),
+                                  );
+                                },
                               ),
-                            ],
-                          ),
-                        ),
+                            )
+                          : const Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Você não tem matérias cadastradas :(",
+                                    style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: AppColors.textFaded),
+                                  ),
+                                ],
+                              ),
+                            )
+                      : const Expanded(
+                          child: Center(child: Text('Carregando...'))),
                 ),
                 // Seção de Suporte
                 // const Padding(

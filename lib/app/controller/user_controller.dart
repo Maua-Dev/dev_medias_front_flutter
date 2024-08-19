@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:dev_medias_front_flutter/app/model/user.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 part 'user_controller.g.dart';
@@ -20,6 +21,9 @@ abstract class UserControllerBase with Store {
 
   @observable
   int? year = 0;
+
+  @observable
+  ObservableList<String> currentCourses = ObservableList<String>.of([]);
 
   @action
   Future<bool> checkUserDataExists() async {
@@ -61,6 +65,34 @@ abstract class UserControllerBase with Store {
     SharedPreferences prefs;
     prefs = await SharedPreferences.getInstance();
     prefs.clear();
+  }
+
+  @action
+  Future<void> getCurrentCourses() async {
+    await Hive.initFlutter();
+    var box = await Hive.openBox('user');
+    currentCourses =
+        ObservableList<String>.of(box.get('currentCourses', defaultValue: <String>[]));
+  }
+
+  @action
+  Future<void> insertCurrentCourses(String code) async {
+    await Hive.initFlutter();
+    var box = await Hive.openBox('user');
+    List<String> courseList = box.get('currentCourses', defaultValue: <String>[]);
+    courseList.add(code);
+    currentCourses = ObservableList<String>.of(courseList);
+    box.put('currentCourses', courseList);
+  }
+
+  @action
+  Future<void> removeCurrentCourse(String code) async {
+    await Hive.initFlutter();
+    var box = await Hive.openBox('user');
+    List<String> courseList = box.get('currentCourses', defaultValue: <String>[]);
+    courseList.remove(code);
+    currentCourses = ObservableList<String>.of(courseList);
+    box.put('currentCourses', courseList);
   }
 }
 

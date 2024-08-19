@@ -16,6 +16,14 @@ abstract class CoursesControllerBase with Store {
   @observable
   ObservableMap<String, dynamic>? allCourses;
 
+  @observable
+  bool loadedCourses = false;
+
+  @action
+  void setLoadedCourses(bool status) {
+    loadedCourses = status;
+  }
+
   @action
   Future<Map<String, dynamic>> getCourses() async {
     try {
@@ -40,14 +48,15 @@ abstract class CoursesControllerBase with Store {
             newAssignmentList.add(GradeModel.fromJson(assignment));
           }
           course["assignments"] = newAssignmentList;
-
           course = CourseModel.fromJson(course);
           aux[code] = course;
         });
 
         Map<String, CourseModel> courses = aux;
         addController.setCoursesLoaded(true);
+        setLoadedCourses(true);
         allCourses = ObservableMap<String, dynamic>.of(courses);
+        loadedCourses = true;
         return courses;
       } else {
         throw Exception('Erro na solicitação GET');
@@ -56,16 +65,6 @@ abstract class CoursesControllerBase with Store {
       throw Exception('Erro de rede: $e');
     }
   }
-
-  // @action
-  // Future<void> insertCoursesData(CoursesModel Courses) async {
-
-  // }
-
-  // @action
-  // Future<void> resetCoursesData() async {
-
-  // }
 }
 
 CoursesController coursesController = CoursesController();

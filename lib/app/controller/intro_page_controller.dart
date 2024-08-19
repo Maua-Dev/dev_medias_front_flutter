@@ -19,12 +19,9 @@ abstract class IntroPageControllerBase with Store {
   void setLoginSuccesful(bool status) {
     loggedIn = status;
   }
-  //NÂO ESQUECER
 
   @action
   Future<bool> checkUserDataExists() async {
-    // UserModel? data = await getUserData();
-    // if (data == null) userDataMissing = true;
     return await userController.checkUserDataExists();
   }
 
@@ -36,8 +33,6 @@ abstract class IntroPageControllerBase with Store {
 
   @action
   Future<void> insertUserData(UserModel user) async {
-    // final id = await userDatabase.createUser(user);
-    // print(id);
     userController.insertUserData(user);
   }
 }

@@ -73,6 +73,22 @@ mixin _$UserController on UserControllerBase, Store {
     });
   }
 
+  late final _$currentCoursesAtom =
+      Atom(name: 'UserControllerBase.currentCourses', context: context);
+
+  @override
+  ObservableList<String> get currentCourses {
+    _$currentCoursesAtom.reportRead();
+    return super.currentCourses;
+  }
+
+  @override
+  set currentCourses(ObservableList<String> value) {
+    _$currentCoursesAtom.reportWrite(value, super.currentCourses, () {
+      super.currentCourses = value;
+    });
+  }
+
   late final _$checkUserDataExistsAsyncAction =
       AsyncAction('UserControllerBase.checkUserDataExists', context: context);
 
@@ -106,13 +122,40 @@ mixin _$UserController on UserControllerBase, Store {
     return _$resetUserDataAsyncAction.run(() => super.resetUserData());
   }
 
+  late final _$getCurrentCoursesAsyncAction =
+      AsyncAction('UserControllerBase.getCurrentCourses', context: context);
+
+  @override
+  Future<void> getCurrentCourses() {
+    return _$getCurrentCoursesAsyncAction.run(() => super.getCurrentCourses());
+  }
+
+  late final _$insertCurrentCoursesAsyncAction =
+      AsyncAction('UserControllerBase.insertCurrentCourses', context: context);
+
+  @override
+  Future<void> insertCurrentCourses(String code) {
+    return _$insertCurrentCoursesAsyncAction
+        .run(() => super.insertCurrentCourses(code));
+  }
+
+  late final _$removeCurrentCourseAsyncAction =
+      AsyncAction('UserControllerBase.removeCurrentCourse', context: context);
+
+  @override
+  Future<void> removeCurrentCourse(String code) {
+    return _$removeCurrentCourseAsyncAction
+        .run(() => super.removeCurrentCourse(code));
+  }
+
   @override
   String toString() {
     return '''
 userDataMissing: ${userDataMissing},
 name: ${name},
 graduation: ${graduation},
-year: ${year}
+year: ${year},
+currentCourses: ${currentCourses}
     ''';
   }
 }

@@ -33,35 +33,40 @@ class CurrentCourseCard extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                       borderRadius: Round.secondary, color: AppColors.red),
-                  child: Center(
+                  child: const Center(
                       child: Padding(
-                    padding: const EdgeInsets.all(10),
+                    padding: EdgeInsets.all(10),
                     child: Text(
-                      course.code,
+                      "0.0",
                       style:
-                          const TextStyle(fontSize: 18, color: AppColors.white),
+                          TextStyle(fontSize: 18, color: AppColors.white),
                     ),
                   )),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 7),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FittedBox(
-                        fit: BoxFit.contain,
-                        child: Text(
-                          course.name,
-                          style: const TextStyle(fontSize: 20),
-                        )),
-                    FittedBox(
-                        fit: BoxFit.contain,
-                        child: Text(
-                          course.code,
-                          style: const TextStyle(fontSize: 12),
-                        )),
-                  ],
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 7),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                          SizedBox(
+                            width: 320,
+                            child: Text(
+                              course.name,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                  fontSize: 18, color: AppColors.black),
+                            ),
+                          ),
+                      FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
+                            course.code,
+                            style: const TextStyle(fontSize: 12),
+                          )),
+                    ],
+                  ),
                 ),
               )
             ],

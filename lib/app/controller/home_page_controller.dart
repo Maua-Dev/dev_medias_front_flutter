@@ -5,6 +5,7 @@ class HomePageController = HomePageControllerBase with _$HomePageController;
 
 abstract class HomePageControllerBase with Store {
   HomePageControllerBase();
+
 }
 
 HomePageController homeController = HomePageController();

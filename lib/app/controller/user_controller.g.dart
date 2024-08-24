@@ -25,6 +25,22 @@ mixin _$UserController on UserControllerBase, Store {
     });
   }
 
+  late final _$firstLoginAtom =
+      Atom(name: 'UserControllerBase.firstLogin', context: context);
+
+  @override
+  bool get firstLogin {
+    _$firstLoginAtom.reportRead();
+    return super.firstLogin;
+  }
+
+  @override
+  set firstLogin(bool value) {
+    _$firstLoginAtom.reportWrite(value, super.firstLogin, () {
+      super.firstLogin = value;
+    });
+  }
+
   late final _$nameAtom =
       Atom(name: 'UserControllerBase.name', context: context);
 
@@ -148,10 +164,100 @@ mixin _$UserController on UserControllerBase, Store {
         .run(() => super.removeCurrentCourse(code));
   }
 
+  late final _$loadInitialCoursesAsyncAction =
+      AsyncAction('UserControllerBase.loadInitialCourses', context: context);
+
+  @override
+  Future<void> loadInitialCourses(String code, int year) {
+    return _$loadInitialCoursesAsyncAction
+        .run(() => super.loadInitialCourses(code, year));
+  }
+
+  late final _$UserControllerBaseActionController =
+      ActionController(name: 'UserControllerBase', context: context);
+
+  @override
+  String? getName() {
+    final _$actionInfo = _$UserControllerBaseActionController.startAction(
+        name: 'UserControllerBase.getName');
+    try {
+      return super.getName();
+    } finally {
+      _$UserControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  String? getGraduation() {
+    final _$actionInfo = _$UserControllerBaseActionController.startAction(
+        name: 'UserControllerBase.getGraduation');
+    try {
+      return super.getGraduation();
+    } finally {
+      _$UserControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  int? getYear() {
+    final _$actionInfo = _$UserControllerBaseActionController.startAction(
+        name: 'UserControllerBase.getYear');
+    try {
+      return super.getYear();
+    } finally {
+      _$UserControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setName(String name) {
+    final _$actionInfo = _$UserControllerBaseActionController.startAction(
+        name: 'UserControllerBase.setName');
+    try {
+      return super.setName(name);
+    } finally {
+      _$UserControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setGraduation(String graduation) {
+    final _$actionInfo = _$UserControllerBaseActionController.startAction(
+        name: 'UserControllerBase.setGraduation');
+    try {
+      return super.setGraduation(graduation);
+    } finally {
+      _$UserControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setYear(int year) {
+    final _$actionInfo = _$UserControllerBaseActionController.startAction(
+        name: 'UserControllerBase.setYear');
+    try {
+      return super.setYear(year);
+    } finally {
+      _$UserControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setFirstLogin(bool status) {
+    final _$actionInfo = _$UserControllerBaseActionController.startAction(
+        name: 'UserControllerBase.setFirstLogin');
+    try {
+      return super.setFirstLogin(status);
+    } finally {
+      _$UserControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
 userDataMissing: ${userDataMissing},
+firstLogin: ${firstLogin},
 name: ${name},
 graduation: ${graduation},
 year: ${year},

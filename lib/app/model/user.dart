@@ -1,5 +1,3 @@
-import 'package:dev_medias_front_flutter/app/database/user_database.dart';
-
 class UserModel {
   final String name;
   final int year;
@@ -13,15 +11,15 @@ class UserModel {
       });
 
   Map<String, Object?> toJson() => {
-        UserFields.nameColumnName: name,
-        UserFields.userYearColumnName: year,
-        UserFields.userGraduationColumnName: graduation,
+        "name": name,
+        "year": year,
+        "graduation": graduation,
       };
 
   factory UserModel.fromJson(Map<String, Object?> json) => UserModel(
-        name: json[UserFields.nameColumnName] as String,
-        year: json[UserFields.userYearColumnName] as int,
-        graduation: json[UserFields.userGraduationColumnName] as String,
+        name: json["name"] as String,
+        year: json["year"] as int,
+        graduation: json["graduation"] as String,
       );
 
   UserModel copy({

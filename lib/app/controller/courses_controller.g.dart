@@ -25,6 +25,22 @@ mixin _$CoursesController on CoursesControllerBase, Store {
     });
   }
 
+  late final _$allGradsAtom =
+      Atom(name: 'CoursesControllerBase.allGrads', context: context);
+
+  @override
+  ObservableMap<String, dynamic>? get allGrads {
+    _$allGradsAtom.reportRead();
+    return super.allGrads;
+  }
+
+  @override
+  set allGrads(ObservableMap<String, dynamic>? value) {
+    _$allGradsAtom.reportWrite(value, super.allGrads, () {
+      super.allGrads = value;
+    });
+  }
+
   late final _$loadedCoursesAtom =
       Atom(name: 'CoursesControllerBase.loadedCourses', context: context);
 
@@ -49,6 +65,14 @@ mixin _$CoursesController on CoursesControllerBase, Store {
     return _$getCoursesAsyncAction.run(() => super.getCourses());
   }
 
+  late final _$getGradsAsyncAction =
+      AsyncAction('CoursesControllerBase.getGrads', context: context);
+
+  @override
+  Future<Map<String, dynamic>> getGrads() {
+    return _$getGradsAsyncAction.run(() => super.getGrads());
+  }
+
   late final _$CoursesControllerBaseActionController =
       ActionController(name: 'CoursesControllerBase', context: context);
 
@@ -64,9 +88,32 @@ mixin _$CoursesController on CoursesControllerBase, Store {
   }
 
   @override
+  dynamic getAllGrads() {
+    final _$actionInfo = _$CoursesControllerBaseActionController.startAction(
+        name: 'CoursesControllerBase.getAllGrads');
+    try {
+      return super.getAllGrads();
+    } finally {
+      _$CoursesControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  List<String> getDropdownInputStrings() {
+    final _$actionInfo = _$CoursesControllerBaseActionController.startAction(
+        name: 'CoursesControllerBase.getDropdownInputStrings');
+    try {
+      return super.getDropdownInputStrings();
+    } finally {
+      _$CoursesControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 allCourses: ${allCourses},
+allGrads: ${allGrads},
 loadedCourses: ${loadedCourses}
     ''';
   }

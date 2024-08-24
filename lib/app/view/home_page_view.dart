@@ -17,12 +17,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    coursesController.getCourses();
-    userController.getCurrentCourses();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

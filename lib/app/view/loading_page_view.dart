@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/intro_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/loading_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';
@@ -23,7 +24,7 @@ class _LoadingPageState extends State<LoadingPage> {
   void initState() {
     Future.delayed(const Duration(seconds: 2), () async {
       loadingPageController.setLoading(true);
-      await userController.resetUserData();
+      // await userController.resetUserData();
       final userDataMissing = await userController.checkUserDataExists();
       await coursesController.getCourses();
       await coursesController.getGrads();

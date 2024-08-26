@@ -6,7 +6,6 @@ import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:dev_medias_front_flutter/app/widgets/logo.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 
 class StartingDataForm extends StatefulWidget {
   const StartingDataForm({super.key});

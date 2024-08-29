@@ -46,6 +46,7 @@ abstract class CoursesControllerBase with Store {
           final prevExams = course["exams"];
           final newExamList = [];
           for (Map<String, dynamic> exam in prevExams) {
+            print(exam);
             newExamList.add(GradeModel.fromJson(exam));
           }
           course["exams"] = newExamList;

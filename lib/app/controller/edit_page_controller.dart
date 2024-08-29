@@ -1,4 +1,4 @@
-import 'package:dev_medias_front_flutter/app/model/course.dart';
+import 'package:dev_medias_front_flutter/app/controller/grade_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 part 'edit_page_controller.g.dart';
@@ -12,20 +12,25 @@ abstract class EditPageControllerBase with Store {
   double targetGrade = 0;
 
   @observable
-  ObservableMap<String, double> examGrades =
-      ObservableMap<String, double>.of({});
+  String courseCode = "";
 
   @observable
-  ObservableMap<String, TextEditingController> examControllers =
+  ObservableMap<String, double?> grades = ObservableMap<String, double?>.of({});
+
+  @observable
+  ObservableMap<String, TextEditingController> gradeControllers =
       ObservableMap<String, TextEditingController>.of({});
 
-  @observable
-  ObservableMap<String, double> assignmentGrades =
-      ObservableMap<String, double>.of({});
+  @action
+  String getCourseCode() {
+    return courseCode;
+  }
 
-  @observable
-  ObservableMap<String, TextEditingController> assignmentControllers =
-      ObservableMap<String, TextEditingController>.of({});
+  @action
+  void setCourseCode(String code) {
+    courseCode = code;
+  }
+
 
   @action
   double getTargetGrade() {
@@ -38,33 +43,23 @@ abstract class EditPageControllerBase with Store {
   }
 
   @action
-  void buildGrades(CourseModel course) {
-    buildExamGrades(course.exams);
-    buildAssignmentGrades(course.assignments);
-  }
-
-  @action
-  void buildExamGrades(List<dynamic>? grades) {
+  void buildGrades(List<dynamic>? grades) {
     for (var grade in grades!) {
-      examControllers[grade.name] = TextEditingController();
-      examGrades[grade.name] = 0.0;
-    }
-  }
-
-  @action
-  void buildAssignmentGrades(List<dynamic>? grades) {
-    for (var grade in grades!) {
-      assignmentControllers[grade.name] = TextEditingController();
-      assignmentGrades[grade.name] = 0.0;
+      gradeControllers[grade.name] = TextEditingController();
+      this.grades[grade.name] = null;
     }
   }
 
   @action
   void resetGradeControllers() {
-    examGrades = ObservableMap<String, double>.of({});
-    assignmentGrades = ObservableMap<String, double>.of({});
-    examControllers = ObservableMap<String, TextEditingController>.of({});
-    assignmentControllers = ObservableMap<String, TextEditingController>.of({});
+    grades = ObservableMap<String, double?>.of({});
+    gradeControllers = ObservableMap<String, TextEditingController>.of({});
+  }
+
+  @action
+  Future<Map<String, dynamic>> calcTargetGrade(Map<String, dynamic> grades,
+      Map<String, dynamic> weights, double targetGrade) async {
+    return await gradeController.getTargetGrade(grades, weights, targetGrade, courseCode);
   }
 }
 

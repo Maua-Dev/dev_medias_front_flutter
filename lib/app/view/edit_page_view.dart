@@ -18,8 +18,10 @@ class EditPage extends StatefulWidget {
 class _EditPageState extends State<EditPage> {
   @override
   void initState() {
-    editController.buildExamGrades(widget.course.exams);
-    editController.buildAssignmentGrades(widget.course.assignments);
+    editController.resetGradeControllers();
+    final grades = widget.course.exams! + widget.course.assignments!;
+    editController.setCourseCode(widget.course.code);
+    editController.buildGrades(grades);
     super.initState();
   }
 
@@ -151,9 +153,8 @@ class _EditPageState extends State<EditPage> {
                                           .course.assignments![index].name,
                                       labelled: true,
                                       controller:
-                                          editController.assignmentControllers[
-                                              widget.course.assignments![index]
-                                                  .name],
+                                          editController.gradeControllers[widget
+                                              .course.assignments![index].name],
                                     ),
                                   ),
                                 );
@@ -188,7 +189,15 @@ class _EditPageState extends State<EditPage> {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Map<String, dynamic> weights = {};
+                            for (var grade in widget.course.exams! +
+                                widget.course.assignments!) {
+                              weights[grade.name] = grade.weight;
+                            }
+                            editController.calcTargetGrade(
+                                editController.grades, weights, 6);
+                          },
                           style: TextButton.styleFrom(
                               backgroundColor: AppColors.red,
                               shape: RoundedRectangleBorder(
@@ -215,17 +224,15 @@ class _EditPageState extends State<EditPage> {
                     ),
                     Expanded(
                       child: ElevatedButton(
-                          onPressed: () {
-                            for (var controller in editController
-                                .examControllers.entries) {
-                              print(controller.key);
-                              print(controller.value);
+                          onPressed: () async {
+                            Map<String, dynamic> weights = {};
+                            for (var grade in widget.course.exams! +
+                                widget.course.assignments!) {
+                              weights[grade.name] = grade.weight;
                             }
-                            for (var controller in editController
-                                .assignmentControllers.entries) {
-                              print(controller.key);
-                              print(controller.value);
-                            }
+                            final res = await editController.calcTargetGrade(
+                                editController.grades, weights, 0);
+                            print(res);
                           },
                           style: TextButton.styleFrom(
                               backgroundColor: AppColors.red,

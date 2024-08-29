@@ -1,3 +1,4 @@
+import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +15,7 @@ class GradeInput extends StatelessWidget {
       this.name = "Sem Nome",
       this.labelled = true,
       this.enabled = true,
-      this.controller
-      });
+      this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +35,10 @@ class GradeInput extends StatelessWidget {
             textAlign: TextAlign.center,
             keyboardType: TextInputType.number,
             enabled: enabled,
+            onChanged: (String value) {
+              print(value);
+              editController.grades[name] = double.parse(value);
+            },
             inputFormatters: [
               LengthLimitingTextInputFormatter(4),
               FilteringTextInputFormatter.allow(RegExp(r'^[0-9,.]*$')),

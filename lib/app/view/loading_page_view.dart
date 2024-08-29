@@ -3,7 +3,6 @@
 import 'dart:async';
 
 import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
-import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/intro_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/loading_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';

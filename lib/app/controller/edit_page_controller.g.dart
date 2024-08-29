@@ -25,74 +25,88 @@ mixin _$EditPageController on EditPageControllerBase, Store {
     });
   }
 
-  late final _$examGradesAtom =
-      Atom(name: 'EditPageControllerBase.examGrades', context: context);
+  late final _$courseCodeAtom =
+      Atom(name: 'EditPageControllerBase.courseCode', context: context);
 
   @override
-  ObservableMap<String, double> get examGrades {
-    _$examGradesAtom.reportRead();
-    return super.examGrades;
+  String get courseCode {
+    _$courseCodeAtom.reportRead();
+    return super.courseCode;
   }
 
   @override
-  set examGrades(ObservableMap<String, double> value) {
-    _$examGradesAtom.reportWrite(value, super.examGrades, () {
-      super.examGrades = value;
+  set courseCode(String value) {
+    _$courseCodeAtom.reportWrite(value, super.courseCode, () {
+      super.courseCode = value;
     });
   }
 
-  late final _$examControllersAtom =
-      Atom(name: 'EditPageControllerBase.examControllers', context: context);
+  late final _$gradesAtom =
+      Atom(name: 'EditPageControllerBase.grades', context: context);
 
   @override
-  ObservableMap<String, TextEditingController> get examControllers {
-    _$examControllersAtom.reportRead();
-    return super.examControllers;
+  ObservableMap<String, double?> get grades {
+    _$gradesAtom.reportRead();
+    return super.grades;
   }
 
   @override
-  set examControllers(ObservableMap<String, TextEditingController> value) {
-    _$examControllersAtom.reportWrite(value, super.examControllers, () {
-      super.examControllers = value;
+  set grades(ObservableMap<String, double?> value) {
+    _$gradesAtom.reportWrite(value, super.grades, () {
+      super.grades = value;
     });
   }
 
-  late final _$assignmentGradesAtom =
-      Atom(name: 'EditPageControllerBase.assignmentGrades', context: context);
+  late final _$gradeControllersAtom =
+      Atom(name: 'EditPageControllerBase.gradeControllers', context: context);
 
   @override
-  ObservableMap<String, double> get assignmentGrades {
-    _$assignmentGradesAtom.reportRead();
-    return super.assignmentGrades;
+  ObservableMap<String, TextEditingController> get gradeControllers {
+    _$gradeControllersAtom.reportRead();
+    return super.gradeControllers;
   }
 
   @override
-  set assignmentGrades(ObservableMap<String, double> value) {
-    _$assignmentGradesAtom.reportWrite(value, super.assignmentGrades, () {
-      super.assignmentGrades = value;
+  set gradeControllers(ObservableMap<String, TextEditingController> value) {
+    _$gradeControllersAtom.reportWrite(value, super.gradeControllers, () {
+      super.gradeControllers = value;
     });
   }
 
-  late final _$assignmentControllersAtom = Atom(
-      name: 'EditPageControllerBase.assignmentControllers', context: context);
+  late final _$calcTargetGradeAsyncAction =
+      AsyncAction('EditPageControllerBase.calcTargetGrade', context: context);
 
   @override
-  ObservableMap<String, TextEditingController> get assignmentControllers {
-    _$assignmentControllersAtom.reportRead();
-    return super.assignmentControllers;
-  }
-
-  @override
-  set assignmentControllers(
-      ObservableMap<String, TextEditingController> value) {
-    _$assignmentControllersAtom.reportWrite(value, super.assignmentControllers,
-        () {
-      super.assignmentControllers = value;
-    });
+  Future<Map<String, dynamic>> calcTargetGrade(Map<String, dynamic> grades,
+      Map<String, dynamic> weights, double targetGrade) {
+    return _$calcTargetGradeAsyncAction
+        .run(() => super.calcTargetGrade(grades, weights, targetGrade));
   }
 
   late final _$EditPageControllerBaseActionController =
       ActionController(name: 'EditPageControllerBase', context: context);
+
+  @override
+  String getCourseCode() {
+    final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
+        name: 'EditPageControllerBase.getCourseCode');
+    try {
+      return super.getCourseCode();
+    } finally {
+      _$EditPageControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setCourseCode(String code) {
+    final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
+        name: 'EditPageControllerBase.setCourseCode');
+    try {
+      return super.setCourseCode(code);
+    } finally {
+      _$EditPageControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   double getTargetGrade() {
@@ -117,33 +131,11 @@ mixin _$EditPageController on EditPageControllerBase, Store {
   }
 
   @override
-  void buildGrades(CourseModel course) {
+  void buildGrades(List<dynamic>? grades) {
     final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
         name: 'EditPageControllerBase.buildGrades');
     try {
-      return super.buildGrades(course);
-    } finally {
-      _$EditPageControllerBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void buildExamGrades(List<dynamic>? grades) {
-    final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
-        name: 'EditPageControllerBase.buildExamGrades');
-    try {
-      return super.buildExamGrades(grades);
-    } finally {
-      _$EditPageControllerBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void buildAssignmentGrades(List<dynamic>? grades) {
-    final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
-        name: 'EditPageControllerBase.buildAssignmentGrades');
-    try {
-      return super.buildAssignmentGrades(grades);
+      return super.buildGrades(grades);
     } finally {
       _$EditPageControllerBaseActionController.endAction(_$actionInfo);
     }
@@ -164,10 +156,9 @@ mixin _$EditPageController on EditPageControllerBase, Store {
   String toString() {
     return '''
 targetGrade: ${targetGrade},
-examGrades: ${examGrades},
-examControllers: ${examControllers},
-assignmentGrades: ${assignmentGrades},
-assignmentControllers: ${assignmentControllers}
+courseCode: ${courseCode},
+grades: ${grades},
+gradeControllers: ${gradeControllers}
     ''';
   }
 }

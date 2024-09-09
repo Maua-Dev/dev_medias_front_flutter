@@ -9,6 +9,9 @@ abstract class EditPageControllerBase with Store {
   EditPageControllerBase();
 
   @observable
+  bool targetCalcInProgress = false;
+
+  @observable
   double targetGrade = 0;
 
   @observable
@@ -40,6 +43,11 @@ abstract class EditPageControllerBase with Store {
   }
 
   @action
+  setTargetCalcProgress(bool value) {
+    targetCalcInProgress = value;
+  }
+
+  @action
   void setCourseCode(String code) {
     courseCode = code;
   }
@@ -54,10 +62,12 @@ abstract class EditPageControllerBase with Store {
     targetGrade = grade;
   }
 
+  // Desenha as notas meta na tela
   @action
   void renderTargetGrades(Map grades) {
     final allGrades = grades["notas"]["provas"] + grades["notas"]["trabalhos"];
     int index = 0;
+    // Define os valores das notas restantes como as metas recebidas
     editController.grades.forEach((key, value) {
       if (value == null) {
         value = allGrades[index]["valor"];
@@ -67,11 +77,13 @@ abstract class EditPageControllerBase with Store {
         }
       }
     );
+    // Faz o mesmo para a nota final
     editController.finalScoreController.text = "$targetGrade";
     editController.finalScoreGrade = targetGrade;
     editController.finalScoreType = "targetcalc";
   }
 
+  // De acordo com as notas recebias como parâmetro, cria os controladores de notas
   @action
   void buildGrades(List<dynamic>? grades) {
     for (var grade in grades!) {
@@ -81,6 +93,7 @@ abstract class EditPageControllerBase with Store {
     }
   }
 
+  // Reseta os controladores de notas para comportar as notas de outra matéria
   @action
   void resetGradeControllers() {
     grades = ObservableMap<String, double?>.of({});
@@ -94,11 +107,45 @@ abstract class EditPageControllerBase with Store {
     gradeTypes = ObservableMap<String, String>.of({});
   }
 
+  // Calcula as metas de nota para cada avaliação de acordo com a meta inserida com o usuário
   @action
   calcTargetGrade(
       Map<String, dynamic> grades, Map<String, dynamic> weights) async {
+    // Obtém as notas meta e devolve um mapa
     Map targetGrades = await gradeController.getTargetGrades(grades, weights, targetGrade, courseCode);
+    // Pega o mapa e utiliza ele para alterar os valores da tela
     renderTargetGrades(targetGrades);
+  }
+
+  // Calcula a nota final de acordo com as notas inseridas pelo usuário
+  @action
+  calcFinalScore(Map<String, dynamic> grades, Map<String, dynamic> weights) {
+    // Calcula a nota final
+    grades.forEach((key, value) {
+      if (value == null) {
+        grades[key] = 0;
+      }
+    });
+
+    double productSum = 0;
+    double weightSum = 0;
+
+    grades.forEach((key, grade) {
+      double weight = weights[key] ?? 0;
+      productSum += grade * weight;
+      weightSum += weight;
+    });
+
+    if (weightSum == 0) {
+      throw ArgumentError('A soma dos pesos não pode ser zero.');
+    }
+
+    final result = productSum / weightSum;
+
+    // Update the final score value on the screen
+    finalScoreController.text = "$result";
+    finalScoreGrade = result;
+    finalScoreType = "normal";
   }
 }
 

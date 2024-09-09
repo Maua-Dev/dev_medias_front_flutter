@@ -155,24 +155,22 @@ class _EditPageState extends State<EditPage> {
                               alignment: WrapAlignment.center,
                               children: List.generate(
                                   widget.course.assignments!.length, (index) {
-                                return Observer(
-                                  builder: (_) => Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: GradeInput(
-                                      name: widget
-                                          .course.assignments![index].name,
-                                      labelled: true,
-                                      type: editController.gradeTypes[widget.course.exams![index].name]!,
-                                      controller:
-                                          editController.gradeControllers[widget
-                                              .course.assignments![index].name],
-                                    ),
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: GradeInput(
+                                    name: widget
+                                        .course.assignments![index].name,
+                                    labelled: true,
+                                    type: editController.gradeTypes[widget.course.assignments![index].name]!,
+                                    controller:
+                                        editController.gradeControllers[widget
+                                            .course.assignments![index].name],
                                   ),
                                 );
                               })),
                           Expanded(child: Container()),
                           Padding(
-                            padding: EdgeInsets.only(top: 32, bottom: 32),
+                            padding: const EdgeInsets.only(top: 32, bottom: 32),
                             child: Column(
                               children: [
                                 const Padding(
@@ -208,41 +206,94 @@ class _EditPageState extends State<EditPage> {
                                 builder: (context) {
                                   final targetController =
                                       TextEditingController();
-                                  return AlertDialog(
-                                    title: const Text("Definir Meta de Nota"),
-                                    content: SizedBox(
-                                      height: 100,
-                                      child: Column(
-                                        children: [
-                                          GradeInput(
-                                            changes: false,
-                                            controller: targetController,
-                                            labelled: false,
+                                  return Observer(
+                                    builder: (_) => AlertDialog(
+                                      title: editController.targetCalcInProgress
+                                      ? const Text("Definir meta de nota")
+                                      : null,
+                                      content: SizedBox(
+                                        height: 250,
+                                        child: editController.targetCalcInProgress
+                                        ? const Center(
+                                          child: SizedBox(
+                                            height: 50,
+                                            width: 50,
+                                            child: CircularProgressIndicator(
+                                              color: AppColors.red,
+
+                                            ),
                                           ),
-                                        ],
+                                        )
+                                        : Column(
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                              children:
+                                                [
+                                                  const Text("Como funciona?", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                                                  const Text("1. Digite a nota que você deseja alcançar na matéria.", style: TextStyle(color: AppColors.black, fontFamily: 'Poppins', fontSize: 16),),
+                                                  const Text("2. Calcularemos as notas necessárias para alcançar essa meta.", style: TextStyle(color: AppColors.black, fontFamily: 'Poppins', fontSize: 16),),
+                                                  RichText(
+                                                    text: const TextSpan(
+                                                    style: TextStyle(color: AppColors.black, fontFamily: 'Poppins', fontSize: 16),
+                                                      children: [
+                                                        TextSpan(
+                                                          text: "3. As notas calculadas serão exibidas em ",
+                                                        ),
+                                                        TextSpan(
+                                                          text: "vermelho.",
+                                                          style: TextStyle(color: AppColors.red, fontWeight: FontWeight.bold),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                  ,]
+                                              ),
+                                            Expanded(child: Container()),
+                                            GradeInput(
+                                              changes: false,
+                                              name: "Sua meta",
+                                              controller: targetController,
+                                              labelled: true,
+                                            ),
+                                          ],
+                                        ),
                                       ),
+                                      actions: [
+                                        editController.targetCalcInProgress
+                                        ? Container()
+                                        : TextButton(
+                                          style: TextButton.styleFrom(
+                                            backgroundColor: AppColors.red,
+                                            foregroundColor: AppColors.white,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: Round.primary),
+                                            minimumSize: const Size.fromHeight(50),
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 7, horizontal: 7)),
+                                            onPressed: () async {
+                                              editController.setTargetCalcProgress(true);
+                                              editController.setTargetGrade(
+                                                  double.parse(
+                                                      targetController.text));
+                                              Map<String, dynamic> weights = {};
+                                              for (var grade in widget
+                                                      .course.exams! +
+                                                  widget.course.assignments!) {
+                                                weights[grade.name] =
+                                                    grade.weight;
+                                              }
+                                              await editController
+                                                  .calcTargetGrade(
+                                                      editController.grades,
+                                                      weights);
+                                              Navigator.pop(context);
+                                              editController.setTargetCalcProgress(false);
+                                            },
+                                            child: const Text("Confirmar"))
+                                      ],
                                     ),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () async {
-                                            editController.setTargetGrade(
-                                                double.parse(
-                                                    targetController.text));
-                                            Map<String, dynamic> weights = {};
-                                            for (var grade in widget
-                                                    .course.exams! +
-                                                widget.course.assignments!) {
-                                              weights[grade.name] =
-                                                  grade.weight;
-                                            }
-                                            await editController
-                                                .calcTargetGrade(
-                                                    editController.grades,
-                                                    weights);
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text("Confirmar"))
-                                    ],
                                   );
                                 });
                           },
@@ -278,7 +329,7 @@ class _EditPageState extends State<EditPage> {
                                 widget.course.assignments!) {
                               weights[grade.name] = grade.weight;
                             }
-                            final res = await editController.calcTargetGrade(
+                            await editController.calcFinalScore(
                                 editController.grades, weights);
                           },
                           style: TextButton.styleFrom(
@@ -300,7 +351,8 @@ class _EditPageState extends State<EditPage> {
                                 ),
                               ],
                             ),
-                          )),
+                          )
+                        ),
                     ),
                   ],
                 ),

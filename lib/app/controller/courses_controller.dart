@@ -99,7 +99,7 @@ abstract class CoursesControllerBase with Store {
   List<String> getDropdownInputStrings() {
     List<String> aux = [];
     allGrads!.forEach((key, value) {
-      aux.add('$key');
+      aux.add(key);
     });
     return aux;
   }

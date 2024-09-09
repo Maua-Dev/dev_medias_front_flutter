@@ -61,7 +61,6 @@ class _HomePageState extends State<HomePage> {
                                   CourseModel? course =
                                       coursesController.allCourses?[
                                           userController.currentCourses[index]];
-                                  print(course!.name);
                                   return ClipRRect(
                                     borderRadius: Round.primary,
                                     child: Dismissible(
@@ -94,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                                       child: CurrentCourseCard(
                                         key: UniqueKey(),
                                         index: index,
-                                        course: course,
+                                        course: course!,
                                       ),
                                     ),
                                   );

@@ -4,8 +4,10 @@ import 'package:dev_medias_front_flutter/app/view/home_page_view.dart';
 import 'package:dev_medias_front_flutter/app/view/intro_page_view.dart';
 import 'package:dev_medias_front_flutter/app/view/loading_page_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 

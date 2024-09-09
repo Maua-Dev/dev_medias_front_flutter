@@ -41,6 +41,71 @@ mixin _$EditPageController on EditPageControllerBase, Store {
     });
   }
 
+  late final _$finalScoreTypeAtom =
+      Atom(name: 'EditPageControllerBase.finalScoreType', context: context);
+
+  @override
+  String get finalScoreType {
+    _$finalScoreTypeAtom.reportRead();
+    return super.finalScoreType;
+  }
+
+  @override
+  set finalScoreType(String value) {
+    _$finalScoreTypeAtom.reportWrite(value, super.finalScoreType, () {
+      super.finalScoreType = value;
+    });
+  }
+
+  late final _$finalScoreGradeAtom =
+      Atom(name: 'EditPageControllerBase.finalScoreGrade', context: context);
+
+  @override
+  double? get finalScoreGrade {
+    _$finalScoreGradeAtom.reportRead();
+    return super.finalScoreGrade;
+  }
+
+  @override
+  set finalScoreGrade(double? value) {
+    _$finalScoreGradeAtom.reportWrite(value, super.finalScoreGrade, () {
+      super.finalScoreGrade = value;
+    });
+  }
+
+  late final _$finalScoreControllerAtom = Atom(
+      name: 'EditPageControllerBase.finalScoreController', context: context);
+
+  @override
+  TextEditingController get finalScoreController {
+    _$finalScoreControllerAtom.reportRead();
+    return super.finalScoreController;
+  }
+
+  @override
+  set finalScoreController(TextEditingController value) {
+    _$finalScoreControllerAtom.reportWrite(value, super.finalScoreController,
+        () {
+      super.finalScoreController = value;
+    });
+  }
+
+  late final _$gradeTypesAtom =
+      Atom(name: 'EditPageControllerBase.gradeTypes', context: context);
+
+  @override
+  ObservableMap<String, String> get gradeTypes {
+    _$gradeTypesAtom.reportRead();
+    return super.gradeTypes;
+  }
+
+  @override
+  set gradeTypes(ObservableMap<String, String> value) {
+    _$gradeTypesAtom.reportWrite(value, super.gradeTypes, () {
+      super.gradeTypes = value;
+    });
+  }
+
   late final _$gradesAtom =
       Atom(name: 'EditPageControllerBase.grades', context: context);
 
@@ -77,10 +142,10 @@ mixin _$EditPageController on EditPageControllerBase, Store {
       AsyncAction('EditPageControllerBase.calcTargetGrade', context: context);
 
   @override
-  Future<Map<String, dynamic>> calcTargetGrade(Map<String, dynamic> grades,
-      Map<String, dynamic> weights, double targetGrade) {
+  Future calcTargetGrade(
+      Map<String, dynamic> grades, Map<String, dynamic> weights) {
     return _$calcTargetGradeAsyncAction
-        .run(() => super.calcTargetGrade(grades, weights, targetGrade));
+        .run(() => super.calcTargetGrade(grades, weights));
   }
 
   late final _$EditPageControllerBaseActionController =
@@ -131,6 +196,17 @@ mixin _$EditPageController on EditPageControllerBase, Store {
   }
 
   @override
+  void renderTargetGrades(Map<dynamic, dynamic> grades) {
+    final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
+        name: 'EditPageControllerBase.renderTargetGrades');
+    try {
+      return super.renderTargetGrades(grades);
+    } finally {
+      _$EditPageControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void buildGrades(List<dynamic>? grades) {
     final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
         name: 'EditPageControllerBase.buildGrades');
@@ -157,6 +233,10 @@ mixin _$EditPageController on EditPageControllerBase, Store {
     return '''
 targetGrade: ${targetGrade},
 courseCode: ${courseCode},
+finalScoreType: ${finalScoreType},
+finalScoreGrade: ${finalScoreGrade},
+finalScoreController: ${finalScoreController},
+gradeTypes: ${gradeTypes},
 grades: ${grades},
 gradeControllers: ${gradeControllers}
     ''';

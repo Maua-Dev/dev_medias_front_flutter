@@ -1,4 +1,5 @@
 import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
+import 'package:dev_medias_front_flutter/app/utils/text_formatters/grade_formatter.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:flutter/material.dart';
@@ -6,14 +7,18 @@ import 'package:flutter/services.dart';
 
 class GradeInput extends StatelessWidget {
   final String name;
+  final String type;
   final bool labelled;
   final bool enabled;
+  final bool changes;
   final TextEditingController? controller;
 
   const GradeInput(
       {super.key,
       this.name = "Sem Nome",
+      this.type = "normal",
       this.labelled = true,
+      this.changes = true,
       this.enabled = true,
       this.controller});
 
@@ -31,17 +36,20 @@ class GradeInput extends StatelessWidget {
           width: 80,
           child: TextField(
             controller: controller,
-            style: const TextStyle(fontSize: 20),
+            style: TextStyle(fontSize: 20, color: type == "normal" ? AppColors.black : AppColors.red),
             textAlign: TextAlign.center,
             keyboardType: TextInputType.number,
             enabled: enabled,
             onChanged: (String value) {
-              print(value);
-              editController.grades[name] = double.parse(value);
+              if (changes && value != "") {
+                  editController.grades[name] = double.parse(value);
+                  editController.gradeControllers[name]?.text = value;
+                  editController.gradeTypes[name] = "normal";
+              }
             },
             inputFormatters: [
               LengthLimitingTextInputFormatter(4),
-              FilteringTextInputFormatter.allow(RegExp(r'^[0-9,.]*$')),
+              GradeInputFormatter(),
             ],
             decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 8),

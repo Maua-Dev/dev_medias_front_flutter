@@ -15,6 +15,19 @@ abstract class EditPageControllerBase with Store {
   String courseCode = "";
 
   @observable
+  String finalScoreType = "normal";
+
+  @observable
+  double? finalScoreGrade;
+
+  @observable
+  TextEditingController finalScoreController = TextEditingController();
+
+  @observable
+  ObservableMap<String, String> gradeTypes =
+      ObservableMap<String, String>.of({});
+
+  @observable
   ObservableMap<String, double?> grades = ObservableMap<String, double?>.of({});
 
   @observable
@@ -31,7 +44,6 @@ abstract class EditPageControllerBase with Store {
     courseCode = code;
   }
 
-
   @action
   double getTargetGrade() {
     return targetGrade;
@@ -43,9 +55,28 @@ abstract class EditPageControllerBase with Store {
   }
 
   @action
+  void renderTargetGrades(Map grades) {
+    final allGrades = grades["notas"]["provas"] + grades["notas"]["trabalhos"];
+    int index = 0;
+    editController.grades.forEach((key, value) {
+      if (value == null) {
+        value = allGrades[index]["valor"];
+        editController.gradeControllers[key]!.text = "$value";
+        editController.gradeTypes[key] = "targetcalc";
+        index++;
+        }
+      }
+    );
+    editController.finalScoreController.text = "$targetGrade";
+    editController.finalScoreGrade = targetGrade;
+    editController.finalScoreType = "targetcalc";
+  }
+
+  @action
   void buildGrades(List<dynamic>? grades) {
     for (var grade in grades!) {
       gradeControllers[grade.name] = TextEditingController();
+      gradeTypes[grade.name] = "normal";
       this.grades[grade.name] = null;
     }
   }
@@ -53,13 +84,21 @@ abstract class EditPageControllerBase with Store {
   @action
   void resetGradeControllers() {
     grades = ObservableMap<String, double?>.of({});
+    finalScoreGrade = null;
+    gradeControllers.forEach((key, value) {
+      value.dispose();
+    });
+    finalScoreController.text = "";
     gradeControllers = ObservableMap<String, TextEditingController>.of({});
+    finalScoreType = "normal";
+    gradeTypes = ObservableMap<String, String>.of({});
   }
 
   @action
-  Future<Map<String, dynamic>> calcTargetGrade(Map<String, dynamic> grades,
-      Map<String, dynamic> weights, double targetGrade) async {
-    return await gradeController.getTargetGrade(grades, weights, targetGrade, courseCode);
+  calcTargetGrade(
+      Map<String, dynamic> grades, Map<String, dynamic> weights) async {
+    Map targetGrades = await gradeController.getTargetGrades(grades, weights, targetGrade, courseCode);
+    renderTargetGrades(targetGrades);
   }
 }
 

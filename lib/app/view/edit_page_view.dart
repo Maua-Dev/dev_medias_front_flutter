@@ -103,7 +103,10 @@ class _EditPageState extends State<EditPage> {
                               ? const Expanded(
                                   child: Center(
                                       child: Text(
-                                          "Essa matéria não tem notas cadastradas.")))
+                                          "Essa matéria não tem notas cadastradas."
+                                          )
+                                        )
+                                      )
                               : Container(),
                           widget.course.exams!.isNotEmpty
                               ? const Padding(
@@ -111,7 +114,9 @@ class _EditPageState extends State<EditPage> {
                                   child: Text("Provas",
                                       style: TextStyle(
                                           color: AppColors.black,
-                                          fontSize: 20)),
+                                          fontSize: 20
+                                          )
+                                      ),
                                 )
                               : Container(),
                           Wrap(
@@ -126,10 +131,15 @@ class _EditPageState extends State<EditPage> {
                                     child: GradeInput(
                                       name: widget.course.exams![index].name,
                                       labelled: true,
+                                      type: editController.gradeTypes[widget.course.exams![index].name]!,
+                                      controller: editController.gradeControllers[widget
+                                              .course.exams![index].name],
                                     ),
                                   ),
                                 );
-                              })),
+                              }
+                            )
+                          ),
                           widget.course.assignments!.isNotEmpty
                               ? const Padding(
                                   padding: EdgeInsets.only(top: 32, bottom: 16),
@@ -152,6 +162,7 @@ class _EditPageState extends State<EditPage> {
                                       name: widget
                                           .course.assignments![index].name,
                                       labelled: true,
+                                      type: editController.gradeTypes[widget.course.exams![index].name]!,
                                       controller:
                                           editController.gradeControllers[widget
                                               .course.assignments![index].name],
@@ -160,11 +171,11 @@ class _EditPageState extends State<EditPage> {
                                 );
                               })),
                           Expanded(child: Container()),
-                          const Padding(
+                          Padding(
                             padding: EdgeInsets.only(top: 32, bottom: 32),
                             child: Column(
                               children: [
-                                Padding(
+                                const Padding(
                                   padding: EdgeInsets.only(bottom: 16.0),
                                   child: Text("Média Final",
                                       style: TextStyle(
@@ -173,6 +184,8 @@ class _EditPageState extends State<EditPage> {
                                 ),
                                 GradeInput(
                                   labelled: false,
+                                  controller: editController.finalScoreController,
+                                  type: editController.finalScoreType,
                                   enabled: false,
                                 ),
                               ],
@@ -190,13 +203,48 @@ class _EditPageState extends State<EditPage> {
                     Expanded(
                       child: ElevatedButton(
                           onPressed: () {
-                            Map<String, dynamic> weights = {};
-                            for (var grade in widget.course.exams! +
-                                widget.course.assignments!) {
-                              weights[grade.name] = grade.weight;
-                            }
-                            editController.calcTargetGrade(
-                                editController.grades, weights, 6);
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  final targetController =
+                                      TextEditingController();
+                                  return AlertDialog(
+                                    title: const Text("Definir Meta de Nota"),
+                                    content: SizedBox(
+                                      height: 100,
+                                      child: Column(
+                                        children: [
+                                          GradeInput(
+                                            changes: false,
+                                            controller: targetController,
+                                            labelled: false,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () async {
+                                            editController.setTargetGrade(
+                                                double.parse(
+                                                    targetController.text));
+                                            Map<String, dynamic> weights = {};
+                                            for (var grade in widget
+                                                    .course.exams! +
+                                                widget.course.assignments!) {
+                                              weights[grade.name] =
+                                                  grade.weight;
+                                            }
+                                            await editController
+                                                .calcTargetGrade(
+                                                    editController.grades,
+                                                    weights);
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text("Confirmar"))
+                                    ],
+                                  );
+                                });
                           },
                           style: TextButton.styleFrom(
                               backgroundColor: AppColors.red,
@@ -231,8 +279,7 @@ class _EditPageState extends State<EditPage> {
                               weights[grade.name] = grade.weight;
                             }
                             final res = await editController.calcTargetGrade(
-                                editController.grades, weights, 0);
-                            print(res);
+                                editController.grades, weights);
                           },
                           style: TextButton.styleFrom(
                               backgroundColor: AppColors.red,

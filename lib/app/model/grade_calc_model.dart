@@ -1,9 +1,6 @@
-class GradeCalcModel {
-  final List<Map<String, double>> provasQueTenho;
-  final List<Map<String, double>> trabalhosQueTenho;
-  final List<Map<String, double>> provasQueQuero;
-  final List<Map<String, double>> trabalhosQueQuero;
-  final double? mediaDesejada;
+class GradesModel {
+  final Map<String, Map> notas;
+  final double? mediaFinal;
 
   GradeCalcModel({
     this.provasQueTenho = const [],

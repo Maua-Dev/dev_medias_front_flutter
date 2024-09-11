@@ -1,4 +1,5 @@
 import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/grade_controller.dart';
 import 'package:dev_medias_front_flutter/app/utils/text_formatters/grade_formatter.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
@@ -48,6 +49,8 @@ class GradeInput extends StatelessWidget {
                     editController.gradeControllers[name]?.text = value;
                     editController.gradeTypes[name] = "normal";
                 }
+                final grades = editController.formatGradesForSaving();
+                gradeController.insertGrades(editController.getCourseCode(), grades);
               },
               inputFormatters: [
                 LengthLimitingTextInputFormatter(4),

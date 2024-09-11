@@ -13,7 +13,7 @@ mixin _$GradeController on GradeControllerBase, Store {
       AsyncAction('GradeControllerBase.getGrades', context: context);
 
   @override
-  Future<Map<dynamic, dynamic>?> getGrades(String code) {
+  Future<dynamic> getGrades(String code) {
     return _$getGradesAsyncAction.run(() => super.getGrades(code));
   }
 
@@ -21,8 +21,7 @@ mixin _$GradeController on GradeControllerBase, Store {
       AsyncAction('GradeControllerBase.insertGrades', context: context);
 
   @override
-  Future<void> insertGrades(
-      String code, Map<String, Map<dynamic, dynamic>> grades) {
+  Future<void> insertGrades(String code, Map<String, dynamic> grades) {
     return _$insertGradesAsyncAction
         .run(() => super.insertGrades(code, grades));
   }

@@ -13,19 +13,21 @@ abstract class GradeControllerBase with Store {
   final dio = Dio();
 
   @action
-  Future<Map<dynamic, dynamic>?> getGrades (String code) async {
+  Future<dynamic> getGrades(String code) async {
     await Hive.initFlutter();
     var box = await Hive.openBox('user');
-    Map<String, Map> grades = box.get('grades', defaultValue: <String, Map>{});
-    return grades[code];
+    final grades =
+        box.get('grades', defaultValue: <String, dynamic>{});
+    final subjectGrades = grades?[code];
+    return subjectGrades;
   }
 
   @action
-  Future<void> insertGrades (String code, Map<String, Map> grades) async {
+  Future<void> insertGrades (String code, Map<String, dynamic> grades) async {
     await Hive.initFlutter();
     var box = await Hive.openBox('user');
-    Map<String, Map> oldGrades = box.get('grades', defaultValue: <String, Map>{});
-    Map<String, Map> newGrades = oldGrades;
+    final oldGrades = box.get('grades', defaultValue: <String, Map>{});
+    final newGrades = oldGrades;
     newGrades[code] = grades;
     box.put('grades', newGrades);
   }

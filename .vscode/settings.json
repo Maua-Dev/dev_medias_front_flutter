@@ -1,4 +1,5 @@
 {
     "dart.flutterSdkPath": "C:\\Users\\LuizFelipe\\.puro\\envs\\devmedias\\flutter",
-    "dart.sdkPath": "C:\\Users\\LuizFelipe\\.puro\\envs\\devmedias\\flutter\\bin\\cache\\dart-sdk"
+    "dart.sdkPath": "C:\\Users\\LuizFelipe\\.puro\\envs\\devmedias\\flutter\\bin\\cache\\dart-sdk",
+    "cmake.sourceDirectory": "F:/dev/flutter/dev_medias/linux"
 }

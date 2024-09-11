@@ -26,6 +26,22 @@ mixin _$EditPageController on EditPageControllerBase, Store {
     });
   }
 
+  late final _$gradeRenderedAtom =
+      Atom(name: 'EditPageControllerBase.gradeRendered', context: context);
+
+  @override
+  bool get gradeRendered {
+    _$gradeRenderedAtom.reportRead();
+    return super.gradeRendered;
+  }
+
+  @override
+  set gradeRendered(bool value) {
+    _$gradeRenderedAtom.reportWrite(value, super.gradeRendered, () {
+      super.gradeRendered = value;
+    });
+  }
+
   late final _$targetGradeAtom =
       Atom(name: 'EditPageControllerBase.targetGrade', context: context);
 
@@ -159,7 +175,7 @@ mixin _$EditPageController on EditPageControllerBase, Store {
       AsyncAction('EditPageControllerBase.calcTargetGrade', context: context);
 
   @override
-  Future calcTargetGrade(
+  Future<void> calcTargetGrade(
       Map<String, dynamic> grades, Map<String, dynamic> weights) {
     return _$calcTargetGradeAsyncAction
         .run(() => super.calcTargetGrade(grades, weights));
@@ -180,22 +196,44 @@ mixin _$EditPageController on EditPageControllerBase, Store {
   }
 
   @override
-  dynamic setTargetCalcProgress(bool value) {
+  void setCourseCode(String code) {
     final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
-        name: 'EditPageControllerBase.setTargetCalcProgress');
+        name: 'EditPageControllerBase.setCourseCode');
     try {
-      return super.setTargetCalcProgress(value);
+      return super.setCourseCode(code);
     } finally {
       _$EditPageControllerBaseActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  void setCourseCode(String code) {
+  bool getRendered() {
     final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
-        name: 'EditPageControllerBase.setCourseCode');
+        name: 'EditPageControllerBase.getRendered');
     try {
-      return super.setCourseCode(code);
+      return super.getRendered();
+    } finally {
+      _$EditPageControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setRendered(bool value) {
+    final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
+        name: 'EditPageControllerBase.setRendered');
+    try {
+      return super.setRendered(value);
+    } finally {
+      _$EditPageControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setTargetCalcProgress(bool value) {
+    final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
+        name: 'EditPageControllerBase.setTargetCalcProgress');
+    try {
+      return super.setTargetCalcProgress(value);
     } finally {
       _$EditPageControllerBaseActionController.endAction(_$actionInfo);
     }
@@ -235,6 +273,17 @@ mixin _$EditPageController on EditPageControllerBase, Store {
   }
 
   @override
+  void renderGrades(Map<dynamic, dynamic> newGrades) {
+    final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
+        name: 'EditPageControllerBase.renderGrades');
+    try {
+      return super.renderGrades(newGrades);
+    } finally {
+      _$EditPageControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void buildGrades(List<dynamic>? grades) {
     final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
         name: 'EditPageControllerBase.buildGrades');
@@ -257,7 +306,7 @@ mixin _$EditPageController on EditPageControllerBase, Store {
   }
 
   @override
-  dynamic calcFinalScore(
+  void calcFinalScore(
       Map<String, dynamic> grades, Map<String, dynamic> weights) {
     final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
         name: 'EditPageControllerBase.calcFinalScore');
@@ -269,9 +318,21 @@ mixin _$EditPageController on EditPageControllerBase, Store {
   }
 
   @override
+  Map<String, dynamic> formatGradesForSaving() {
+    final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
+        name: 'EditPageControllerBase.formatGradesForSaving');
+    try {
+      return super.formatGradesForSaving();
+    } finally {
+      _$EditPageControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 targetCalcInProgress: ${targetCalcInProgress},
+gradeRendered: ${gradeRendered},
 targetGrade: ${targetGrade},
 courseCode: ${courseCode},
 finalScoreType: ${finalScoreType},

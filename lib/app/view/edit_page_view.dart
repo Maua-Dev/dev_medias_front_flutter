@@ -1,4 +1,5 @@
 import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/grade_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:dev_medias_front_flutter/app/widgets/grade_input.dart';
@@ -18,11 +19,19 @@ class EditPage extends StatefulWidget {
 class _EditPageState extends State<EditPage> {
   @override
   void initState() {
-    editController.resetGradeControllers();
-    final grades = widget.course.exams! + widget.course.assignments!;
-    editController.setCourseCode(widget.course.code);
-    editController.buildGrades(grades);
+    initializeAsync();
     super.initState();
+  }
+
+  Future<void> initializeAsync() async {
+      editController.resetGradeControllers();
+      final grades = widget.course.exams! + widget.course.assignments!;
+      editController.setCourseCode(widget.course.code);
+      editController.buildGrades(grades);
+      final savedGrades = await gradeController.getGrades(widget.course.code);
+      if (savedGrades != null) {
+        editController.renderGrades(savedGrades);
+      }
   }
 
   @override
@@ -92,105 +101,122 @@ class _EditPageState extends State<EditPage> {
               SingleChildScrollView(
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height - 350,
-                  child: Container(
-                      decoration: BoxDecoration(
-                          color: const Color.fromRGBO(255, 255, 255, 1),
-                          borderRadius: Round.primary),
-                      child: Column(
-                        children: [
-                          widget.course.exams!.isEmpty &&
-                                  widget.course.assignments!.isEmpty
-                              ? const Expanded(
-                                  child: Center(
-                                      child: Text(
-                                          "Essa matéria não tem notas cadastradas."
+                  child: Observer(
+                    builder: (_) => Container(
+                        decoration: BoxDecoration(
+                            color: const Color.fromRGBO(255, 255, 255, 1),
+                            borderRadius: Round.primary),
+                        // Ternário necessário para carregar as cores das notas
+                        child: editController.gradeRendered
+                        ? Column(
+                          children: [
+                            widget.course.exams!.isEmpty &&
+                                    widget.course.assignments!.isEmpty
+                                ? const Expanded(
+                                    child: Center(
+                                        child: Text(
+                                            "Essa matéria não tem notas cadastradas."
+                                            )
                                           )
                                         )
-                                      )
-                              : Container(),
-                          widget.course.exams!.isNotEmpty
-                              ? const Padding(
-                                  padding: EdgeInsets.only(top: 32, bottom: 16),
-                                  child: Text("Provas",
-                                      style: TextStyle(
-                                          color: AppColors.black,
-                                          fontSize: 20
-                                          )
+                                : Container(),
+                            widget.course.exams!.isNotEmpty
+                                ? const Padding(
+                                    padding: EdgeInsets.only(top: 32, bottom: 16),
+                                    child: Text("Provas",
+                                        style: TextStyle(
+                                            color: AppColors.black,
+                                            fontSize: 20
+                                            )
+                                        ),
+                                  )
+                                : Container(),
+                            Wrap(
+                                runSpacing: 4,
+                                spacing: 4,
+                                alignment: WrapAlignment.center,
+                                children: List.generate(
+                                    widget.course.exams!.length, (index) {
+                                  return Observer(
+                                    builder: (_) => Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: GradeInput(
+                                        name: widget.course.exams![index].name,
+                                        labelled: true,
+                                        type: editController.gradeTypes[widget.course.exams![index].name]!,
+                                        controller: editController.gradeControllers[widget
+                                                .course.exams![index].name],
                                       ),
-                                )
-                              : Container(),
-                          Wrap(
-                              runSpacing: 4,
-                              spacing: 4,
-                              alignment: WrapAlignment.center,
-                              children: List.generate(
-                                  widget.course.exams!.length, (index) {
-                                return Observer(
-                                  builder: (_) => Padding(
+                                    ),
+                                  );
+                                }
+                              )
+                            ),
+                            widget.course.assignments!.isNotEmpty
+                                ? const Padding(
+                                    padding: EdgeInsets.only(top: 32, bottom: 16),
+                                    child: Text("Trabalhos",
+                                        style: TextStyle(
+                                            color: AppColors.black,
+                                            fontSize: 20)),
+                                  )
+                                : Container(),
+                            Wrap(
+                                runSpacing: 4,
+                                spacing: 4,
+                                alignment: WrapAlignment.center,
+                                children: List.generate(
+                                    widget.course.assignments!.length, (index) {
+                                  return Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: GradeInput(
-                                      name: widget.course.exams![index].name,
+                                      name: widget
+                                          .course.assignments![index].name,
                                       labelled: true,
-                                      type: editController.gradeTypes[widget.course.exams![index].name]!,
-                                      controller: editController.gradeControllers[widget
-                                              .course.exams![index].name],
+                                      type: editController.gradeTypes[widget.course.assignments![index].name]!,
+                                      controller:
+                                          editController.gradeControllers[widget
+                                              .course.assignments![index].name],
                                     ),
+                                  );
+                                })),
+                            Expanded(child: Container()),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 32, bottom: 32),
+                              child: Column(
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(bottom: 16.0),
+                                    child: Text("Média Final",
+                                        style: TextStyle(
+                                            color: AppColors.black,
+                                            fontSize: 20)),
                                   ),
-                                );
-                              }
+                                  GradeInput(
+                                    labelled: false,
+                                    controller: editController.finalScoreController,
+                                    type: editController.finalScoreType,
+                                    enabled: false,
+                                  ),
+                                ],
+                              ),
                             )
-                          ),
-                          widget.course.assignments!.isNotEmpty
-                              ? const Padding(
-                                  padding: EdgeInsets.only(top: 32, bottom: 16),
-                                  child: Text("Trabalhos",
-                                      style: TextStyle(
-                                          color: AppColors.black,
-                                          fontSize: 20)),
-                                )
-                              : Container(),
-                          Wrap(
-                              runSpacing: 4,
-                              spacing: 4,
-                              alignment: WrapAlignment.center,
-                              children: List.generate(
-                                  widget.course.assignments!.length, (index) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: GradeInput(
-                                    name: widget
-                                        .course.assignments![index].name,
-                                    labelled: true,
-                                    type: editController.gradeTypes[widget.course.assignments![index].name]!,
-                                    controller:
-                                        editController.gradeControllers[widget
-                                            .course.assignments![index].name],
-                                  ),
-                                );
-                              })),
-                          Expanded(child: Container()),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 32, bottom: 32),
-                            child: Column(
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.only(bottom: 16.0),
-                                  child: Text("Média Final",
-                                      style: TextStyle(
-                                          color: AppColors.black,
-                                          fontSize: 20)),
+                          ],
+                        )
+                        : const SizedBox(
+                          width: double.maxFinite,
+                          child: Center(
+                            child: SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: CircularProgressIndicator(
+                                  color: AppColors.red,
                                 ),
-                                GradeInput(
-                                  labelled: false,
-                                  controller: editController.finalScoreController,
-                                  type: editController.finalScoreType,
-                                  enabled: false,
-                                ),
-                              ],
                             ),
-                          )
-                        ],
-                      )),
+                          ),
+                        )
+                      ),
+                  ),
                 ),
               ),
               // Seção de Suporte
@@ -289,6 +315,8 @@ class _EditPageState extends State<EditPage> {
                                                       editController.grades,
                                                       weights);
                                               Navigator.pop(context);
+                                              final gradesToSave = editController.formatGradesForSaving();
+                                              gradeController.insertGrades(editController.getCourseCode(), gradesToSave);
                                               editController.setTargetCalcProgress(false);
                                             },
                                             child: const Text("Confirmar"))
@@ -323,14 +351,16 @@ class _EditPageState extends State<EditPage> {
                     ),
                     Expanded(
                       child: ElevatedButton(
-                          onPressed: () async {
+                          onPressed: () {
                             Map<String, dynamic> weights = {};
                             for (var grade in widget.course.exams! +
                                 widget.course.assignments!) {
                               weights[grade.name] = grade.weight;
                             }
-                            await editController.calcFinalScore(
+                            editController.calcFinalScore(
                                 editController.grades, weights);
+                            final gradesToSave = editController.formatGradesForSaving();
+                            gradeController.insertGrades(editController.getCourseCode(), gradesToSave);
                           },
                           style: TextButton.styleFrom(
                               backgroundColor: AppColors.red,

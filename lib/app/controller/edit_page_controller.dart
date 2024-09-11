@@ -12,6 +12,9 @@ abstract class EditPageControllerBase with Store {
   bool targetCalcInProgress = false;
 
   @observable
+  bool gradeRendered = false;
+
+  @observable
   double targetGrade = 0;
 
   @observable
@@ -43,13 +46,23 @@ abstract class EditPageControllerBase with Store {
   }
 
   @action
-  setTargetCalcProgress(bool value) {
-    targetCalcInProgress = value;
+  void setCourseCode(String code) {
+    courseCode = code;
   }
 
   @action
-  void setCourseCode(String code) {
-    courseCode = code;
+  bool getRendered() {
+    return gradeRendered;
+  }
+
+  @action
+  void setRendered(bool value) {
+    gradeRendered = value;
+  }
+
+  @action
+  void setTargetCalcProgress(bool value) {
+    targetCalcInProgress = value;
   }
 
   @action
@@ -65,13 +78,14 @@ abstract class EditPageControllerBase with Store {
   // Desenha as notas meta na tela
   @action
   void renderTargetGrades(Map grades) {
+    setRendered(false);
     final allGrades = grades["notas"]["provas"] + grades["notas"]["trabalhos"];
     int index = 0;
     // Define os valores das notas restantes como as metas recebidas
     editController.grades.forEach((key, value) {
-      if (value == null) {
-        value = allGrades[index]["valor"];
-        editController.gradeControllers[key]!.text = "$value";
+      if (editController.gradeControllers[key]!.text.isEmpty) {
+        editController.grades[key] = allGrades[index]["valor"];
+        editController.gradeControllers[key]!.text = "${allGrades[index]["valor"]}";
         editController.gradeTypes[key] = "targetcalc";
         index++;
         }
@@ -81,6 +95,26 @@ abstract class EditPageControllerBase with Store {
     editController.finalScoreController.text = "$targetGrade";
     editController.finalScoreGrade = targetGrade;
     editController.finalScoreType = "targetcalc";
+    setRendered(true);
+  }
+
+  @action
+  void renderGrades(Map newGrades) {
+    setRendered(false);
+    editController.grades.forEach((key, value) {
+      if (newGrades[key]["value"] != null) {
+          editController.grades[key] = newGrades[key]["value"];
+          editController.gradeControllers[key]!.text = "${newGrades[key]["value"]}";
+          editController.gradeTypes[key] = newGrades[key]["type"];
+          }
+        }
+      );
+    if (newGrades["finalScore"]["value"] != null) {
+      editController.finalScoreGrade = newGrades["finalScore"]["value"];
+      editController.finalScoreController.text = "${newGrades["finalScore"]["value"]}";
+      editController.finalScoreType = newGrades["finalScore"]["type"];
+    }
+    setRendered(true);
   }
 
   // De acordo com as notas recebias como parâmetro, cria os controladores de notas
@@ -109,7 +143,7 @@ abstract class EditPageControllerBase with Store {
 
   // Calcula as metas de nota para cada avaliação de acordo com a meta inserida com o usuário
   @action
-  calcTargetGrade(
+  Future<void> calcTargetGrade(
       Map<String, dynamic> grades, Map<String, dynamic> weights) async {
     // Obtém as notas meta e devolve um mapa
     Map targetGrades = await gradeController.getTargetGrades(grades, weights, targetGrade, courseCode);
@@ -119,7 +153,7 @@ abstract class EditPageControllerBase with Store {
 
   // Calcula a nota final de acordo com as notas inseridas pelo usuário
   @action
-  calcFinalScore(Map<String, dynamic> grades, Map<String, dynamic> weights) {
+  void calcFinalScore(Map<String, dynamic> grades, Map<String, dynamic> weights) {
     // Calcula a nota final
     grades.forEach((key, value) {
       if (value == null) {
@@ -142,10 +176,21 @@ abstract class EditPageControllerBase with Store {
 
     final result = productSum / weightSum;
 
-    // Update the final score value on the screen
+    // Atualiza o resultado final na tela
     finalScoreController.text = "$result";
     finalScoreGrade = result;
     finalScoreType = "normal";
+  }
+
+  // Formata as notas para serem enviadas ao salvamento local no Hive
+  @action
+  Map<String, dynamic> formatGradesForSaving () {
+    Map<String, dynamic> formattedGrades = {};
+    for (var grade in grades.keys) {
+      formattedGrades[grade] = {"value": grades[grade], "type": gradeTypes[grade]};
+    }
+    formattedGrades["finalScore"] = {"value": finalScoreGrade, "type": finalScoreType};
+    return formattedGrades;
   }
 }
 

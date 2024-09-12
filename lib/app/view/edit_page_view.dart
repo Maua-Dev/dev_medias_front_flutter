@@ -234,9 +234,6 @@ class _EditPageState extends State<EditPage> {
                                       TextEditingController();
                                   return Observer(
                                     builder: (_) => AlertDialog(
-                                      title: editController.targetCalcInProgress
-                                      ? const Text("Definir meta de nota")
-                                      : null,
                                       content: SizedBox(
                                         height: 250,
                                         child: editController.targetCalcInProgress
@@ -323,7 +320,8 @@ class _EditPageState extends State<EditPage> {
                                       ],
                                     ),
                                   );
-                                });
+                                }
+                              );
                           },
                           style: TextButton.styleFrom(
                               backgroundColor: AppColors.red,
@@ -334,15 +332,10 @@ class _EditPageState extends State<EditPage> {
                                   vertical: 7, horizontal: 7)),
                           child: const Padding(
                             padding: EdgeInsets.symmetric(vertical: 12),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Definir meta",
-                                  style: TextStyle(
-                                      color: AppColors.white, fontSize: 22),
-                                ),
-                              ],
+                            child: Text(
+                              "Definir meta",
+                              style: TextStyle(
+                                  color: AppColors.white, fontSize: 22),
                             ),
                           )),
                     ),
@@ -352,15 +345,77 @@ class _EditPageState extends State<EditPage> {
                     Expanded(
                       child: ElevatedButton(
                           onPressed: () {
-                            Map<String, dynamic> weights = {};
-                            for (var grade in widget.course.exams! +
-                                widget.course.assignments!) {
-                              weights[grade.name] = grade.weight;
-                            }
-                            editController.calcFinalScore(
-                                editController.grades, weights);
-                            final gradesToSave = editController.formatGradesForSaving();
-                            gradeController.insertGrades(editController.getCourseCode(), gradesToSave);
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Observer(
+                                    builder: (_) => AlertDialog(
+                                      content: SizedBox(
+                                        height: 250,
+                                        child:
+                                         Column(
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                              children:
+                                                [
+                                                  const Text("Deseja calcular suas notas?", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                                                  RichText(
+                                                    text: const TextSpan(
+                                                    style: TextStyle(color: AppColors.black, fontFamily: 'Poppins', fontSize: 16),
+                                                      children: [
+                                                        TextSpan(
+                                                          text: "Observação: ",
+                                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                                        ),
+                                                        TextSpan(
+                                                          text: "As notas ",
+                                                        ),
+                                                        TextSpan(
+                                                          text: "calculadas por meta ",
+                                                          style: TextStyle(color: AppColors.red, fontWeight: FontWeight.bold),
+                                                        ),
+                                                        TextSpan(
+                                                          text: "serão contadas como 0 para a média finaç ",
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                ,]
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: [
+                                        editController.targetCalcInProgress
+                                        ? Container()
+                                        : TextButton(
+                                          style: TextButton.styleFrom(
+                                            backgroundColor: AppColors.red,
+                                            foregroundColor: AppColors.white,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: Round.primary),
+                                            minimumSize: const Size.fromHeight(50),
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 7, horizontal: 7)),
+                                            onPressed: () async {
+                                              Map<String, dynamic> weights = {};
+                                              for (var grade in widget.course.exams! +
+                                                  widget.course.assignments!) {
+                                                weights[grade.name] = grade.weight;
+                                              }
+                                              editController.calcFinalScore(
+                                                  editController.grades, weights);
+                                              final gradesToSave = editController.formatGradesForSaving();
+                                              gradeController.insertGrades(editController.getCourseCode(), gradesToSave);
+                                            },
+                                            child: const Text("Confirmar"))
+                                      ],
+                                    ),
+                                  );
+                                }
+                              );
                           },
                           style: TextButton.styleFrom(
                               backgroundColor: AppColors.red,
@@ -375,7 +430,7 @@ class _EditPageState extends State<EditPage> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Calcular",
+                                  "Calcular média",
                                   style: TextStyle(
                                       color: AppColors.white, fontSize: 22),
                                 ),

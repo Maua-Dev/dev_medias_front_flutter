@@ -83,7 +83,7 @@ abstract class EditPageControllerBase with Store {
     int index = 0;
     // Define os valores das notas restantes como as metas recebidas
     editController.grades.forEach((key, value) {
-      if (editController.gradeControllers[key]!.text.isEmpty) {
+      if (editController.gradeControllers[key]!.text.isEmpty || editController.gradeTypes[key] != "normal") {
         editController.grades[key] = allGrades[index]["valor"];
         editController.gradeControllers[key]!.text = "${allGrades[index]["valor"]}";
         editController.gradeTypes[key] = "targetcalc";
@@ -145,8 +145,15 @@ abstract class EditPageControllerBase with Store {
   @action
   Future<void> calcTargetGrade(
       Map<String, dynamic> grades, Map<String, dynamic> weights) async {
+    // Se o tipo de uma das notas for diferente de normal, ele é considerado como zero
+    final filteredGrades = grades;
+    filteredGrades.forEach((key, value) {
+      if (gradeTypes[key] != "normal") {
+        filteredGrades[key] = null;
+      }
+    });
     // Obtém as notas meta e devolve um mapa
-    Map targetGrades = await gradeController.getTargetGrades(grades, weights, targetGrade, courseCode);
+    Map targetGrades = await gradeController.getTargetGrades(filteredGrades, weights, targetGrade.toDouble(), courseCode);
     // Pega o mapa e utiliza ele para alterar os valores da tela
     renderTargetGrades(targetGrades);
   }
@@ -154,17 +161,23 @@ abstract class EditPageControllerBase with Store {
   // Calcula a nota final de acordo com as notas inseridas pelo usuário
   @action
   void calcFinalScore(Map<String, dynamic> grades, Map<String, dynamic> weights) {
+    // Arrendonda número para o múltiplo de 0.5 mais próximo
+    double roundToNearestHalf(double number) {
+      return (number * 2).round() / 2;
+    }
+
     // Calcula a nota final
-    grades.forEach((key, value) {
-      if (value == null) {
-        grades[key] = 0;
+    final auxGrades = {...grades};
+    auxGrades.forEach((key, value) {
+      if (value == null || gradeTypes[key] != "normal") {
+        auxGrades[key] = 0.0;
       }
     });
 
     double productSum = 0;
     double weightSum = 0;
 
-    grades.forEach((key, grade) {
+    auxGrades.forEach((key, grade) {
       double weight = weights[key] ?? 0;
       productSum += grade * weight;
       weightSum += weight;
@@ -174,7 +187,7 @@ abstract class EditPageControllerBase with Store {
       throw ArgumentError('A soma dos pesos não pode ser zero.');
     }
 
-    final result = productSum / weightSum;
+    final result = roundToNearestHalf(productSum / weightSum);
 
     // Atualiza o resultado final na tela
     finalScoreController.text = "$result";

@@ -1,4 +1,4 @@
-import 'package:dev_medias_front_flutter/app/controller/add_page_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
@@ -57,7 +57,7 @@ class _AddCourseCardState extends State<AddCourseCard>
                 await Future.delayed(const Duration(milliseconds: 500));
                 _updateHeight(0);
                 await Future.delayed(const Duration(milliseconds: 250));
-                addController.addCurrentCourse(widget.course);
+                userController.insertCurrentCourses(widget.course.code);
               },
               style: TextButton.styleFrom(
                   backgroundColor: AppColors.white,

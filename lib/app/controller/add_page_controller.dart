@@ -1,6 +1,5 @@
 import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
-import 'package:dev_medias_front_flutter/app/controller/home_page_controller.dart';
-import 'package:dev_medias_front_flutter/app/model/course.dart';
+import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';
 import 'package:mobx/mobx.dart';
 part 'add_page_controller.g.dart';
 
@@ -9,30 +8,23 @@ class AddPageController = AddPageControllerBase with _$AddPageController;
 abstract class AddPageControllerBase with Store {
   AddPageControllerBase();
 
-  static List<CourseModel> testAvailableCourses = [
-    // CourseModel(
-    //     id: "2", name: "Matéria 2", desc: "Descrição da Matéria", grade: "2.5"),
-    // CourseModel(
-    //     id: "3", name: "Matéria 3", desc: "Descrição da Matéria", grade: "9.5"),
-    // CourseModel(
-    //     id: "4", name: "Matéria 4", desc: "Descrição da Matéria", grade: "6.0"),
-    // CourseModel(
-    //     id: "5", name: "Matéria 5", desc: "Descrição da Matéria", grade: "4.5"),
-    // CourseModel(
-    //     id: "6", name: "Matéria 6", desc: "Descrição da Matéria", grade: "5.0"),
-  ];
-
   @observable
   bool coursesLoaded = false;
 
   @observable
   ObservableMap<String, dynamic>? availableCourses;
-  // AvailableCourses availableCourses = AvailableCourses(courses: testCourses);
+
+  @observable
+  String userSearch = '';
 
   @action
   Future<void> loadCourses() async {
+    setCoursesLoaded(false);
     final result = await coursesController.getCourses();
+    result.removeWhere(
+        (key, value) => userController.currentCourses.contains(value.code));
     availableCourses = ObservableMap<String, dynamic>.of(result);
+    setCoursesLoaded(true);
   }
 
   @action
@@ -41,20 +33,25 @@ abstract class AddPageControllerBase with Store {
   }
 
   @action
-  void addCurrentCourse(CourseModel course) {
-    homeController.currentCourses.add(course);
-    // removeAvailableCourse(course);
+  void searchAvailableCourses() {
+    Map<String, dynamic> aux = {};
+    coursesController.allCourses!.forEach((key, value) {
+      var notCurrent =
+          userController.currentCourses.where((code) => code == value.code);
+      if (notCurrent.isEmpty) {
+        if (value.name.toLowerCase().contains(userSearch.toLowerCase()) |
+            value.code.toLowerCase().contains(userSearch.toLowerCase())) {
+          aux[key] = value;
+        }
+      }
+    });
+    availableCourses = ObservableMap<String, dynamic>.of(aux);
   }
 
-  // @action
-  // void addAvailableCourse(CourseModel course) {
-  //   availableCourses.add(course);
-  // }
-
-  // @action
-  // void removeAvailableCourse(CourseModel course) {
-  //   availableCourses.remove(course);
-  // }
+  @action
+  void setSearchTerm(String value) {
+    userSearch = value;
+  }
 }
 
 AddPageController addController = AddPageController();

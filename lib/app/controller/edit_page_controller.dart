@@ -78,7 +78,7 @@ abstract class EditPageControllerBase with Store {
   // Desenha as notas meta na tela
   @action
   void renderTargetGrades(Map grades) {
-    setRendered(false);
+    gradeRendered = false;
     final allGrades = grades["notas"]["provas"] + grades["notas"]["trabalhos"];
     int index = 0;
     // Define os valores das notas restantes como as metas recebidas
@@ -95,12 +95,12 @@ abstract class EditPageControllerBase with Store {
     editController.finalScoreController.text = "$targetGrade";
     editController.finalScoreGrade = targetGrade;
     editController.finalScoreType = "targetcalc";
-    setRendered(true);
+    gradeRendered = true;
   }
 
   @action
   void renderGrades(Map newGrades) {
-    setRendered(false);
+    gradeRendered = false;
     editController.grades.forEach((key, value) {
       if (newGrades[key]["value"] != null) {
           editController.grades[key] = newGrades[key]["value"];
@@ -114,7 +114,7 @@ abstract class EditPageControllerBase with Store {
       editController.finalScoreController.text = "${newGrades["finalScore"]["value"]}";
       editController.finalScoreType = newGrades["finalScore"]["type"];
     }
-    setRendered(true);
+    gradeRendered = true;
   }
 
   // De acordo com as notas recebias como parâmetro, cria os controladores de notas
@@ -169,7 +169,7 @@ abstract class EditPageControllerBase with Store {
     // Calcula a nota final
     final auxGrades = {...grades};
     auxGrades.forEach((key, value) {
-      if (value == null || gradeTypes[key] != "normal") {
+      if (value == null) {
         auxGrades[key] = 0.0;
       }
     });

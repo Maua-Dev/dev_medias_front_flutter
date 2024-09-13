@@ -26,12 +26,13 @@ class _EditPageState extends State<EditPage> {
   Future<void> initializeAsync() async {
       editController.resetGradeControllers();
       final grades = widget.course.exams! + widget.course.assignments!;
-      print(grades);
       editController.setCourseCode(widget.course.code);
       editController.buildGrades(grades);
       final savedGrades = await gradeController.getGrades(widget.course.code);
       if (savedGrades != null) {
         editController.renderGrades(savedGrades);
+      } else {
+        editController.setRendered(true);
       }
   }
 
@@ -210,6 +211,9 @@ class _EditPageState extends State<EditPage> {
                             child: SizedBox(
                               width: 50,
                               height: 50,
+                              child: CircularProgressIndicator(
+                                  color: AppColors.red,
+                                ),
                             ),
                           ),
                         )
@@ -364,18 +368,14 @@ class _EditPageState extends State<EditPage> {
                                                     style: TextStyle(color: AppColors.black, fontFamily: 'Poppins', fontSize: 16),
                                                       children: [
                                                         TextSpan(
-                                                          text: "Observação: ",
-                                                          style: TextStyle(fontWeight: FontWeight.bold),
-                                                        ),
-                                                        TextSpan(
-                                                          text: "As notas ",
+                                                          text: "É importante dizer que as notas ",
                                                         ),
                                                         TextSpan(
                                                           text: "calculadas por meta ",
                                                           style: TextStyle(color: AppColors.red, fontWeight: FontWeight.bold),
                                                         ),
                                                         TextSpan(
-                                                          text: "serão contadas como 0 para a média finaç ",
+                                                          text: "serão contadas como 0 para a média final.",
                                                         ),
                                                       ],
                                                     ),

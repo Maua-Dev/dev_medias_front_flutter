@@ -41,22 +41,6 @@ mixin _$UserController on UserControllerBase, Store {
     });
   }
 
-  late final _$firstLoginAtom =
-      Atom(name: 'UserControllerBase.firstLogin', context: context);
-
-  @override
-  bool get firstLogin {
-    _$firstLoginAtom.reportRead();
-    return super.firstLogin;
-  }
-
-  @override
-  set firstLogin(bool value) {
-    _$firstLoginAtom.reportWrite(value, super.firstLogin, () {
-      super.firstLogin = value;
-    });
-  }
-
   late final _$nameAtom =
       Atom(name: 'UserControllerBase.name', context: context);
 
@@ -270,21 +254,9 @@ mixin _$UserController on UserControllerBase, Store {
   }
 
   @override
-  void setFirstLogin(bool status) {
-    final _$actionInfo = _$UserControllerBaseActionController.startAction(
-        name: 'UserControllerBase.setFirstLogin');
-    try {
-      return super.setFirstLogin(status);
-    } finally {
-      _$UserControllerBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   String toString() {
     return '''
 userDataMissing: ${userDataMissing},
-firstLogin: ${firstLogin},
 firstLogin: ${firstLogin},
 name: ${name},
 graduation: ${graduation},

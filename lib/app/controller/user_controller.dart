@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/user.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:mobx/mobx.dart';
@@ -13,6 +14,9 @@ abstract class UserControllerBase with Store {
 
   @observable
   bool userDataMissing = false;
+
+  @observable
+  bool firstLogin = true;
 
   @observable
   bool firstLogin = true;
@@ -65,6 +69,11 @@ abstract class UserControllerBase with Store {
   }
 
   @action
+  void setFirstLogin(bool status) {
+    firstLogin = status;
+  }
+
+  @action
   Future<bool> checkUserDataExists() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userDataMissing = true;
@@ -72,6 +81,7 @@ abstract class UserControllerBase with Store {
     graduation = prefs.getString("graduation");
     year = prefs.getInt("year");
     if (name != null && graduation != null && year != null) {
+      setFirstLogin(false);
       setFirstLogin(false);
       userDataMissing = false;
     }
@@ -107,9 +117,13 @@ abstract class UserControllerBase with Store {
   Future<void> resetUserData() async {
     SharedPreferences prefs;
     await Hive.initFlutter();
+    await Hive.initFlutter();
     prefs = await SharedPreferences.getInstance();
     Box box = await Hive.openBox('user');
+    Box box = await Hive.openBox('user');
     prefs.clear();
+    List<String> courseList = [];
+    box.put('currentCourses', courseList);
     List<String> courseList = [];
     box.put('currentCourses', courseList);
   }
@@ -120,12 +134,16 @@ abstract class UserControllerBase with Store {
     var box = await Hive.openBox('user');
     currentCourses = ObservableList<String>.of(
         box.get('currentCourses', defaultValue: <String>[]));
+    currentCourses = ObservableList<String>.of(
+        box.get('currentCourses', defaultValue: <String>[]));
   }
 
   @action
   Future<void> insertCurrentCourses(String code) async {
     await Hive.initFlutter();
     var box = await Hive.openBox('user');
+    List<String> courseList =
+        box.get('currentCourses', defaultValue: <String>[]);
     List<String> courseList =
         box.get('currentCourses', defaultValue: <String>[]);
     courseList.add(code);
@@ -137,6 +155,8 @@ abstract class UserControllerBase with Store {
   Future<void> removeCurrentCourse(String code) async {
     await Hive.initFlutter();
     var box = await Hive.openBox('user');
+    List<String> courseList =
+        box.get('currentCourses', defaultValue: <String>[]);
     List<String> courseList =
         box.get('currentCourses', defaultValue: <String>[]);
     courseList.remove(code);

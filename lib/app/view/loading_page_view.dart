@@ -23,7 +23,7 @@ class _LoadingPageState extends State<LoadingPage> {
   void initState() {
     Future.delayed(const Duration(seconds: 2), () async {
       loadingPageController.setLoading(true);
-      // await userController.resetUserData();
+      await userController.resetUserData();
       final userDataMissing = await userController.checkUserDataExists();
       await coursesController.getCourses();
       await coursesController.getGrads();

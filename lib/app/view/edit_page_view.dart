@@ -26,6 +26,7 @@ class _EditPageState extends State<EditPage> {
   Future<void> initializeAsync() async {
       editController.resetGradeControllers();
       final grades = widget.course.exams! + widget.course.assignments!;
+      print(grades);
       editController.setCourseCode(widget.course.code);
       editController.buildGrades(grades);
       final savedGrades = await gradeController.getGrades(widget.course.code);
@@ -209,9 +210,6 @@ class _EditPageState extends State<EditPage> {
                             child: SizedBox(
                               width: 50,
                               height: 50,
-                              child: CircularProgressIndicator(
-                                  color: AppColors.red,
-                                ),
                             ),
                           ),
                         )

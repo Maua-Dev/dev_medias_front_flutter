@@ -1,5 +1,5 @@
 import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
-import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/home_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
@@ -21,7 +21,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    editController.resetGradeControllers();
+    coursesController.getCourses();
+    userController.getCurrentCourses();
     super.initState();
   }
 
@@ -58,6 +59,9 @@ class _HomePageState extends State<HomePage> {
                                 shrinkWrap: true,
                                 itemCount: userController.currentCourses.length,
                                 itemBuilder: (context, index) {
+                                  Future.delayed(Duration.zero, () async {
+                                    await userController.getCurrentCourses();
+                                  });
                                   CourseModel? course =
                                       coursesController.allCourses?[
                                           userController.currentCourses[index]];

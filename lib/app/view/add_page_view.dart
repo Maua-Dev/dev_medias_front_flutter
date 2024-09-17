@@ -2,6 +2,7 @@ import 'package:dev_medias_front_flutter/app/controller/add_page_controller.dart
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/widgets/add_course_card.dart';
 import 'package:dev_medias_front_flutter/app/widgets/logo.dart';
+import 'package:dev_medias_front_flutter/app/widgets/navigation_top_bar.dart';
 import 'package:dev_medias_front_flutter/app/widgets/search_course_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -34,11 +35,8 @@ class _AddPageState extends State<AddPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                // Logo DevMédias
-                const Padding(
-                  padding: EdgeInsets.only(top: 42, bottom: 18),
-                  child: Logo(),
-                ),
+                //Top Barra de Navegação 
+                const NavigationTopBar(),
                 // Campo de Pesquisar Matérias
                const Padding(
                   padding: EdgeInsets.symmetric(vertical: 16),

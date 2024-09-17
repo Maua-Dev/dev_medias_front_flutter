@@ -2,19 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 
-class PopupDeleteCourse extends StatefulWidget {
-  @override
-  State<PopupDeleteCourse> createState() => _PopupDeleteCourseState();
-}
+class PopupDeleteCourse extends StatelessWidget {
+  const PopupDeleteCourse({super.key});
 
-class _PopupDeleteCourseState extends State<PopupDeleteCourse> {
   @override
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
         return AlertDialog(
-          contentPadding: const EdgeInsets.all(0),
-          actionsPadding: const EdgeInsets.all(0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
           ),
@@ -22,7 +17,7 @@ class _PopupDeleteCourseState extends State<PopupDeleteCourse> {
             width: 400,
             height: 300,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -30,122 +25,92 @@ class _PopupDeleteCourseState extends State<PopupDeleteCourse> {
                   Row(
                     children: [
                       Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: AppColors.red,
-                              borderRadius: BorderRadius.circular(16),
+                        child: Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: AppColors.red,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          height: 50,
+                          child: const Text(
+                            "Excluir Matéria",
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
                             ),
-                            height: 50,
-                            child: const Text(
-                              "Excluir Matéria",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: AppColors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 20,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          alignment: Alignment.topRight,
-                          child: Stack(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: AppColors.red,
-                                ),
-                                height: 30,
-                                width: 30,
-                              ),
-                              const Icon(
-                                Icons.close,
-                                color: AppColors.white,
-                                size: 30,
-                              ),
-                            ],
-                          ),
+                      IconButton(
+                        padding: const EdgeInsets.only(left: 20.0),
+                        icon: const Icon(
+                          Icons.disabled_by_default_rounded,
+                          size: 30,
+                          color: AppColors.red,
                         ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
                       ),
                     ],
                   ),
                   const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child:  Text(
-                            "Você deseja excluir essa matéria? Todas as notas serão perdidas",
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.black,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 3,
-                          ),
-                        ),
-                      ],
+                    padding: EdgeInsets.symmetric(vertical: 16.0),
+                    child: Text(
+                      "Você deseja excluir essa matéria? Todas as notas serão perdidas",
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.black,
+                      ),
+                      maxLines: 3,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.00, horizontal: 16.0),
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: AppColors.red,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            alignment: Alignment.bottomLeft,
-                            width: 150,
-                            height: 50,
-                            child: const Center(
-                              child: Text(
-                                "Cancelar",
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  color: AppColors.white,
-                                  fontWeight: FontWeight.w600
-                                ),
-                              ),
-                            ),
+                  const Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
+                          fixedSize: const Size(150, 50),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: AppColors.red,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            alignment: Alignment.bottomRight ,
-                            width: 150,
-                            height: 50,
-                            child: const Center(
-                              child: Text(
-                                "Excluir",
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  color: AppColors.white,
-                                  fontWeight: FontWeight.w600
-                                ),
-                              ),
-                            ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text(
+                          "Cancelar",
+                          style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.white),
+                        ),
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
+                          fixedSize: const Size(150, 50),
                         ),
-                      ],
-                    ),
+                        onPressed: () {
+                          // Ação de exclusão
+                        },
+                        child: const Text(
+                          "Excluir",
+                          style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.white),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

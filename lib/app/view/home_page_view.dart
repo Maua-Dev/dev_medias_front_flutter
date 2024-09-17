@@ -5,6 +5,8 @@ import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:dev_medias_front_flutter/app/widgets/add_course_navigation_button.dart';
 import 'package:dev_medias_front_flutter/app/widgets/current_course_card.dart';
 import 'package:dev_medias_front_flutter/app/widgets/logo.dart';
+import 'package:dev_medias_front_flutter/app/widgets/navigation_top_bar.dart';
+import 'package:dev_medias_front_flutter/app/widgets/support_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
@@ -17,7 +19,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,13 +30,10 @@ class _HomePageState extends State<HomePage> {
           child: FractionallySizedBox(
             widthFactor: 1,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                // Logo DevMédias
-                const Padding(
-                  padding: EdgeInsets.only(top: 42, bottom: 18),
-                  child: Logo(),
-                ),
+                //Top Barra de Navegação sem botão de voltar
+                const NavigationTopBar(),
                 // Botão Adicionar Matérias
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 16),
@@ -80,6 +78,7 @@ class _HomePageState extends State<HomePage> {
                                                 color: AppColors.white,
                                               ),
                                             ),
+                                            
                                           ],
                                         ),
                                       ),
@@ -109,10 +108,10 @@ class _HomePageState extends State<HomePage> {
                           child: Center(child: Text('Carregando...'))),
                 ),
                 // Seção de Suporte
-                // const Padding(
-                //   padding: EdgeInsets.only(top: 16),
-                //   child: SupportBox(),
-                // )
+                const Padding(
+                  padding: EdgeInsets.only(top: 16),
+                  child: SupportBox(),
+                )
               ],
             ),
           ),

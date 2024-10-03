@@ -1,13 +1,40 @@
+import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/grade_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:dev_medias_front_flutter/app/widgets/grade_input.dart';
 import 'package:flutter/material.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
-class EditPage extends StatelessWidget {
+class EditPage extends StatefulWidget {
   final CourseModel course;
 
   const EditPage({super.key, required this.course});
+
+  @override
+  State<EditPage> createState() => _EditPageState();
+}
+
+class _EditPageState extends State<EditPage> {
+  @override
+  void initState() {
+    initializeAsync();
+    super.initState();
+  }
+
+  Future<void> initializeAsync() async {
+      editController.resetGradeControllers();
+      final grades = widget.course.exams! + widget.course.assignments!;
+      editController.setCourseCode(widget.course.code);
+      editController.buildGrades(grades);
+      final savedGrades = await gradeController.getGrades(widget.course.code);
+      if (savedGrades != null) {
+        editController.renderGrades(savedGrades);
+      } else {
+        editController.setRendered(true);
+      }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,132 +44,403 @@ class EditPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(30),
         child: Center(
-          child: FractionallySizedBox(
-            widthFactor: 1,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                // Logo DevMédias
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 11),
-                  child: Image(
-                      image: AssetImage(
-                          'lib/app/assets/images/dev_medias_logo.png')),
-                ),
-                // Cabeçalho Matéria
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 11),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: Round.primary,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      child: Row(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                course.name,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              // Logo DevMédias
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 11),
+                child: Image(
+                    image: AssetImage(
+                        'lib/app/assets/images/dev_medias_logo.png')),
+              ),
+              // Cabeçalho Matéria
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: Round.primary,
+                  ),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: Row(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 320,
+                              child: Text(
+                                widget.course.name,
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                    fontSize: 22, color: AppColors.black),
+                                    fontSize: 24, color: AppColors.black),
                               ),
-                              Text(
-                                course.name,
-                                style: const TextStyle(
-                                    fontSize: 12, color: AppColors.black),
-                              ),
-                            ],
-                          ),
-                          Expanded(child: Container()),
-                          IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.delete,
-                                color: AppColors.red,
-                                size: 30,
-                              ))
-                        ],
-                      ),
+                            ),
+                            Text(
+                              widget.course.code,
+                              style: const TextStyle(
+                                  fontSize: 16, color: AppColors.black),
+                            ),
+                          ],
+                        ),
+                        Expanded(child: Container()),
+                        IconButton(
+                            onPressed: () {},
+                            icon: const Icon(
+                              Icons.delete,
+                              color: AppColors.red,
+                              size: 30,
+                            ))
+                      ],
                     ),
                   ),
                 ),
-                // Menu Matéria
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Container(
-                          decoration: BoxDecoration(
-                              color: const Color.fromRGBO(255, 255, 255, 1),
-                              borderRadius: Round.primary),
-                          child: Column(
-                            children: [
-                              const Padding(padding: EdgeInsets.symmetric(vertical: 6)),
-                              const Text("Provas",
-                                  style: TextStyle(
-                                      color: AppColors.black, fontSize: 16)),
-                              const Padding(padding: EdgeInsets.symmetric(vertical: 6)),
-                              GridView(
-                                scrollDirection: Axis.vertical,
-                                shrinkWrap: true,
-                                padding: const EdgeInsets.symmetric(horizontal: 24),
-                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                    mainAxisExtent: 55,
-                                    crossAxisCount: 3,
-                                    mainAxisSpacing: 0,
-                                    crossAxisSpacing: 2,
-                                  ),
-                                children: const [
-                                    GradeInput(name: "P1"),
-                                    GradeInput(name: "P2"),
-                                    GradeInput(name: "PSUB1"),
-                                    GradeInput(name: "P3"),
-                                    GradeInput(name: "P4"),
-                                    GradeInput(name: "PSUB2"),
-                                  ],
-                                ),
-                              const Padding(padding: EdgeInsets.symmetric(vertical: 6)),
-                              const Text("Trabalhos",
-                                  style: TextStyle(
-                                      color: AppColors.black, fontSize: 16)),
-                              const Padding(padding: EdgeInsets.symmetric(vertical: 6)),
-                              Center(
-                                child: GridView(
-                                  scrollDirection: Axis.vertical,
-                                  shrinkWrap: true,
-                                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                      mainAxisExtent: 55,
-                                      crossAxisCount: 3,
-                                      mainAxisSpacing: 0,
-                                      crossAxisSpacing: 2,
-                                    ),
-                                  children: const [
-                                      GradeInput(name: "T1"),
-                                      GradeInput(name: "T2"),
-                                      GradeInput(name: "T3"),
-                                      GradeInput(name: "T4"),
-                                    ],
-                                  ),
-                              ),
-                              const Text("Média Final",
+              ),
+              // Menu Matéria
+              SingleChildScrollView(
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height - 350,
+                  child: Observer(
+                    builder: (_) => Container(
+                        decoration: BoxDecoration(
+                            color: const Color.fromRGBO(255, 255, 255, 1),
+                            borderRadius: Round.primary),
+                        // Ternário necessário para carregar as cores das notas
+                        child: editController.gradeRendered
+                        ? Column(
+                          children: [
+                            widget.course.exams!.isEmpty &&
+                                    widget.course.assignments!.isEmpty
+                                ? const Expanded(
+                                    child: Center(
+                                        child: Text(
+                                            "Essa matéria não tem notas cadastradas."
+                                            )
+                                          )
+                                        )
+                                : Container(),
+                            widget.course.exams!.isNotEmpty
+                                ? const Padding(
+                                    padding: EdgeInsets.only(top: 32, bottom: 16),
+                                    child: Text("Provas",
                                         style: TextStyle(
-                                            color: AppColors.black, fontSize: 16)),
-                              const GradeInput(labelled: false,),
-                              const Padding(padding: EdgeInsets.symmetric(vertical: 6)),
-                            ],
+                                            color: AppColors.black,
+                                            fontSize: 20
+                                            )
+                                        ),
+                                  )
+                                : Container(),
+                            Wrap(
+                                runSpacing: 4,
+                                spacing: 4,
+                                alignment: WrapAlignment.center,
+                                children: List.generate(
+                                    widget.course.exams!.length, (index) {
+                                  return Observer(
+                                    builder: (_) => Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: GradeInput(
+                                        name: widget.course.exams![index].name,
+                                        labelled: true,
+                                        type: editController.gradeTypes[widget.course.exams![index].name]!,
+                                        controller: editController.gradeControllers[widget
+                                                .course.exams![index].name],
+                                      ),
+                                    ),
+                                  );
+                                }
+                              )
+                            ),
+                            widget.course.assignments!.isNotEmpty
+                                ? const Padding(
+                                    padding: EdgeInsets.only(top: 32, bottom: 16),
+                                    child: Text("Trabalhos",
+                                        style: TextStyle(
+                                            color: AppColors.black,
+                                            fontSize: 20)),
+                                  )
+                                : Container(),
+                            Wrap(
+                                runSpacing: 4,
+                                spacing: 4,
+                                alignment: WrapAlignment.center,
+                                children: List.generate(
+                                    widget.course.assignments!.length, (index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: GradeInput(
+                                      name: widget
+                                          .course.assignments![index].name,
+                                      labelled: true,
+                                      type: editController.gradeTypes[widget.course.assignments![index].name]!,
+                                      controller:
+                                          editController.gradeControllers[widget
+                                              .course.assignments![index].name],
+                                    ),
+                                  );
+                                })),
+                            Expanded(child: Container()),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 32, bottom: 32),
+                              child: Column(
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(bottom: 16.0),
+                                    child: Text("Média Final",
+                                        style: TextStyle(
+                                            color: AppColors.black,
+                                            fontSize: 20)),
+                                  ),
+                                  GradeInput(
+                                    labelled: false,
+                                    controller: editController.finalScoreController,
+                                    type: editController.finalScoreType,
+                                    enabled: false,
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+                        : const SizedBox(
+                          width: double.maxFinite,
+                          child: Center(
+                            child: SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: CircularProgressIndicator(
+                                  color: AppColors.red,
+                                ),
+                            ),
+                          ),
+                        )
+                      ),
+                  ),
+                ),
+              ),
+              // Seção de Suporte
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  final targetController =
+                                      TextEditingController();
+                                  return Observer(
+                                    builder: (_) => AlertDialog(
+                                      content: SizedBox(
+                                        height: 250,
+                                        child: editController.targetCalcInProgress
+                                        ? const Center(
+                                          child: SizedBox(
+                                            height: 50,
+                                            width: 50,
+                                            child: CircularProgressIndicator(
+                                              color: AppColors.red,
+
+                                            ),
+                                          ),
+                                        )
+                                        : Column(
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                              children:
+                                                [
+                                                  const Text("Como funciona?", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                                                  const Text("1. Digite a nota que você deseja alcançar na matéria.", style: TextStyle(color: AppColors.black, fontFamily: 'Poppins', fontSize: 16),),
+                                                  const Text("2. Calcularemos as notas necessárias para alcançar essa meta.", style: TextStyle(color: AppColors.black, fontFamily: 'Poppins', fontSize: 16),),
+                                                  RichText(
+                                                    text: const TextSpan(
+                                                    style: TextStyle(color: AppColors.black, fontFamily: 'Poppins', fontSize: 16),
+                                                      children: [
+                                                        TextSpan(
+                                                          text: "3. As notas calculadas serão exibidas em ",
+                                                        ),
+                                                        TextSpan(
+                                                          text: "vermelho.",
+                                                          style: TextStyle(color: AppColors.red, fontWeight: FontWeight.bold),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                  ,]
+                                              ),
+                                            Expanded(child: Container()),
+                                            GradeInput(
+                                              changes: false,
+                                              name: "Sua meta",
+                                              controller: targetController,
+                                              labelled: true,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: [
+                                        editController.targetCalcInProgress
+                                        ? Container()
+                                        : TextButton(
+                                          style: TextButton.styleFrom(
+                                            backgroundColor: AppColors.red,
+                                            foregroundColor: AppColors.white,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: Round.primary),
+                                            minimumSize: const Size.fromHeight(50),
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 7, horizontal: 7)),
+                                            onPressed: () async {
+                                              editController.setTargetCalcProgress(true);
+                                              editController.setTargetGrade(
+                                                  double.parse(
+                                                      targetController.text));
+                                              Map<String, dynamic> weights = {};
+                                              for (var grade in widget
+                                                      .course.exams! +
+                                                  widget.course.assignments!) {
+                                                weights[grade.name] =
+                                                    grade.weight;
+                                              }
+                                              await editController
+                                                  .calcTargetGrade(
+                                                      editController.grades,
+                                                      weights);
+                                              Navigator.pop(context);
+                                              final gradesToSave = editController.formatGradesForSaving();
+                                              gradeController.insertGrades(editController.getCourseCode(), gradesToSave);
+                                              editController.setTargetCalcProgress(false);
+                                            },
+                                            child: const Text("Confirmar"))
+                                      ],
+                                    ),
+                                  );
+                                }
+                              );
+                          },
+                          style: TextButton.styleFrom(
+                              backgroundColor: AppColors.red,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: Round.primary),
+                              minimumSize: const Size.fromHeight(50),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 7, horizontal: 7)),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            child: Text(
+                              "Definir meta",
+                              style: TextStyle(
+                                  color: AppColors.white, fontSize: 22),
+                            ),
                           )),
-                    )
+                    ),
+                    Container(
+                      width: 12,
+                    ),
+                    Expanded(
+                      child: ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Observer(
+                                    builder: (_) => AlertDialog(
+                                      content: SizedBox(
+                                        height: 250,
+                                        child:
+                                         Column(
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                              children:
+                                                [
+                                                  const Text("Deseja calcular suas notas?", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                                                  RichText(
+                                                    text: const TextSpan(
+                                                    style: TextStyle(color: AppColors.black, fontFamily: 'Poppins', fontSize: 16),
+                                                      children: [
+                                                        TextSpan(
+                                                          text: "É importante dizer que as notas ",
+                                                        ),
+                                                        TextSpan(
+                                                          text: "calculadas por meta ",
+                                                          style: TextStyle(color: AppColors.red, fontWeight: FontWeight.bold),
+                                                        ),
+                                                        TextSpan(
+                                                          text: "serão contadas como 0 para a média final.",
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                ,]
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: [
+                                        editController.targetCalcInProgress
+                                        ? Container()
+                                        : TextButton(
+                                          style: TextButton.styleFrom(
+                                            backgroundColor: AppColors.red,
+                                            foregroundColor: AppColors.white,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: Round.primary),
+                                            minimumSize: const Size.fromHeight(50),
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 7, horizontal: 7)),
+                                            onPressed: () async {
+                                              Map<String, dynamic> weights = {};
+                                              for (var grade in widget.course.exams! +
+                                                  widget.course.assignments!) {
+                                                weights[grade.name] = grade.weight;
+                                              }
+                                              editController.calcFinalScore(
+                                                  editController.grades, weights);
+                                              final gradesToSave = editController.formatGradesForSaving();
+                                              gradeController.insertGrades(editController.getCourseCode(), gradesToSave);
+                                            },
+                                            child: const Text("Confirmar"))
+                                      ],
+                                    ),
+                                  );
+                                }
+                              );
+                          },
+                          style: TextButton.styleFrom(
+                              backgroundColor: AppColors.red,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: Round.primary),
+                              minimumSize: const Size.fromHeight(50),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 7, horizontal: 7)),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Calcular média",
+                                  style: TextStyle(
+                                      color: AppColors.white, fontSize: 22),
+                                ),
+                              ],
+                            ),
+                          )
+                        ),
+                    ),
                   ],
                 ),
-                Expanded(child: Container()),
-                // Seção de Suporte
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

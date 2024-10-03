@@ -1,4 +1,5 @@
 import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
@@ -17,6 +18,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  @override
+  void initState() {
+    editController.resetGradeControllers();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +91,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       ),
                                       child: CurrentCourseCard(
+                                        key: UniqueKey(),
                                         index: index,
                                         course: course!,
                                       ),

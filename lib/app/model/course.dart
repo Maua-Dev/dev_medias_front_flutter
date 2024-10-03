@@ -39,7 +39,7 @@ class CourseModel {
       examWeight: json["examWeight"] as dynamic,
       assignmentWeight: json["assignmentWeight"] as dynamic,
       exams: json["exams"] as List<dynamic>? ,
-      assignments: json["assignment"] as List<dynamic>? ,
+      assignments: json["assignments"] as List<dynamic>? ,
       courses: json["courses"] as dynamic
     );
 }

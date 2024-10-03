@@ -3,7 +3,7 @@ import 'package:dev_medias_front_flutter/app/controller/add_page_controller.dart
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/model/grade.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/rendering.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mobx/mobx.dart';
 part 'courses_controller.g.dart';
 
@@ -33,11 +33,12 @@ abstract class CoursesControllerBase with Store {
     return allGrads;
   }
 
+  // Requisição de matérias
   @action
   Future<Map<String, dynamic>> getCourses() async {
     try {
       final response = await dio
-          .get("https://d2aa4b9d9pswiy.cloudfront.net/allSubjects.json");
+          .get(dotenv.env['COURSES_URL']!);
       if (response.statusCode == 200) {
         Map<String, dynamic> data = response.data;
         Map<String, CourseModel> aux = {};
@@ -75,11 +76,13 @@ abstract class CoursesControllerBase with Store {
     }
   }
 
+
+  // Requisição de cursos
   @action
   Future<Map<String, dynamic>> getGrads() async {
     try {
       final response =
-          await dio.get("https://d2aa4b9d9pswiy.cloudfront.net/courses.json");
+          await dio.get(dotenv.env['GRADS_URL']!);
       if (response.statusCode == 200) {
         Map<String, dynamic> data = response.data;
         allGrads = ObservableMap<String, dynamic>.of(data);
@@ -96,7 +99,7 @@ abstract class CoursesControllerBase with Store {
   List<String> getDropdownInputStrings() {
     List<String> aux = [];
     allGrads!.forEach((key, value) {
-      aux.add('$key');
+      aux.add(key);
     });
     return aux;
   }

@@ -27,6 +27,9 @@ abstract class EditPageControllerBase with Store {
   double? finalScoreGrade;
 
   @observable
+  bool targetCalcError = false;
+
+  @observable
   TextEditingController finalScoreController = TextEditingController();
 
   @observable
@@ -75,10 +78,20 @@ abstract class EditPageControllerBase with Store {
     targetGrade = grade;
   }
 
+  @action setTargetCalcError(bool value) {
+    targetCalcError = value;
+  }
+
   // Desenha as notas meta na tela
   @action
   void renderTargetGrades(Map grades) {
     gradeRendered = false;
+    if (grades.containsKey("erro")) {
+      targetCalcError = true;
+      gradeRendered = true;
+      targetCalcInProgress = false;
+      return;
+    }
     final allGrades = grades["notas"]["provas"] + grades["notas"]["trabalhos"];
     int index = 0;
     // Define os valores das notas restantes como as metas recebidas
@@ -96,6 +109,7 @@ abstract class EditPageControllerBase with Store {
     editController.finalScoreGrade = targetGrade;
     editController.finalScoreType = "targetcalc";
     gradeRendered = true;
+    targetCalcInProgress = false;
   }
 
   @action
@@ -153,7 +167,13 @@ abstract class EditPageControllerBase with Store {
       }
     });
     // Obtém as notas meta e devolve um mapa
-    Map targetGrades = await gradeController.getTargetGrades(filteredGrades, weights, targetGrade.toDouble(), courseCode);
+    Map targetGrades = {};
+    try {
+        targetGrades = await gradeController.getTargetGrades(filteredGrades, weights, targetGrade.toDouble(), courseCode);
+    } catch (e) {
+        targetGrades = {"erro": "Erro ao calcular as notas meta."};
+    }
+
     // Pega o mapa e utiliza ele para alterar os valores da tela
     renderTargetGrades(targetGrades);
   }

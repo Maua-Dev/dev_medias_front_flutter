@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:mobx/mobx.dart';
 part 'grade_controller.g.dart';
@@ -77,7 +78,7 @@ abstract class GradeControllerBase with Store {
     gradeMap["media_desejada"] = targetGrade;
     try {
       final response = await dio.post(
-          "https://10rp5zrm1j.execute-api.sa-east-1.amazonaws.com/prod/mss-medias/grade-optmizer",
+          dotenv.env['GRADE_OPTIMIZER_URL']!,
           data: gradeMap);
       if (response.statusCode == 200) {
         return response.data;

@@ -221,7 +221,6 @@ class _EditPageState extends State<EditPage> {
                   ),
                 ),
               ),
-              // Seção de Suporte
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
                 child: Row(
@@ -234,6 +233,12 @@ class _EditPageState extends State<EditPage> {
                                 builder: (context) {
                                   final targetController =
                                       TextEditingController();
+                                  final ValueNotifier<bool> isButtonDisabled = ValueNotifier<bool>(true);
+                                  targetController.addListener(
+                                    () {
+                                      isButtonDisabled.value = targetController.text.isEmpty;
+                                    }
+                                  );
                                   return Observer(
                                     builder: (_) => AlertDialog(
                                       content: SizedBox(
@@ -245,11 +250,11 @@ class _EditPageState extends State<EditPage> {
                                             width: 50,
                                             child: CircularProgressIndicator(
                                               color: AppColors.red,
-
                                             ),
                                           ),
                                         )
-                                        : Column(
+                                        :  editController.targetCalcError ?
+                                        const Center(child: Text("Erro ao calcular as notas :(", style: TextStyle(color: AppColors.red, fontSize: 16),)) : Column(
                                           children: [
                                             Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -286,9 +291,7 @@ class _EditPageState extends State<EditPage> {
                                         ),
                                       ),
                                       actions: [
-                                        editController.targetCalcInProgress
-                                        ? Container()
-                                        : TextButton(
+                                        editController.targetCalcError ? TextButton(
                                           style: TextButton.styleFrom(
                                             backgroundColor: AppColors.red,
                                             foregroundColor: AppColors.white,
@@ -297,28 +300,53 @@ class _EditPageState extends State<EditPage> {
                                             minimumSize: const Size.fromHeight(50),
                                             padding: const EdgeInsets.symmetric(
                                                 vertical: 7, horizontal: 7)),
-                                            onPressed: () async {
-                                              editController.setTargetCalcProgress(true);
-                                              editController.setTargetGrade(
-                                                  double.parse(
-                                                      targetController.text));
-                                              Map<String, dynamic> weights = {};
-                                              for (var grade in widget
-                                                      .course.exams! +
-                                                  widget.course.assignments!) {
-                                                weights[grade.name] =
-                                                    grade.weight;
-                                              }
-                                              await editController
-                                                  .calcTargetGrade(
-                                                      editController.grades,
-                                                      weights);
-                                              Navigator.pop(context);
-                                              final gradesToSave = editController.formatGradesForSaving();
-                                              gradeController.insertGrades(editController.getCourseCode(), gradesToSave);
-                                              editController.setTargetCalcProgress(false);
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            editController.setTargetCalcError(false);
                                             },
-                                            child: const Text("Confirmar"))
+                                          child: const Text("Fechar")) : Container(),
+                                        editController.targetCalcInProgress || editController.targetCalcError
+                                        ? Container()
+                                        // Verifica se o campo de meta de notas está vazio ou não
+                                        : ValueListenableBuilder<bool>(
+                                            valueListenable: isButtonDisabled,
+                                            builder: (context, isDisabled, child) =>
+                                            Observer(
+                                              builder: (_) => TextButton(
+                                                style: TextButton.styleFrom(
+                                                  backgroundColor: isDisabled ? AppColors.gray : AppColors.red,
+                                                  foregroundColor: AppColors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius: Round.primary),
+                                                  minimumSize: const Size.fromHeight(50),
+                                                  padding: const EdgeInsets.symmetric(
+                                                      vertical: 7, horizontal: 7)),
+                                                  onPressed: isDisabled ? null : () async {
+                                                    editController.setTargetCalcProgress(true);
+                                                    editController.setTargetGrade(
+                                                        double.parse(
+                                                            targetController.text));
+                                                    Map<String, dynamic> weights = {};
+                                                    for (var grade in widget
+                                                            .course.exams! +
+                                                        widget.course.assignments!) {
+                                                      weights[grade.name] =
+                                                          grade.weight;
+                                                    }
+                                                    await editController
+                                                        .calcTargetGrade(
+                                                            editController.grades,
+                                                            weights);
+                                                    final gradesToSave = editController.formatGradesForSaving();
+                                                    gradeController.insertGrades(editController.getCourseCode(), gradesToSave);
+                                                    editController.setTargetCalcProgress(false);
+                                                    if (editController.targetCalcError == false) {
+                                                      Navigator.pop(context);
+                                                    }
+                                                  },
+                                                  child: const Text("Confirmar")),
+                                            ),
+                                        )
                                       ],
                                     ),
                                   );

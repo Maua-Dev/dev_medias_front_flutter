@@ -47,24 +47,31 @@ class _AddPageState extends State<AddPage> {
                 Observer(
                   builder: (_) => addController.coursesLoaded ?
                     Expanded(
-                      child: RawScrollbar(
-                        child: ListView.builder(
-                          padding: EdgeInsets.zero,
-                          shrinkWrap: true,
-                          itemCount: addController.availableCourses?.length,
-                          itemBuilder: (context, index) {
-                            String? key =
-                                addController.availableCourses?.keys.toList().elementAt(index);
-                            CourseModel course = addController.availableCourses?[key];
-                            return Observer(
-                              builder: (_) => AddCourseCard(
-                                key: UniqueKey(),
-                                index: index,
-                                course: course,
-                              ),
-                            );
-                            },
-                          ),
+                      child: ScrollConfiguration(
+                        behavior: ScrollConfiguration.of(context).copyWith(
+                          scrollbars: false,
+                          overscroll: false,
+                          physics: BouncingScrollPhysics(),
+                        ),
+                        child: RawScrollbar(
+                          child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: true,
+                            itemCount: addController.availableCourses?.length,
+                            itemBuilder: (context, index) {
+                              String? key =
+                                  addController.availableCourses?.keys.toList().elementAt(index);
+                              CourseModel course = addController.availableCourses?[key];
+                              return Observer(
+                                builder: (_) => AddCourseCard(
+                                  key: UniqueKey(),
+                                  index: index,
+                                  course: course,
+                                ),
+                              );
+                              },
+                            ),
+                        ),
                       ),
                     ) : const Expanded(child: Center(child: Text('carregando...', style: TextStyle(color: AppColors.white, fontSize: 20),))),
                 )

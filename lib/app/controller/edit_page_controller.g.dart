@@ -106,6 +106,22 @@ mixin _$EditPageController on EditPageControllerBase, Store {
     });
   }
 
+  late final _$targetCalcErrorAtom =
+      Atom(name: 'EditPageControllerBase.targetCalcError', context: context);
+
+  @override
+  bool get targetCalcError {
+    _$targetCalcErrorAtom.reportRead();
+    return super.targetCalcError;
+  }
+
+  @override
+  set targetCalcError(bool value) {
+    _$targetCalcErrorAtom.reportWrite(value, super.targetCalcError, () {
+      super.targetCalcError = value;
+    });
+  }
+
   late final _$finalScoreControllerAtom = Atom(
       name: 'EditPageControllerBase.finalScoreController', context: context);
 
@@ -262,6 +278,17 @@ mixin _$EditPageController on EditPageControllerBase, Store {
   }
 
   @override
+  dynamic setTargetCalcError(bool value) {
+    final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
+        name: 'EditPageControllerBase.setTargetCalcError');
+    try {
+      return super.setTargetCalcError(value);
+    } finally {
+      _$EditPageControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void renderTargetGrades(Map<dynamic, dynamic> grades) {
     final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
         name: 'EditPageControllerBase.renderTargetGrades');
@@ -337,6 +364,7 @@ targetGrade: ${targetGrade},
 courseCode: ${courseCode},
 finalScoreType: ${finalScoreType},
 finalScoreGrade: ${finalScoreGrade},
+targetCalcError: ${targetCalcError},
 finalScoreController: ${finalScoreController},
 gradeTypes: ${gradeTypes},
 grades: ${grades},

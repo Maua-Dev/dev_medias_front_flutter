@@ -67,28 +67,26 @@ class _AddCourseCardState extends State<AddCourseCard>
               child: Expanded(
                 child: Row(
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: 320,
-                          child: Text(
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
                             widget.course.name,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                                 fontSize: 18, color: AppColors.black),
                           ),
-                        ),
-                        FittedBox(
-                            fit: BoxFit.contain,
-                            child: Text(
-                              widget.course.code,
-                              style: const TextStyle(
-                                  fontSize: 12, color: AppColors.black),
-                            )),
-                      ],
+                          FittedBox(
+                              fit: BoxFit.contain,
+                              child: Text(
+                                widget.course.code,
+                                style: const TextStyle(
+                                    fontSize: 12, color: AppColors.black),
+                              )),
+                        ],
+                      ),
                     ),
-                    Expanded(child: Container()),
                     Stack(children: [
                       Container(
                         color: AppColors.white,

@@ -30,9 +30,9 @@ class _LoadingPageState extends State<LoadingPage> {
       await userController.getCurrentCourses();
       if (userDataMissing == false) {
         introPageController.setLoginSuccesful(true);
-        Navigator.pushNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/home');
       } else {
-        Navigator.pushNamed(context, '/first');
+        Navigator.pushReplacementNamed(context, '/first');
       }
     });
     super.initState();

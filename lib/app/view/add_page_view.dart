@@ -57,6 +57,7 @@ class _AddPageState extends State<AddPage> {
                           ),
                           child: RawScrollbar(
                             child: ListView.builder(
+                              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                               padding: EdgeInsets.zero,
                               shrinkWrap: true,
                               itemCount: addController.availableCourses?.length,

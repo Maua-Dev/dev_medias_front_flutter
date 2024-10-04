@@ -131,7 +131,7 @@ abstract class EditPageControllerBase with Store {
     gradeRendered = true;
   }
 
-  // De acordo com as notas recebias como parâmetro, cria os controladores de notas
+  // De acordo com as notas recebidas como parâmetro, cria os controladores de notas
   @action
   void buildGrades(List<dynamic>? grades) {
     for (var grade in grades!) {
@@ -180,7 +180,8 @@ abstract class EditPageControllerBase with Store {
 
   // Calcula a nota final de acordo com as notas inseridas pelo usuário
   @action
-  void calcFinalScore(Map<String, dynamic> grades, Map<String, dynamic> weights) {
+  void calcFinalScore(Map<String, dynamic> weights) {
+
     // Arrendonda número para o múltiplo de 0.5 mais próximo
     double roundToNearestHalf(double number) {
       return (number * 2).round() / 2;
@@ -199,7 +200,7 @@ abstract class EditPageControllerBase with Store {
 
     auxGrades.forEach((key, grade) {
       double weight = weights[key] ?? 0;
-      productSum += grade * weight;
+      productSum += grade! * weight;
       weightSum += weight;
     });
 

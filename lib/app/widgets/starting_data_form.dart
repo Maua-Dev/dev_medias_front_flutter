@@ -93,7 +93,7 @@ class _StartingDataFormState extends State<StartingDataForm> {
                         userController.setGraduation(s!);
                       },
                       menuHeight: 200,
-                      menuStyle: MenuStyle(
+                      menuStyle: const MenuStyle(
                         maximumSize:
                             WidgetStatePropertyAll(Size.fromWidth(120)),
                         backgroundColor:
@@ -155,7 +155,7 @@ class _StartingDataFormState extends State<StartingDataForm> {
                         year: int.parse(yearController.text)));
                     await userController.loadInitialCourses(graduationController.text, int.parse(yearController.text));
                     introPageController.setLoginSuccesful(true);
-                    Navigator.pushNamed(context, '/home');
+                    Navigator.pushReplacementNamed(context, '/home');
                   }
                 },
                 style: TextButton.styleFrom(

@@ -68,34 +68,33 @@ class _EditPageState extends State<EditPage> {
                       padding:
                           const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: 320,
-                                child: Text(
-                                  widget.course.name,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontSize: 24, color: AppColors.black),
-                                ),
+                          Expanded(
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.course.name,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontSize: 20, color: AppColors.black),
+                                  ),
+                                  Text(
+                                    widget.course.code,
+                                    style: const TextStyle(
+                                        fontSize: 12, color: AppColors.black),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                widget.course.code,
-                                style: const TextStyle(
-                                    fontSize: 16, color: AppColors.black),
-                              ),
-                            ],
                           ),
-                          Expanded(child: Container()),
                           IconButton(
                               onPressed: () {},
                               icon: const Icon(
                                 Icons.delete,
                                 color: AppColors.red,
                                 size: 30,
-                              ))
+                            ))
                         ],
                       ),
                     ),
@@ -367,7 +366,7 @@ class _EditPageState extends State<EditPage> {
                               child: Text(
                                 "Definir meta",
                                 style: TextStyle(
-                                    color: AppColors.white, fontSize: 22),
+                                    color: AppColors.white, fontSize: 18),
                               ),
                             )),
                       ),
@@ -433,8 +432,7 @@ class _EditPageState extends State<EditPage> {
                                                     widget.course.assignments!) {
                                                   weights[grade.name] = grade.weight;
                                                 }
-                                                editController.calcFinalScore(
-                                                    editController.grades, weights);
+                                                editController.calcFinalScore(weights);
                                                 final gradesToSave = editController.formatGradesForSaving();
                                                 gradeController.insertGrades(editController.getCourseCode(), gradesToSave);
                                               },
@@ -460,7 +458,7 @@ class _EditPageState extends State<EditPage> {
                                   Text(
                                     "Calcular média",
                                     style: TextStyle(
-                                        color: AppColors.white, fontSize: 22),
+                                        color: AppColors.white, fontSize: 18),
                                   ),
                                 ],
                               ),

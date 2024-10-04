@@ -1,5 +1,6 @@
 import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/home_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
@@ -23,6 +24,10 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     editController.resetGradeControllers();
     super.initState();
+  }
+
+  Future<String> updateFinalScore(String courseCode) async {
+    return await homeController.getFinalScore(courseCode);
   }
 
   @override
@@ -61,41 +66,54 @@ class _HomePageState extends State<HomePage> {
                                   CourseModel? course =
                                       coursesController.allCourses?[
                                           userController.currentCourses[index]];
-                                  return ClipRRect(
-                                    borderRadius: Round.primary,
-                                    child: Dismissible(
-                                      key: UniqueKey(),
-                                      direction: DismissDirection.endToStart,
-                                      onDismissed: (direction) {
-                                        userController
-                                            .removeCurrentCourse(course.code);
-                                      },
-                                      background: Container(
-                                        margin:
-                                            const EdgeInsets.only(bottom: 12),
-                                        decoration: BoxDecoration(
-                                            color: AppColors.red,
-                                            borderRadius: Round.primary),
-                                        child: Row(
-                                          children: [
-                                            Expanded(child: Container()),
-                                            const Padding(
-                                              padding:
-                                                  EdgeInsets.only(right: 12),
-                                              child: Icon(
-                                                Icons.delete,
-                                                color: AppColors.white,
+                                  return FutureBuilder<String>(
+                                    future: updateFinalScore(course!.code),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                        return const CircularProgressIndicator();
+                                      } else if (snapshot.hasError) {
+                                        return const Text('Error');
+                                      } else {
+                                        String finalScore = snapshot.data ?? 'N.A';
+                                        return ClipRRect(
+                                          borderRadius: Round.primary,
+                                          child: Dismissible(
+                                            key: UniqueKey(),
+                                            direction: DismissDirection.endToStart,
+                                            onDismissed: (direction) {
+                                              userController
+                                                  .removeCurrentCourse(course.code);
+                                            },
+                                            background: Container(
+                                              margin:
+                                                  const EdgeInsets.only(bottom: 12),
+                                              decoration: BoxDecoration(
+                                                  color: AppColors.red,
+                                                  borderRadius: Round.primary),
+                                              child: Row(
+                                                children: [
+                                                  Expanded(child: Container()),
+                                                  const Padding(
+                                                    padding:
+                                                        EdgeInsets.only(right: 12),
+                                                    child: Icon(
+                                                      Icons.delete,
+                                                      color: AppColors.white,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                      child: CurrentCourseCard(
-                                        key: UniqueKey(),
-                                        index: index,
-                                        course: course!,
-                                      ),
-                                    ),
+                                            child: CurrentCourseCard(
+                                              key: UniqueKey(),
+                                              index: index,
+                                              finalScore: finalScore,
+                                              course: course,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    },
                                   );
                                 },
                               ),

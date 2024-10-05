@@ -53,7 +53,7 @@ class _AddPageState extends State<AddPage> {
                           behavior: ScrollConfiguration.of(context).copyWith(
                             scrollbars: false,
                             overscroll: false,
-                            physics: BouncingScrollPhysics(),
+                            physics: const BouncingScrollPhysics(),
                           ),
                           child: RawScrollbar(
                             child: ListView.builder(

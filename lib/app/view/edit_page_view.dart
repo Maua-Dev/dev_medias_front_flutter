@@ -1,5 +1,6 @@
 import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/grade_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:dev_medias_front_flutter/app/widgets/grade_input.dart';
@@ -89,7 +90,61 @@ class _EditPageState extends State<EditPage> {
                               ),
                           ),
                           IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                      showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return AlertDialog(
+                                                    content: SizedBox(
+                                                        height: 128,
+                                                        child: Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                            const Text("Remover matéria?", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.red),),
+                                                            const SizedBox(height: 8),
+                                                            Text(
+                                                                "Remover ${widget.course.name}?",
+                                                                style: const TextStyle(
+                                                                    fontSize: 14,),
+                                                            ),
+                                                            ],
+                                                        ),
+                                                    ),
+                                                    actions: <Widget>[
+                                                        TextButton(
+                                                            style: TextButton.styleFrom(
+                                                                backgroundColor: AppColors.red,
+                                                                foregroundColor: AppColors.white,
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius: Round.primary),
+                                                                minimumSize: const Size.fromHeight(50),
+                                                                padding: const EdgeInsets.symmetric(
+                                                                    vertical: 7, horizontal: 7)),
+                                                            onPressed: () {
+                                                                Navigator.of(context).pop();
+                                                                userController.removeCurrentCourse(widget.course.code);
+                                                                Navigator.pushNamed(context, '/home');
+                                                            },
+                                                            child: const Text("Excluir")
+                                                        ),
+                                                        TextButton(
+                                                            style: TextButton.styleFrom(
+                                                                foregroundColor: AppColors.red,
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius: Round.primary),
+                                                                minimumSize: const Size.fromHeight(50),
+                                                                padding: const EdgeInsets.symmetric(
+                                                                    vertical: 7, horizontal: 7)),
+                                                            onPressed: () {
+                                                                Navigator.of(context).pop(false);
+                                                            },
+                                                            child: const Text("Cancelar")
+                                                        )
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                              },
                               icon: const Icon(
                                 Icons.delete,
                                 color: AppColors.red,
@@ -243,7 +298,7 @@ class _EditPageState extends State<EditPage> {
                                     return Observer(
                                       builder: (_) => AlertDialog(
                                         content: SizedBox(
-                                          height: 250,
+                                          height: 275,
                                           child: editController.targetCalcInProgress
                                           ? const Center(
                                             child: SizedBox(

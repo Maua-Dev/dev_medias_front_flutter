@@ -80,6 +80,59 @@ class _HomePageState extends State<HomePage> {
                                           child: Dismissible(
                                             key: UniqueKey(),
                                             direction: DismissDirection.endToStart,
+                                            confirmDismiss: (direction) async {
+                                              return await showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return AlertDialog(
+                                                    content: SizedBox(
+                                                        height: 128,
+                                                        child: Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                            const Text("Remover matéria?", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.red),),
+                                                            const SizedBox(height: 8),
+                                                            Text(
+                                                                "Remover ${course.name}?",
+                                                                style: const TextStyle(
+                                                                    fontSize: 14,),
+                                                            ),
+                                                            ],
+                                                        ),
+                                                    ),
+                                                    actions: <Widget>[
+                                                        TextButton(
+                                                            style: TextButton.styleFrom(
+                                                                backgroundColor: AppColors.red,
+                                                                foregroundColor: AppColors.white,
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius: Round.primary),
+                                                                minimumSize: const Size.fromHeight(50),
+                                                                padding: const EdgeInsets.symmetric(
+                                                                    vertical: 7, horizontal: 7)),
+                                                            onPressed: () {
+                                                                Navigator.of(context).pop(true);
+                                                            },
+                                                            child: const Text("Excluir")
+                                                        ),
+                                                        TextButton(
+                                                            style: TextButton.styleFrom(
+                                                                foregroundColor: AppColors.red,
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius: Round.primary),
+                                                                minimumSize: const Size.fromHeight(50),
+                                                                padding: const EdgeInsets.symmetric(
+                                                                    vertical: 7, horizontal: 7)),
+                                                            onPressed: () {
+                                                                Navigator.of(context).pop(false);
+                                                            },
+                                                            child: const Text("Cancelar")
+                                                        )
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            },
                                             onDismissed: (direction) {
                                               userController
                                                   .removeCurrentCourse(course.code);

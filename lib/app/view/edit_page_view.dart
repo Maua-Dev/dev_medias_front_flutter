@@ -368,8 +368,10 @@ class _EditPageState extends State<EditPage> {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                            onPressed: () {
-                              showDialog(
+                            onPressed: widget.course.assignments!.isEmpty && widget.course.exams!.isEmpty ?
+                            () {} :
+                            () {
+                                showDialog(
                                   context: context,
                                   builder: (context) {
                                     final targetController =
@@ -455,8 +457,7 @@ class _EditPageState extends State<EditPage> {
                                               Observer(
                                                 builder: (_) => TextButton(
                                                   style: TextButton.styleFrom(
-                                                    backgroundColor: isDisabled ? AppColors.gray : AppColors.red,
-                                                    foregroundColor: AppColors.white,
+                                                    backgroundColor: isDisabled ? AppColors.red.withOpacity(0.5) : AppColors.red,
                                                     shape: RoundedRectangleBorder(
                                                         borderRadius: Round.primary),
                                                     minimumSize: const Size.fromHeight(50),
@@ -485,7 +486,7 @@ class _EditPageState extends State<EditPage> {
                                                         Navigator.pop(context);
                                                       }
                                                     },
-                                                    child: const Text("Confirmar")),
+                                                    child: Text("Confirmar", style: TextStyle(color: isDisabled ? AppColors.white.withOpacity(0.5) : AppColors.white),)),
                                               ),
                                           )
                                         ],
@@ -495,18 +496,18 @@ class _EditPageState extends State<EditPage> {
                                 );
                             },
                             style: TextButton.styleFrom(
-                                backgroundColor: AppColors.red,
+                                backgroundColor: widget.course.assignments!.isEmpty && widget.course.exams!.isEmpty ? AppColors.red.withOpacity(0.5) : AppColors.red,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: Round.primary),
                                 minimumSize: const Size.fromHeight(50),
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 7, horizontal: 7)),
-                            child: const Padding(
+                            child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 12),
                               child: Text(
                                 "Definir meta",
                                 style: TextStyle(
-                                    color: AppColors.white, fontSize: 18),
+                                    color: widget.course.assignments!.isEmpty && widget.course.exams!.isEmpty ? AppColors.white.withOpacity(0.5) : AppColors.white, fontSize: 18),
                               ),
                             )),
                       ),
@@ -515,7 +516,10 @@ class _EditPageState extends State<EditPage> {
                       ),
                       Expanded(
                         child: ElevatedButton(
-                            onPressed: () {
+                            onPressed:
+                            widget.course.assignments!.isEmpty && widget.course.exams!.isEmpty ?
+                            () {} :
+                            () {
                               showDialog(
                                   context: context,
                                   builder: (context) {
@@ -584,13 +588,13 @@ class _EditPageState extends State<EditPage> {
                                 );
                             },
                             style: TextButton.styleFrom(
-                                backgroundColor: AppColors.red,
+                                backgroundColor: widget.course.assignments!.isEmpty && widget.course.exams!.isEmpty ? AppColors.red.withOpacity(0.5) : AppColors.red,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: Round.primary),
                                 minimumSize: const Size.fromHeight(50),
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 7, horizontal: 7)),
-                            child: const Padding(
+                            child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 12),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -598,7 +602,7 @@ class _EditPageState extends State<EditPage> {
                                   Text(
                                     "Calcular média",
                                     style: TextStyle(
-                                        color: AppColors.white, fontSize: 18),
+                                        color: widget.course.assignments!.isEmpty && widget.course.exams!.isEmpty ? AppColors.white.withOpacity(0.5) : AppColors.white, fontSize: 18),
                                   ),
                                 ],
                               ),

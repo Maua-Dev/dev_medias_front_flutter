@@ -89,67 +89,67 @@ class _EditPageState extends State<EditPage> {
                                 ],
                               ),
                           ),
-                          IconButton(
-                              onPressed: () {
-                                      showDialog(
-                                                context: context,
-                                                builder: (BuildContext context) {
-                                                  return AlertDialog(
-                                                    content: SizedBox(
-                                                        height: 128,
-                                                        child: Column(
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: [
-                                                            const Text("Remover matéria?", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.red),),
-                                                            const SizedBox(height: 8),
-                                                            Text(
-                                                                "Remover ${widget.course.name}?",
-                                                                style: const TextStyle(
-                                                                    fontSize: 14,),
-                                                            ),
-                                                            ],
-                                                        ),
-                                                    ),
-                                                    actions: <Widget>[
-                                                        TextButton(
-                                                            style: TextButton.styleFrom(
-                                                                backgroundColor: AppColors.red,
-                                                                foregroundColor: AppColors.white,
-                                                                shape: RoundedRectangleBorder(
-                                                                    borderRadius: Round.primary),
-                                                                minimumSize: const Size.fromHeight(50),
-                                                                padding: const EdgeInsets.symmetric(
-                                                                    vertical: 7, horizontal: 7)),
-                                                            onPressed: () {
-                                                                Navigator.of(context).pop();
-                                                                userController.removeCurrentCourse(widget.course.code);
-                                                                Navigator.pushNamed(context, '/home');
-                                                            },
-                                                            child: const Text("Excluir")
-                                                        ),
-                                                        TextButton(
-                                                            style: TextButton.styleFrom(
-                                                                foregroundColor: AppColors.red,
-                                                                shape: RoundedRectangleBorder(
-                                                                    borderRadius: Round.primary),
-                                                                minimumSize: const Size.fromHeight(50),
-                                                                padding: const EdgeInsets.symmetric(
-                                                                    vertical: 7, horizontal: 7)),
-                                                            onPressed: () {
-                                                                Navigator.of(context).pop(false);
-                                                            },
-                                                            child: const Text("Cancelar")
-                                                        )
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                              },
-                              icon: const Icon(
-                                Icons.delete,
-                                color: AppColors.red,
-                                size: 30,
-                            ))
+                        //   IconButton(
+                        //       onPressed: () {
+                        //               showDialog(
+                        //                         context: context,
+                        //                         builder: (BuildContext context) {
+                        //                           return AlertDialog(
+                        //                             content: SizedBox(
+                        //                                 height: 128,
+                        //                                 child: Column(
+                        //                                     crossAxisAlignment: CrossAxisAlignment.start,
+                        //                                     children: [
+                        //                                     const Text("Remover matéria?", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.red),),
+                        //                                     const SizedBox(height: 8),
+                        //                                     Text(
+                        //                                         "Remover ${widget.course.name}?",
+                        //                                         style: const TextStyle(
+                        //                                             fontSize: 14,),
+                        //                                     ),
+                        //                                     ],
+                        //                                 ),
+                        //                             ),
+                        //                             actions: <Widget>[
+                        //                                 TextButton(
+                        //                                     style: TextButton.styleFrom(
+                        //                                         backgroundColor: AppColors.red,
+                        //                                         foregroundColor: AppColors.white,
+                        //                                         shape: RoundedRectangleBorder(
+                        //                                             borderRadius: Round.primary),
+                        //                                         minimumSize: const Size.fromHeight(50),
+                        //                                         padding: const EdgeInsets.symmetric(
+                        //                                             vertical: 7, horizontal: 7)),
+                        //                                     onPressed: () {
+                        //                                         Navigator.of(context).pop();
+                        //                                         userController.removeCurrentCourse(widget.course.code);
+                        //                                         Navigator.pushNamed(context, '/home');
+                        //                                     },
+                        //                                     child: const Text("Excluir")
+                        //                                 ),
+                        //                                 TextButton(
+                        //                                     style: TextButton.styleFrom(
+                        //                                         foregroundColor: AppColors.red,
+                        //                                         shape: RoundedRectangleBorder(
+                        //                                             borderRadius: Round.primary),
+                        //                                         minimumSize: const Size.fromHeight(50),
+                        //                                         padding: const EdgeInsets.symmetric(
+                        //                                             vertical: 7, horizontal: 7)),
+                        //                                     onPressed: () {
+                        //                                         Navigator.of(context).pop(false);
+                        //                                     },
+                        //                                     child: const Text("Cancelar")
+                        //                                 )
+                        //                             ],
+                        //                           );
+                        //                         },
+                        //                       );
+                        //       },
+                        //       icon: const Icon(
+                        //         Icons.delete,
+                        //         color: AppColors.red,
+                        //         size: 30,
+                        //     ))
                         ],
                       ),
                     ),
@@ -170,23 +170,81 @@ class _EditPageState extends State<EditPage> {
                             children: [
                               widget.course.exams!.isEmpty &&
                                       widget.course.assignments!.isEmpty
-                                  ? const Expanded(
-                                      child: Center(
-                                          child: Text(
-                                              "Essa matéria não tem notas cadastradas."
-                                              )
-                                            )
-                                          )
+                                  ? Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Column(
+                                      children: [
+                                          Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                  IconButton(
+                                                          icon: const Icon(
+                                                          Icons.import_contacts,
+                                                          color: AppColors.red,
+                                                          size: 30,
+                                                      ),
+                                                      onPressed: () {
+                                                            _showCourseDefinitions(context, widget.course);
+                                                      },
+                                                  ),
+                                                  IconButton(
+                                                      icon: const Icon(
+                                                            Icons.remove,
+                                                            color: AppColors.gray,
+                                                            size: 30,
+                                                       ),
+                                                       onPressed: () {
+
+                                                       },
+                                                  ),
+                                              ],
+                                          ),
+                                        const Padding(
+                                            padding: EdgeInsets.only(top: 32),
+                                            child: Center(
+                                                child: Text(
+                                                    "Essa matéria não tem notas cadastradas."
+                                                    )
+                                                ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
                                   : Container(),
                               widget.course.exams!.isNotEmpty
-                                  ? const Padding(
-                                      padding: EdgeInsets.only(top: 32, bottom: 16),
-                                      child: Text("Provas",
-                                          style: TextStyle(
-                                              color: AppColors.black,
-                                              fontSize: 20
-                                              )
-                                          ),
+                                  ? Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                            IconButton(
+                                                icon: const Icon(
+                                                    Icons.import_contacts,
+                                                    color: AppColors.red,
+                                                    size: 30,
+                                                ),
+                                                onPressed: () {
+                                                    _showCourseDefinitions(context, widget.course);
+                                                },
+                                            ),
+                                            const Text("Provas",
+                                              style: TextStyle(
+                                                  color: AppColors.black,
+                                                  fontSize: 20
+                                                  )
+                                              ),
+                                            IconButton(
+                                                icon: const Icon(
+                                                    Icons.remove,
+                                                    color: AppColors.red,
+                                                    size: 30,
+                                                ),
+                                                onPressed: () {
+
+                                                },
+                                            ),
+                                        ],
+                                      ),
                                     )
                                   : Container(),
                               Wrap(
@@ -211,12 +269,39 @@ class _EditPageState extends State<EditPage> {
                                 )
                               ),
                               widget.course.assignments!.isNotEmpty
-                                  ? const Padding(
-                                      padding: EdgeInsets.only(top: 32, bottom: 16),
-                                      child: Text("Trabalhos",
-                                          style: TextStyle(
-                                              color: AppColors.black,
-                                              fontSize: 20)),
+                                  ? Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                        widget.course.exams!.isEmpty ?
+                                          IconButton(
+                                                icon: const Icon(
+                                                    Icons.import_contacts,
+                                                    color: AppColors.red,
+                                                    size: 30,
+                                                ),
+                                                onPressed: () {
+                                                    _showCourseDefinitions(context, widget.course);
+                                                },
+                                           ) : Container(),
+                                          const Text("Trabalhos",
+                                              style: TextStyle(
+                                                  color: AppColors.black,
+                                                  fontSize: 20)),
+                                        widget.course.exams!.isEmpty ?
+                                        IconButton(
+                                                icon: const Icon(
+                                                    Icons.remove,
+                                                    color: AppColors.red,
+                                                    size: 30,
+                                                ),
+                                                onPressed: () {
+
+                                                },
+                                           ) : Container(),
+                                        ],
+                                      ),
                                     )
                                   : Container(),
                               Wrap(
@@ -529,5 +614,114 @@ class _EditPageState extends State<EditPage> {
         ),
       ),
     );
+  }
+
+  Future<dynamic> _showCourseDefinitions(context, CourseModel course) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: SizedBox(
+                height: 160,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                        const Padding(
+                          padding: EdgeInsets.only(bottom:8),
+                          child: Text(
+                              "Definições da matéria",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: AppColors.red),
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 8),
+                          child: Text(
+                              "Plano de Ensino",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: AppColors.black),
+                          ),
+                        ),
+                        course.exams!.isEmpty && course.assignments!.isEmpty ?
+                        const Text(
+                             "Nenhuma nota cadastrada",
+                          style: TextStyle(
+                             fontSize: 14,
+                             color: AppColors.black),
+                        ) : Container(),
+                        course.exams!.isNotEmpty ?
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                  Text(
+                                      "Provas: ${course.examWeight}%",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                          color: AppColors.black),
+                                  ),
+                                  Text(
+                                      _genWeightsText(course.exams),
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 14,
+                                          color: AppColors.black),
+                                  ),
+                              ],
+                          ),
+                        ) : Container(),
+                        course.assignments!.isNotEmpty ?
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                                Text(
+                                    "Trabalhos: ${course.assignmentWeight}%",
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        color: AppColors.black),
+                                ),
+                                Text(
+                                    _genWeightsText(course.assignments),
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        color: AppColors.black),
+                                )
+                            ],
+                        ) : Container(),
+
+                    ],
+                ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                    'Fechar',
+                    style: TextStyle(
+                            fontSize: 16,
+                            color: AppColors.red),
+                ),
+              ),
+            ],
+          );
+        }
+    );
+  }
+
+  String _genWeightsText(List? activities) {
+    String text = "";
+    for (var activity in activities!) {
+      text += "${activity.name}: ${activity.weight * 100}% ";
+    }
+    return text;
   }
 }

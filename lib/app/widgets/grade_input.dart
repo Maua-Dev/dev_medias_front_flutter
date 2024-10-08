@@ -50,7 +50,7 @@ class GradeInput extends StatelessWidget {
                       editController.gradeControllers[name]?.text = value;
                       editController.gradeTypes[name] = "normal";
                     } else {
-                      editController.grades[name] = 0;
+                      editController.grades[name] = null;
                       editController.gradeControllers[name]?.text = "";
                       editController.gradeTypes[name] = "normal";
                     }

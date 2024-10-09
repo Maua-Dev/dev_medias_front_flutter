@@ -4,12 +4,16 @@ import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:dev_medias_front_flutter/app/widgets/grade_input.dart';
+import 'package:dev_medias_front_flutter/app/widgets/logo.dart';
+import 'package:dev_medias_front_flutter/app/widgets/navigation_top_bar.dart';
+import 'package:dev_medias_front_flutter/app/widgets/popup_delete_course.dart';
 import 'package:flutter/material.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 class EditPage extends StatefulWidget {
   final CourseModel course;
+  final PopupDeleteController deleteContoller = PopupDeleteController();
 
   const EditPage({super.key, required this.course});
 
@@ -50,13 +54,8 @@ class _EditPageState extends State<EditPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                // Logo DevMédias
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 11),
-                  child: Image(
-                      image: AssetImage(
-                          'lib/app/assets/images/dev_medias_logo.png')),
-                ),
+                //Top Barra de Navegação
+                const NavigationTopBar(),
                 // Cabeçalho Matéria
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -619,6 +618,8 @@ class _EditPageState extends State<EditPage> {
       ),
     );
   }
+}
+
 
   Future<dynamic> _showCourseDefinitions(context, CourseModel course) {
     return showDialog(

@@ -1,19 +1,15 @@
 import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/grade_controller.dart';
-import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:dev_medias_front_flutter/app/widgets/grade_input.dart';
-import 'package:dev_medias_front_flutter/app/widgets/logo.dart';
-import 'package:dev_medias_front_flutter/app/widgets/navigation_top_bar.dart';
-import 'package:dev_medias_front_flutter/app/widgets/popup_delete_course.dart';
+import 'package:dev_medias_front_flutter/app/widgets/common/navigation_top_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 class EditPage extends StatefulWidget {
   final CourseModel course;
-  final PopupDeleteController deleteContoller = PopupDeleteController();
 
   const EditPage({super.key, required this.course});
 
@@ -54,8 +50,11 @@ class _EditPageState extends State<EditPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Expanded(
+                  child: Container()
+                ),
                 //Top Barra de Navegação
-                const NavigationTopBar(),
+                const NavigationTopBar(prevPage: '/home',),
                 // Cabeçalho Matéria
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -88,67 +87,6 @@ class _EditPageState extends State<EditPage> {
                                 ],
                               ),
                           ),
-                        //   IconButton(
-                        //       onPressed: () {
-                        //               showDialog(
-                        //                         context: context,
-                        //                         builder: (BuildContext context) {
-                        //                           return AlertDialog(
-                        //                             content: SizedBox(
-                        //                                 height: 128,
-                        //                                 child: Column(
-                        //                                     crossAxisAlignment: CrossAxisAlignment.start,
-                        //                                     children: [
-                        //                                     const Text("Remover matéria?", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.red),),
-                        //                                     const SizedBox(height: 8),
-                        //                                     Text(
-                        //                                         "Remover ${widget.course.name}?",
-                        //                                         style: const TextStyle(
-                        //                                             fontSize: 14,),
-                        //                                     ),
-                        //                                     ],
-                        //                                 ),
-                        //                             ),
-                        //                             actions: <Widget>[
-                        //                                 TextButton(
-                        //                                     style: TextButton.styleFrom(
-                        //                                         backgroundColor: AppColors.red,
-                        //                                         foregroundColor: AppColors.white,
-                        //                                         shape: RoundedRectangleBorder(
-                        //                                             borderRadius: Round.primary),
-                        //                                         minimumSize: const Size.fromHeight(50),
-                        //                                         padding: const EdgeInsets.symmetric(
-                        //                                             vertical: 7, horizontal: 7)),
-                        //                                     onPressed: () {
-                        //                                         Navigator.of(context).pop();
-                        //                                         userController.removeCurrentCourse(widget.course.code);
-                        //                                         Navigator.pushNamed(context, '/home');
-                        //                                     },
-                        //                                     child: const Text("Excluir")
-                        //                                 ),
-                        //                                 TextButton(
-                        //                                     style: TextButton.styleFrom(
-                        //                                         foregroundColor: AppColors.red,
-                        //                                         shape: RoundedRectangleBorder(
-                        //                                             borderRadius: Round.primary),
-                        //                                         minimumSize: const Size.fromHeight(50),
-                        //                                         padding: const EdgeInsets.symmetric(
-                        //                                             vertical: 7, horizontal: 7)),
-                        //                                     onPressed: () {
-                        //                                         Navigator.of(context).pop(false);
-                        //                                     },
-                        //                                     child: const Text("Cancelar")
-                        //                                 )
-                        //                             ],
-                        //                           );
-                        //                         },
-                        //                       );
-                        //       },
-                        //       icon: const Icon(
-                        //         Icons.delete,
-                        //         color: AppColors.red,
-                        //         size: 30,
-                        //     ))
                         ],
                       ),
                     ),
@@ -167,6 +105,7 @@ class _EditPageState extends State<EditPage> {
                           child: editController.gradeRendered
                           ? Column(
                             children: [
+                              // Menu de notas se não tiver trabalhos e provas
                               widget.course.exams!.isEmpty &&
                                       widget.course.assignments!.isEmpty
                                   ? Padding(
@@ -210,6 +149,7 @@ class _EditPageState extends State<EditPage> {
                                     ),
                                   )
                                   : Container(),
+                              // Menu de notas se não tiver provas
                               widget.course.exams!.isNotEmpty
                                   ? Padding(
                                       padding: const EdgeInsets.all(16),
@@ -246,27 +186,7 @@ class _EditPageState extends State<EditPage> {
                                       ),
                                     )
                                   : Container(),
-                              Wrap(
-                                  runSpacing: 4,
-                                  spacing: 4,
-                                  alignment: WrapAlignment.center,
-                                  children: List.generate(
-                                      widget.course.exams!.length, (index) {
-                                    return Observer(
-                                      builder: (_) => Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: GradeInput(
-                                          name: widget.course.exams![index].name,
-                                          labelled: true,
-                                          type: editController.gradeTypes[widget.course.exams![index].name]!,
-                                          controller: editController.gradeControllers[widget
-                                                  .course.exams![index].name],
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                )
-                              ),
+                              // Menu de notas se não tiver trabalhos
                               widget.course.assignments!.isNotEmpty
                                   ? Padding(
                                       padding: const EdgeInsets.all(16),
@@ -303,6 +223,27 @@ class _EditPageState extends State<EditPage> {
                                       ),
                                     )
                                   : Container(),
+                              Wrap(
+                                  runSpacing: 4,
+                                  spacing: 4,
+                                  alignment: WrapAlignment.center,
+                                  children: List.generate(
+                                      widget.course.exams!.length, (index) {
+                                    return Observer(
+                                      builder: (_) => Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: GradeInput(
+                                          name: widget.course.exams![index].name,
+                                          labelled: true,
+                                          type: editController.gradeTypes[widget.course.exams![index].name]!,
+                                          controller: editController.gradeControllers[widget
+                                                  .course.exams![index].name],
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                )
+                              ),
                               Wrap(
                                   runSpacing: 4,
                                   spacing: 4,
@@ -379,8 +320,7 @@ class _EditPageState extends State<EditPage> {
                                     targetController.addListener(
                                       () {
                                         isButtonDisabled.value = targetController.text.isEmpty;
-                                      }
-                                    );
+                                  });
                                     return Observer(
                                       builder: (_) => AlertDialog(
                                         content: SizedBox(
@@ -502,7 +442,7 @@ class _EditPageState extends State<EditPage> {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 7, horizontal: 7)),
                             child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 12),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               child: Text(
                                 "Definir meta",
                                 style: TextStyle(
@@ -594,7 +534,7 @@ class _EditPageState extends State<EditPage> {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 7, horizontal: 7)),
                             child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 12),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -729,4 +669,3 @@ class _EditPageState extends State<EditPage> {
     }
     return text;
   }
-}

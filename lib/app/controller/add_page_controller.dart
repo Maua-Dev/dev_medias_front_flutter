@@ -1,5 +1,5 @@
-import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
-import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/courses_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/user_controller.dart';
 import 'package:mobx/mobx.dart';
 part 'add_page_controller.g.dart';
 

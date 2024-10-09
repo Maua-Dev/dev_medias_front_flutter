@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/courses_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/adapters.dart';

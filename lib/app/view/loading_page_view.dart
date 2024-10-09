@@ -2,10 +2,10 @@
 
 import 'dart:async';
 
-import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/courses_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/intro_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/loading_page_controller.dart';
-import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/user_controller.dart';
 import 'package:dev_medias_front_flutter/app/widgets/community_logo.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:flutter/material.dart';

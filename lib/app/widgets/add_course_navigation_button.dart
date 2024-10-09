@@ -1,4 +1,5 @@
 import 'package:dev_medias_front_flutter/app/animations/transitions/horizontal_push.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/common_controller.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:dev_medias_front_flutter/app/view/add_page_view.dart';
@@ -19,6 +20,7 @@ class AddCourseNavigationButton extends StatelessWidget {
           minimumSize: const Size(0, 63),
           padding: const EdgeInsets.symmetric(horizontal: 10)),
       onPressed: () {
+        commonController.setPreviousPage("/home");
         Navigator.of(context).push(HorizontalPush(
             exitPage: const HomePage(),
             enterPage: const AddPage(),

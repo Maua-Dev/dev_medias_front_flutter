@@ -1,4 +1,5 @@
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
+import 'package:dev_medias_front_flutter/app/widgets/popup_report_error.dart';
 import 'package:dev_medias_front_flutter/app/widgets/logo.dart';
 import 'package:flutter/material.dart';
 
@@ -43,7 +44,14 @@ class NavigationTopBar extends StatelessWidget {
               size: 40,
               color: AppColors.white,
             ),
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+               return const PopupReportError();
+               },
+              );
+            },
           ),
         ),
       ],

@@ -1,3 +1,4 @@
+import 'package:dev_medias_front_flutter/app/controller/popup_delete_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:dev_medias_front_flutter/app/widgets/grade_input.dart';
@@ -9,8 +10,9 @@ import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 
 class EditPage extends StatelessWidget {
   final CourseModel course;
+  final PopupDeleteController deleteContoller = PopupDeleteController();
 
-  const EditPage({super.key, required this.course});
+  EditPage({super.key, required this.course});
 
   @override
   Widget build(BuildContext context) {
@@ -58,10 +60,12 @@ class EditPage extends StatelessWidget {
                           Expanded(child: Container()),
                           IconButton(
                               onPressed: () {
+                                deleteContoller.showPopup();
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return const PopupDeleteCourse();
+                                    return PopupDeleteCourseWidget(
+                                        controller: deleteContoller);
                                   },
                                 );
                               },

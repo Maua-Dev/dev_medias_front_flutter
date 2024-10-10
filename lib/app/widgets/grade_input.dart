@@ -44,10 +44,16 @@ class GradeInput extends StatelessWidget {
               keyboardType: TextInputType.number,
               enabled: enabled,
               onChanged: (String value) {
-                if (changes && value != "") {
-                    editController.grades[name] = double.parse(value);
-                    editController.gradeControllers[name]?.text = value;
-                    editController.gradeTypes[name] = "normal";
+                if (changes) {
+                    if (value.isNotEmpty) {
+                      editController.grades[name] = double.parse(value);
+                      editController.gradeControllers[name]?.text = value;
+                      editController.gradeTypes[name] = "normal";
+                    } else {
+                      editController.grades[name] = null;
+                      editController.gradeControllers[name]?.text = "";
+                      editController.gradeTypes[name] = "normal";
+                    }
                 }
                 final grades = editController.formatGradesForSaving();
                 gradeController.insertGrades(editController.getCourseCode(), grades);

@@ -35,14 +35,6 @@ mixin _$IntroPageController on IntroPageControllerBase, Store {
         .run(() => super.checkUserDataExists());
   }
 
-  late final _$getUserDataAsyncAction =
-      AsyncAction('IntroPageControllerBase.getUserData', context: context);
-
-  @override
-  Future<UserModel?> getUserData() {
-    return _$getUserDataAsyncAction.run(() => super.getUserData());
-  }
-
   late final _$insertUserDataAsyncAction =
       AsyncAction('IntroPageControllerBase.insertUserData', context: context);
 

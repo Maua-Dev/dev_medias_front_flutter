@@ -1,3 +1,4 @@
+import 'package:dev_medias_front_flutter/app/controller/home_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
@@ -5,12 +6,14 @@ import 'package:flutter/material.dart';
 
 class CurrentCourseCard extends StatelessWidget {
   final int index;
+  final String finalScore;
   final CourseModel course;
 
   // TO-DO adicionar tratamento de atributos null
   const CurrentCourseCard({
     super.key,
     required this.index,
+    required this.finalScore,
     required this.course,
   });
 
@@ -33,13 +36,15 @@ class CurrentCourseCard extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                       borderRadius: Round.secondary, color: AppColors.red),
-                  child: const Center(
+                  child: Center(
                       child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      "0.0",
-                      style:
-                          TextStyle(fontSize: 18, color: AppColors.white),
+                    padding: const EdgeInsets.all(10),
+                    child: SizedBox(
+                      child: Text(
+                        finalScore,
+                        style:
+                            const TextStyle(fontSize: 18, color: AppColors.white),
+                      ),
                     ),
                   )),
                 ),

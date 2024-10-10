@@ -95,12 +95,6 @@ class _AddPageState extends State<AddPage> {
                             ),
                           )
                   )
-                  // Expanded(child: Container()),
-                  // // Seção de Suporte
-                  // const Padding(
-                  //   padding: EdgeInsets.only(top: 16),
-                  //   child: SupportBox(),
-                  // ),
                 ],
               ),
             ),

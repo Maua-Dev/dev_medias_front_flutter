@@ -22,11 +22,11 @@ abstract class IntroPageControllerBase with Store {
     return await userController.checkUserDataExists();
   }
 
-  @action
-  Future<UserModel?> getUserData() async {
-    UserModel? data = await userController.getUserData();
-    return data;
-  }
+  // @action
+  // Future<UserModel?> getUserData() async {
+  //   UserModel? data = await userController.getUserData();
+  //   return data;
+  // }
 
   @action
   Future<void> insertUserData(UserModel user) async {

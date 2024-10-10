@@ -3,11 +3,13 @@
 import 'dart:async';
 
 import 'package:dev_medias_front_flutter/app/controller/common/courses_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/graduations_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/intro_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/loading_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/common/user_controller.dart';
 import 'package:dev_medias_front_flutter/app/widgets/community_logo.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -25,9 +27,9 @@ class _LoadingPageState extends State<LoadingPage> {
       loadingPageController.setLoading(true);
       // await userController.resetUserData();
       final userDataMissing = await userController.checkUserDataExists();
-      await coursesController.getCourses();
-      await coursesController.getGrads();
-      await userController.getCurrentCourses();
+      coursesController.setAllCourses(await coursesController.fetchCourses());
+      graduationsController.setAllGrads(await graduationsController.fetchGrads());
+      await userController.fetchCurrentCourses();
       if (userDataMissing == false) {
         introPageController.setLoginSuccesful(true);
         Navigator.pushReplacementNamed(context, '/home');

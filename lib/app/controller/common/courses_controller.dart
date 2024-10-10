@@ -1,9 +1,6 @@
 import 'dart:async';
-import 'package:dev_medias_front_flutter/app/controller/add_page_controller.dart';
-import 'package:dev_medias_front_flutter/app/model/course.dart';
-import 'package:dev_medias_front_flutter/app/model/grade.dart';
+import 'package:dev_medias_front_flutter/app/service/course_service.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mobx/mobx.dart';
 part 'courses_controller.g.dart';
 
@@ -14,94 +11,47 @@ abstract class CoursesControllerBase with Store {
 
   final dio = Dio();
 
+  final service = CourseService();
+
   @observable
   ObservableMap<String, dynamic>? allCourses;
 
-  @observable
-  ObservableMap<String, dynamic>? allGrads;
+  @computed
+  Map<String, dynamic> get getAllCourses {
+    final result = <String, dynamic>{};
+    allCourses!.forEach((key, value) {
+      result[key] = value;
+    });
+    return result;
+  }
+
+  @action
+  void setAllCourses(Map<String, dynamic> courses) {
+    allCourses = ObservableMap<String, dynamic>.of(courses);
+  }
 
   @observable
   bool loadedCourses = false;
+
+  @computed
+  bool get getLoadedCourses => loadedCourses;
 
   @action
   void setLoadedCourses(bool status) {
     loadedCourses = status;
   }
 
-  @action
-  getAllGrads() {
-    return allGrads;
-  }
-
   // Requisição de matérias
   @action
-  Future<Map<String, dynamic>> getCourses() async {
+  Future<Map<String, dynamic>> fetchCourses() async {
+    setLoadedCourses(false);
     try {
-      final response = await dio
-          .get(dotenv.env['COURSES_URL']!);
-      if (response.statusCode == 200) {
-        Map<String, dynamic> data = response.data;
-        Map<String, CourseModel> aux = {};
-
-        data.forEach((code, course) {
-          // converte as provas no formato GradeModel
-          final prevExams = course["exams"];
-          final newExamList = [];
-          for (Map<String, dynamic> exam in prevExams) {
-            newExamList.add(GradeModel.fromJson(exam));
-          }
-          course["exams"] = newExamList;
-          // converte os trabalhos no formato GradeModel
-          final prevAssignments = course["assignments"];
-          final newAssignmentList = [];
-          for (Map<String, dynamic> assignment in prevAssignments) {
-            newAssignmentList.add(GradeModel.fromJson(assignment));
-          }
-          course["assignments"] = newAssignmentList;
-          course = CourseModel.fromJson(course);
-          aux[code] = course;
-        });
-
-        Map<String, CourseModel> courses = aux;
-        addController.setCoursesLoaded(true);
-        setLoadedCourses(true);
-        allCourses = ObservableMap<String, dynamic>.of(courses);
-        loadedCourses = true;
-        return courses;
-      } else {
-        throw Exception('Erro na solicitação GET');
-      }
+      final response = await service.getCourses();
+      setLoadedCourses(true);
+      return response;
     } catch (e) {
       throw Exception('Erro de rede: $e');
     }
-  }
-
-
-  // Requisição de cursos
-  @action
-  Future<Map<String, dynamic>> getGrads() async {
-    try {
-      final response =
-          await dio.get(dotenv.env['GRADS_URL']!);
-      if (response.statusCode == 200) {
-        Map<String, dynamic> data = response.data;
-        allGrads = ObservableMap<String, dynamic>.of(data);
-        return data;
-      } else {
-        throw Exception('Erro na solicitação GET');
-      }
-    } catch (e) {
-      throw Exception('Erro de rede: $e');
-    }
-  }
-
-  @action
-  List<String> getDropdownInputStrings() {
-    List<String> aux = [];
-    allGrads!.forEach((key, value) {
-      aux.add(key);
-    });
-    return aux;
   }
 }
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:dev_medias_front_flutter/app/controller/common/courses_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/user.dart';
+import 'package:dev_medias_front_flutter/app/service/user_service.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,11 +12,29 @@ class UserController = UserControllerBase with _$UserController;
 abstract class UserControllerBase with Store {
   UserControllerBase();
 
+  final UserService service = UserService();
+
   @observable
   bool userDataMissing = false;
 
+  @computed
+  bool get getUserDataMissing => userDataMissing;
+
+  @action
+  void setUserDataMissing(bool status) {
+    userDataMissing = status;
+  }
+
   @observable
   bool firstLogin = true;
+
+  @computed
+  bool get getFirstLogin => firstLogin;
+
+  @action
+  void setFirstLogin(bool status) {
+    firstLogin = status;
+  }
 
   @observable
   String? name = '';
@@ -26,20 +45,14 @@ abstract class UserControllerBase with Store {
   @observable
   int? year = 0;
 
-  @action
-  String? getName() {
-    return name;
-  }
+  @computed
+  String? get getName => name;
 
-  @action
-  String? getGraduation() {
-    return graduation;
-  }
+  @computed
+  String? get getGraduation => graduation;
 
-  @action
-  int? getYear() {
-    return year;
-  }
+  @computed
+  int? get getYear => year;
 
   @action
   void setName(String name) {
@@ -59,19 +72,21 @@ abstract class UserControllerBase with Store {
   @observable
   ObservableList<String> currentCourses = ObservableList<String>.of([]);
 
+  @computed
+  List<String> get getCurrentCourses => currentCourses.toList();
+
   @action
-  void setFirstLogin(bool status) {
-    firstLogin = status;
+  void setCurrentCourses(List<String> courses) {
+    currentCourses = ObservableList<String>.of(courses);
   }
 
   @action
   Future<bool> checkUserDataExists() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     userDataMissing = true;
-    name = prefs.getString("name");
-    graduation = prefs.getString("graduation");
-    year = prefs.getInt("year");
-    if (name != null && graduation != null && year != null) {
+    final response = await service.getUserData();
+    // verifica se o usuário existe
+    if (response.containsKey('user')) {
+      // firstLogin é true por padrão, ele muda para false se o usuário já existir
       setFirstLogin(false);
       userDataMissing = false;
     }
@@ -79,25 +94,15 @@ abstract class UserControllerBase with Store {
   }
 
   @action
-  Future<UserModel?> getUserData() async {
-    SharedPreferences prefs;
-    prefs = await SharedPreferences.getInstance();
-    UserModel? user;
-    final name = prefs.getString("name");
-    final graduation = prefs.getString("graduation");
-    final year = prefs.getInt("year");
-    if (name != null && graduation != null && year != null) {
-      user = UserModel(name: name, graduation: graduation, year: year);
-    }
-    return user;
+  Future<Map> getUserData() async {
+    return await service.getUserData();
   }
 
   @action
   Future<void> insertUserData(UserModel user) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("name", user.name);
-    prefs.setString("graduation", user.graduation);
-    prefs.setInt("year", user.year);
+    // Salva localmente os dados do usuário
+    service.insertUserData(user);
+    // Atualiza informações durante a sessão
     setName(user.name);
     setGraduation(user.graduation);
     setYear(user.year);
@@ -105,43 +110,25 @@ abstract class UserControllerBase with Store {
 
   @action
   Future<void> resetUserData() async {
-    SharedPreferences prefs;
-    await Hive.initFlutter();
-    prefs = await SharedPreferences.getInstance();
-    Box box = await Hive.openBox('user');
-    prefs.clear();
-    List<String> courseList = [];
-    box.put('currentCourses', courseList);
+    await service.resetUserData();
   }
 
   @action
-  Future<void> getCurrentCourses() async {
-    await Hive.initFlutter();
-    var box = await Hive.openBox('user');
-    currentCourses = ObservableList<String>.of(
-        box.get('currentCourses', defaultValue: <String>[]));
+  Future<void> fetchCurrentCourses() async {
+    final response = await service.getCurrentCourses();
+    setCurrentCourses(ObservableList<String>.of(response['currentCourses']!.toList()));
   }
 
   @action
   Future<void> insertCurrentCourses(String code) async {
-    await Hive.initFlutter();
-    var box = await Hive.openBox('user');
-    List<String> courseList =
-        box.get('currentCourses', defaultValue: <String>[]);
-    courseList.add(code);
-    currentCourses = ObservableList<String>.of(courseList);
-    box.put('currentCourses', courseList);
+    final response = await service.insertCurrentCourses(code);
+    setCurrentCourses(ObservableList<String>.of(response['currentCourses']!.toList()));
   }
 
   @action
   Future<void> removeCurrentCourse(String code) async {
-    await Hive.initFlutter();
-    var box = await Hive.openBox('user');
-    List<String> courseList =
-        box.get('currentCourses', defaultValue: <String>[]);
-    courseList.remove(code);
-    currentCourses = ObservableList<String>.of(courseList);
-    box.put('currentCourses', courseList);
+    final response = await service.removeCurrentCourse(code);
+    setCurrentCourses(ObservableList<String>.of(response['currentCourses']!.toList()));
   }
 
   @action

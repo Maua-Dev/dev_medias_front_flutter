@@ -1,4 +1,5 @@
 import 'package:dev_medias_front_flutter/app/controller/common/courses_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/graduations_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/intro_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/common/user_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/user.dart';
@@ -100,13 +101,13 @@ class _StartingDataFormState extends State<StartingDataForm> {
                             WidgetStatePropertyAll(AppColors.white),
                       ),
                       dropdownMenuEntries:
-                          coursesController.getDropdownInputStrings().map((s) {
+                          graduationsController.getDropdownInputStrings().map((s) {
                         return DropdownMenuEntry<String>(
                           style: MenuItemButton.styleFrom(
-                              textStyle: TextStyle(fontSize: 20),
+                              textStyle: const TextStyle(fontSize: 20),
                               backgroundColor: AppColors.white),
                           value: s,
-                          label: '$s - ${coursesController.allGrads?[s]}',
+                          label: '$s - ${graduationsController.allGrads?[s]}',
                         );
                       }).toList()),
                 ],

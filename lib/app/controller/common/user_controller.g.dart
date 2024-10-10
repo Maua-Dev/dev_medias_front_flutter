@@ -9,6 +9,48 @@ part of 'user_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$UserController on UserControllerBase, Store {
+  Computed<bool>? _$getUserDataMissingComputed;
+
+  @override
+  bool get getUserDataMissing => (_$getUserDataMissingComputed ??=
+          Computed<bool>(() => super.getUserDataMissing,
+              name: 'UserControllerBase.getUserDataMissing'))
+      .value;
+  Computed<bool>? _$getFirstLoginComputed;
+
+  @override
+  bool get getFirstLogin =>
+      (_$getFirstLoginComputed ??= Computed<bool>(() => super.getFirstLogin,
+              name: 'UserControllerBase.getFirstLogin'))
+          .value;
+  Computed<String?>? _$getNameComputed;
+
+  @override
+  String? get getName =>
+      (_$getNameComputed ??= Computed<String?>(() => super.getName,
+              name: 'UserControllerBase.getName'))
+          .value;
+  Computed<String?>? _$getGraduationComputed;
+
+  @override
+  String? get getGraduation =>
+      (_$getGraduationComputed ??= Computed<String?>(() => super.getGraduation,
+              name: 'UserControllerBase.getGraduation'))
+          .value;
+  Computed<int?>? _$getYearComputed;
+
+  @override
+  int? get getYear => (_$getYearComputed ??= Computed<int?>(() => super.getYear,
+          name: 'UserControllerBase.getYear'))
+      .value;
+  Computed<List<String>>? _$getCurrentCoursesComputed;
+
+  @override
+  List<String> get getCurrentCourses => (_$getCurrentCoursesComputed ??=
+          Computed<List<String>>(() => super.getCurrentCourses,
+              name: 'UserControllerBase.getCurrentCourses'))
+      .value;
+
   late final _$userDataMissingAtom =
       Atom(name: 'UserControllerBase.userDataMissing', context: context);
 
@@ -118,7 +160,7 @@ mixin _$UserController on UserControllerBase, Store {
       AsyncAction('UserControllerBase.getUserData', context: context);
 
   @override
-  Future<UserModel?> getUserData() {
+  Future<Map<dynamic, dynamic>> getUserData() {
     return _$getUserDataAsyncAction.run(() => super.getUserData());
   }
 
@@ -138,12 +180,13 @@ mixin _$UserController on UserControllerBase, Store {
     return _$resetUserDataAsyncAction.run(() => super.resetUserData());
   }
 
-  late final _$getCurrentCoursesAsyncAction =
-      AsyncAction('UserControllerBase.getCurrentCourses', context: context);
+  late final _$fetchCurrentCoursesAsyncAction =
+      AsyncAction('UserControllerBase.fetchCurrentCourses', context: context);
 
   @override
-  Future<void> getCurrentCourses() {
-    return _$getCurrentCoursesAsyncAction.run(() => super.getCurrentCourses());
+  Future<void> fetchCurrentCourses() {
+    return _$fetchCurrentCoursesAsyncAction
+        .run(() => super.fetchCurrentCourses());
   }
 
   late final _$insertCurrentCoursesAsyncAction =
@@ -177,33 +220,22 @@ mixin _$UserController on UserControllerBase, Store {
       ActionController(name: 'UserControllerBase', context: context);
 
   @override
-  String? getName() {
+  void setUserDataMissing(bool status) {
     final _$actionInfo = _$UserControllerBaseActionController.startAction(
-        name: 'UserControllerBase.getName');
+        name: 'UserControllerBase.setUserDataMissing');
     try {
-      return super.getName();
+      return super.setUserDataMissing(status);
     } finally {
       _$UserControllerBaseActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  String? getGraduation() {
+  void setFirstLogin(bool status) {
     final _$actionInfo = _$UserControllerBaseActionController.startAction(
-        name: 'UserControllerBase.getGraduation');
+        name: 'UserControllerBase.setFirstLogin');
     try {
-      return super.getGraduation();
-    } finally {
-      _$UserControllerBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  int? getYear() {
-    final _$actionInfo = _$UserControllerBaseActionController.startAction(
-        name: 'UserControllerBase.getYear');
-    try {
-      return super.getYear();
+      return super.setFirstLogin(status);
     } finally {
       _$UserControllerBaseActionController.endAction(_$actionInfo);
     }
@@ -243,11 +275,11 @@ mixin _$UserController on UserControllerBase, Store {
   }
 
   @override
-  void setFirstLogin(bool status) {
+  void setCurrentCourses(List<String> courses) {
     final _$actionInfo = _$UserControllerBaseActionController.startAction(
-        name: 'UserControllerBase.setFirstLogin');
+        name: 'UserControllerBase.setCurrentCourses');
     try {
-      return super.setFirstLogin(status);
+      return super.setCurrentCourses(courses);
     } finally {
       _$UserControllerBaseActionController.endAction(_$actionInfo);
     }
@@ -261,7 +293,13 @@ firstLogin: ${firstLogin},
 name: ${name},
 graduation: ${graduation},
 year: ${year},
-currentCourses: ${currentCourses}
+currentCourses: ${currentCourses},
+getUserDataMissing: ${getUserDataMissing},
+getFirstLogin: ${getFirstLogin},
+getName: ${getName},
+getGraduation: ${getGraduation},
+getYear: ${getYear},
+getCurrentCourses: ${getCurrentCourses}
     ''';
   }
 }

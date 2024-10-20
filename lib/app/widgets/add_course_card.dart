@@ -1,4 +1,4 @@
-import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/user_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
@@ -67,28 +67,26 @@ class _AddCourseCardState extends State<AddCourseCard>
               child: Expanded(
                 child: Row(
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: 320,
-                          child: Text(
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
                             widget.course.name,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                                 fontSize: 18, color: AppColors.black),
                           ),
-                        ),
-                        FittedBox(
-                            fit: BoxFit.contain,
-                            child: Text(
-                              widget.course.code,
-                              style: const TextStyle(
-                                  fontSize: 12, color: AppColors.black),
-                            )),
-                      ],
+                          FittedBox(
+                              fit: BoxFit.contain,
+                              child: Text(
+                                widget.course.code,
+                                style: const TextStyle(
+                                    fontSize: 12, color: AppColors.black),
+                              )),
+                        ],
+                      ),
                     ),
-                    Expanded(child: Container()),
                     Stack(children: [
                       Container(
                         color: AppColors.white,

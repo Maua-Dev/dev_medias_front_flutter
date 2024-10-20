@@ -1,5 +1,5 @@
-import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
-import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/courses_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/user_controller.dart';
 import 'package:mobx/mobx.dart';
 part 'add_page_controller.g.dart';
 
@@ -20,7 +20,7 @@ abstract class AddPageControllerBase with Store {
   @action
   Future<void> loadCourses() async {
     setCoursesLoaded(false);
-    final result = await coursesController.getCourses();
+    final result = await coursesController.fetchCourses();
     result.removeWhere(
         (key, value) => userController.currentCourses.contains(value.code));
     availableCourses = ObservableMap<String, dynamic>.of(result);

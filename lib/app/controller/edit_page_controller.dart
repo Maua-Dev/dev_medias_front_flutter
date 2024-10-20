@@ -27,6 +27,9 @@ abstract class EditPageControllerBase with Store {
   double? finalScoreGrade;
 
   @observable
+  bool targetCalcError = false;
+
+  @observable
   TextEditingController finalScoreController = TextEditingController();
 
   @observable
@@ -75,10 +78,20 @@ abstract class EditPageControllerBase with Store {
     targetGrade = grade;
   }
 
+  @action setTargetCalcError(bool value) {
+    targetCalcError = value;
+  }
+
   // Desenha as notas meta na tela
   @action
   void renderTargetGrades(Map grades) {
     gradeRendered = false;
+    if (grades.containsKey("erro")) {
+      targetCalcError = true;
+      gradeRendered = true;
+      targetCalcInProgress = false;
+      return;
+    }
     final allGrades = grades["notas"]["provas"] + grades["notas"]["trabalhos"];
     int index = 0;
     // Define os valores das notas restantes como as metas recebidas
@@ -96,6 +109,7 @@ abstract class EditPageControllerBase with Store {
     editController.finalScoreGrade = targetGrade;
     editController.finalScoreType = "targetcalc";
     gradeRendered = true;
+    targetCalcInProgress = false;
   }
 
   @action
@@ -117,7 +131,7 @@ abstract class EditPageControllerBase with Store {
     gradeRendered = true;
   }
 
-  // De acordo com as notas recebias como parâmetro, cria os controladores de notas
+  // De acordo com as notas recebidas como parâmetro, cria os controladores de notas
   @action
   void buildGrades(List<dynamic>? grades) {
     for (var grade in grades!) {
@@ -153,14 +167,21 @@ abstract class EditPageControllerBase with Store {
       }
     });
     // Obtém as notas meta e devolve um mapa
-    Map targetGrades = await gradeController.getTargetGrades(filteredGrades, weights, targetGrade.toDouble(), courseCode);
+    Map targetGrades = {};
+    try {
+        targetGrades = await gradeController.getTargetGrades(filteredGrades, weights, targetGrade.toDouble(), courseCode);
+    } catch (e) {
+        targetGrades = {"erro": "Erro ao calcular as notas meta."};
+    }
+
     // Pega o mapa e utiliza ele para alterar os valores da tela
     renderTargetGrades(targetGrades);
   }
 
   // Calcula a nota final de acordo com as notas inseridas pelo usuário
   @action
-  void calcFinalScore(Map<String, dynamic> grades, Map<String, dynamic> weights) {
+  void calcFinalScore(Map<String, dynamic> weights) {
+
     // Arrendonda número para o múltiplo de 0.5 mais próximo
     double roundToNearestHalf(double number) {
       return (number * 2).round() / 2;
@@ -179,7 +200,7 @@ abstract class EditPageControllerBase with Store {
 
     auxGrades.forEach((key, grade) {
       double weight = weights[key] ?? 0;
-      productSum += grade * weight;
+      productSum += grade! * weight;
       weightSum += weight;
     });
 

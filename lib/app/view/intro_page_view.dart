@@ -18,27 +18,30 @@ class _IntroPageState extends State<IntroPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: AppColors.background,
-        body: Center(
-            child: Observer(
-                builder: (_) => AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    transitionBuilder: (child, animation) {
-                      return FadeTransition(
-                        opacity: animation,
-                        child: child,
-                      );
-                    },
-                    child: const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                      child: StartingDataForm(),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: AppColors.background,
+          body: Center(
+              child: Observer(
+                  builder: (_) => AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      transitionBuilder: (child, animation) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child: child,
+                        );
+                      },
+                      child: const Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                        child: StartingDataForm(),
+                      )
                     )
                   )
                 )
-              )
-            );
+              ),
+    );
   }
 }

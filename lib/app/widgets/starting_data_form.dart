@@ -1,6 +1,7 @@
-import 'package:dev_medias_front_flutter/app/controller/courses_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/courses_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/graduations_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/intro_page_controller.dart';
-import 'package:dev_medias_front_flutter/app/controller/user_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/user_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/user.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
@@ -93,20 +94,20 @@ class _StartingDataFormState extends State<StartingDataForm> {
                         userController.setGraduation(s!);
                       },
                       menuHeight: 200,
-                      menuStyle: MenuStyle(
+                      menuStyle: const MenuStyle(
                         maximumSize:
                             WidgetStatePropertyAll(Size.fromWidth(120)),
                         backgroundColor:
                             WidgetStatePropertyAll(AppColors.white),
                       ),
                       dropdownMenuEntries:
-                          coursesController.getDropdownInputStrings().map((s) {
+                          graduationsController.getDropdownInputStrings().map((s) {
                         return DropdownMenuEntry<String>(
                           style: MenuItemButton.styleFrom(
-                              textStyle: TextStyle(fontSize: 20),
+                              textStyle: const TextStyle(fontSize: 20),
                               backgroundColor: AppColors.white),
                           value: s,
-                          label: '$s - ${coursesController.allGrads?[s]}',
+                          label: '$s - ${graduationsController.allGrads?[s]}',
                         );
                       }).toList()),
                 ],
@@ -155,7 +156,7 @@ class _StartingDataFormState extends State<StartingDataForm> {
                         year: int.parse(yearController.text)));
                     await userController.loadInitialCourses(graduationController.text, int.parse(yearController.text));
                     introPageController.setLoginSuccesful(true);
-                    Navigator.pushNamed(context, '/home');
+                    Navigator.pushReplacementNamed(context, '/home');
                   }
                 },
                 style: TextButton.styleFrom(

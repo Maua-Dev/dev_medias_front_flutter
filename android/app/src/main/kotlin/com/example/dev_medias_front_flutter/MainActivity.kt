@@ -1,4 +1,4 @@
-package com.example.dev_medias_front_flutter
+package com.dev_medias_front_rn
 
 import io.flutter.embedding.android.FlutterActivity
 

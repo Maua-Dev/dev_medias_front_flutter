@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+        <user-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="dev_medias_front_flutter"
-        android:name="${applicationName}"
+        android:name="DevMédias"
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true">
         <activity

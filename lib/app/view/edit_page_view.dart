@@ -93,21 +93,21 @@ class _EditPageState extends State<EditPage> {
                   ),
                 ),
                 // Menu Matéria
-                SingleChildScrollView(
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height - 350,
-                    child: Observer(
-                      builder: (_) => Container(
-                          decoration: BoxDecoration(
-                              color: const Color.fromRGBO(255, 255, 255, 1),
-                              borderRadius: Round.primary),
-                          // Ternário necessário para carregar as cores das notas
-                          child: editController.gradeRendered
-                          ? Column(
+                SizedBox(
+                  height: MediaQuery.of(context).size.height - 350,
+                  child: Observer(
+                    builder: (_) => Container(
+                        decoration: BoxDecoration(
+                            color: const Color.fromRGBO(255, 255, 255, 1),
+                            borderRadius: Round.primary),
+                        // Ternário necessário para carregar as cores das notas
+                        child: editController.gradeRendered && editController.targetCalcInProgress == false
+                        ? SingleChildScrollView(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              // Menu de notas se não tiver trabalhos e provas
-                              widget.course.exams!.isEmpty &&
-                                      widget.course.assignments!.isEmpty
+                              // Menu de notas se não tiver trabalhos e nem provas
+                              ((widget.course.exams?.isEmpty ?? true) && (widget.course.assignments?.isEmpty ?? true))
                                   ? Padding(
                                     padding: const EdgeInsets.all(16),
                                     child: Column(
@@ -127,7 +127,7 @@ class _EditPageState extends State<EditPage> {
                                                   ),
                                                   IconButton(
                                                       icon: const Icon(
-                                                            Icons.remove,
+                                                            Icons.close,
                                                             color: AppColors.gray,
                                                             size: 30,
                                                        ),
@@ -149,7 +149,7 @@ class _EditPageState extends State<EditPage> {
                                     ),
                                   )
                                   : Container(),
-                              // Menu de notas se não tiver provas
+                              // Menu de notas se tiver só provas
                               widget.course.exams!.isNotEmpty
                                   ? Padding(
                                       padding: const EdgeInsets.all(16),
@@ -174,51 +174,14 @@ class _EditPageState extends State<EditPage> {
                                               ),
                                             IconButton(
                                                 icon: const Icon(
-                                                    Icons.remove,
+                                                    Icons.close,
                                                     color: AppColors.red,
                                                     size: 30,
                                                 ),
                                                 onPressed: () {
-
+                                                  _showErasePopup(context, widget.course);
                                                 },
                                             ),
-                                        ],
-                                      ),
-                                    )
-                                  : Container(),
-                              // Menu de notas se não tiver trabalhos
-                              widget.course.assignments!.isNotEmpty
-                                  ? Padding(
-                                      padding: const EdgeInsets.all(16),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                        widget.course.exams!.isEmpty ?
-                                          IconButton(
-                                                icon: const Icon(
-                                                    Icons.import_contacts,
-                                                    color: AppColors.red,
-                                                    size: 30,
-                                                ),
-                                                onPressed: () {
-                                                    _showCourseDefinitions(context, widget.course);
-                                                },
-                                           ) : Container(),
-                                          const Text("Trabalhos",
-                                              style: TextStyle(
-                                                  color: AppColors.black,
-                                                  fontSize: 20)),
-                                        widget.course.exams!.isEmpty ?
-                                        IconButton(
-                                                icon: const Icon(
-                                                    Icons.remove,
-                                                    color: AppColors.red,
-                                                    size: 30,
-                                                ),
-                                                onPressed: () {
-
-                                                },
-                                           ) : Container(),
                                         ],
                                       ),
                                     )
@@ -244,6 +207,43 @@ class _EditPageState extends State<EditPage> {
                                   }
                                 )
                               ),
+                              // Menu de notas se tiver só trabalhos
+                              widget.course.assignments!.isNotEmpty
+                                  ? Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                        widget.course.exams!.isEmpty ?
+                                          IconButton(
+                                                icon: const Icon(
+                                                    Icons.import_contacts,
+                                                    color: AppColors.red,
+                                                    size: 30,
+                                                ),
+                                                onPressed: () {
+                                                    _showCourseDefinitions(context, widget.course);
+                                                },
+                                           ) : Container(),
+                                          const Text("Trabalhos",
+                                              style: TextStyle(
+                                                  color: AppColors.black,
+                                                  fontSize: 20)),
+                                        widget.course.exams!.isEmpty ?
+                                        IconButton(
+                                                icon: const Icon(
+                                                    Icons.close,
+                                                    color: AppColors.red,
+                                                    size: 30,
+                                                ),
+                                                onPressed: () {
+
+                                                },
+                                           ) : Container(),
+                                        ],
+                                      ),
+                                    )
+                                  : Container(),
                               Wrap(
                                   runSpacing: 4,
                                   spacing: 4,
@@ -253,19 +253,18 @@ class _EditPageState extends State<EditPage> {
                                     return Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: GradeInput(
-                                        name: widget
-                                            .course.assignments![index].name,
+                                        name: widget.course.assignments != null ? widget
+                                            .course.assignments![index].name : "",
                                         labelled: true,
-                                        type: editController.gradeTypes[widget.course.assignments![index].name]!,
+                                        type: editController.gradeTypes[widget.course.assignments![index].name] != null ? editController.gradeTypes[widget.course.assignments![index].name]! : "normal",
                                         controller:
                                             editController.gradeControllers[widget
                                                 .course.assignments![index].name],
                                       ),
                                     );
                                   })),
-                              Expanded(child: Container()),
                               Padding(
-                                padding: const EdgeInsets.only(top: 32, bottom: 32),
+                                padding: const EdgeInsets.only(top: 96, bottom: 32),
                                 child: Column(
                                   children: [
                                     const Padding(
@@ -285,21 +284,21 @@ class _EditPageState extends State<EditPage> {
                                 ),
                               )
                             ],
-                          )
-                          : const SizedBox(
-                            width: double.maxFinite,
-                            child: Center(
-                              child: SizedBox(
-                                width: 50,
-                                height: 50,
-                                child: CircularProgressIndicator(
-                                    color: AppColors.red,
-                                  ),
-                              ),
+                          ),
+                        )
+                        : const SizedBox(
+                          width: double.maxFinite,
+                          child: Center(
+                            child: SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: CircularProgressIndicator(
+                                  color: AppColors.red,
+                                ),
                             ),
-                          )
-                        ),
-                    ),
+                          ),
+                        )
+                      ),
                   ),
                 ),
                 Padding(
@@ -403,6 +402,7 @@ class _EditPageState extends State<EditPage> {
                                                     padding: const EdgeInsets.symmetric(
                                                         vertical: 7, horizontal: 7)),
                                                     onPressed: isDisabled ? null : () async {
+                                                      Navigator.pop(context);
                                                       editController.setTargetCalcProgress(true);
                                                       editController.setTargetGrade(
                                                           double.parse(
@@ -414,15 +414,16 @@ class _EditPageState extends State<EditPage> {
                                                         weights[grade.name] =
                                                             grade.weight;
                                                       }
-                                                      await editController
-                                                          .calcTargetGrade(
-                                                              editController.grades,
-                                                              weights);
-                                                      final gradesToSave = editController.formatGradesForSaving();
-                                                      gradeController.insertGrades(editController.getCourseCode(), gradesToSave);
-                                                      editController.setTargetCalcProgress(false);
-                                                      if (editController.targetCalcError == false) {
-                                                        Navigator.pop(context);
+                                                      try {
+                                                        await editController
+                                                            .calcTargetGrade(
+                                                                editController.grades,
+                                                                weights);
+                                                        final gradesToSave = editController.formatGradesForSaving();
+                                                        gradeController.insertGrades(editController.getCourseCode(), gradesToSave);
+                                                        editController.setTargetCalcProgress(false);
+                                                      } catch(e) {
+                                                        editController.setTargetCalcProgress(false);
                                                       }
                                                     },
                                                     child: Text("Confirmar", style: TextStyle(color: isDisabled ? AppColors.white.withOpacity(0.5) : AppColors.white),)),
@@ -518,6 +519,7 @@ class _EditPageState extends State<EditPage> {
                                                 editController.calcFinalScore(weights);
                                                 final gradesToSave = editController.formatGradesForSaving();
                                                 gradeController.insertGrades(editController.getCourseCode(), gradesToSave);
+                                                Navigator.pop(context);
                                               },
                                               child: const Text("Confirmar"))
                                         ],
@@ -558,6 +560,65 @@ class _EditPageState extends State<EditPage> {
       ),
     );
   }
+}
+
+Future _showErasePopup(BuildContext context, CourseModel course) {
+  return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: const SizedBox(
+                height: 160,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                        Padding(
+                          padding: EdgeInsets.only(bottom:8),
+                          child: Text(
+                              "Tem certeza?",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: AppColors.red),
+                          ),
+                        ),
+                        Text(
+                             "Todas as notas vindas da meta de notas serão apagadas.",
+                          style: TextStyle(
+                             fontSize: 14,
+                             color: AppColors.black),
+                        )
+                    ],
+                ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  editController.eraseTargetGrades();
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                    'Apagar',
+                    style: TextStyle(
+                            fontSize: 16,
+                            color: AppColors.red),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                    'Fechar',
+                    style: TextStyle(
+                            fontSize: 16,
+                            color: AppColors.red),
+                ),
+              ),
+            ],
+          );
+        }
+    );
 }
 
 

@@ -23,6 +23,7 @@ abstract class GradeControllerBase with Store {
     return subjectGrades;
   }
 
+
   @action
   Future<void> insertGrades (String code, Map<String, dynamic> grades) async {
     await Hive.initFlutter();

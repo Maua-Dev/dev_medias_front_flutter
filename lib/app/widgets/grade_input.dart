@@ -35,7 +35,7 @@ class GradeInput extends StatelessWidget {
               )
             : Container(),
         SizedBox(
-          width: 80,
+          width: MediaQuery.of(context).size.width * 0.2,
           child: Observer(
             builder: (_) => TextField(
               controller: controller,

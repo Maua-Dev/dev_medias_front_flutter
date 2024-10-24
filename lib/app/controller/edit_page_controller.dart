@@ -178,13 +178,31 @@ abstract class EditPageControllerBase with Store {
     renderTargetGrades(targetGrades);
   }
 
+  @action
+  void eraseTargetGrades() {
+    gradeTypes.forEach((key, value) {
+      if (value == "targetcalc") {
+        grades[key] = null;
+        gradeControllers[key]!.text = "";
+        gradeTypes[key] = "normal";
+      }
+    });
+    if (finalScoreType == "targetcalc") {
+      finalScoreGrade = null;
+      finalScoreController.text = "";
+      finalScoreType = "normal";
+    }
+    final formattedGrades = editController.formatGradesForSaving();
+    gradeController.insertGrades(editController.getCourseCode(), formattedGrades);
+  }
+
   // Calcula a nota final de acordo com as notas inseridas pelo usuário
   @action
   void calcFinalScore(Map<String, dynamic> weights) {
 
-    // Arrendonda número para o múltiplo de 0.5 mais próximo
-    double roundToNearestHalf(double number) {
-      return (number * 2).round() / 2;
+    // Arrendonda número para o múltiplo de 0.05 mais próximo
+    double round(double number) {
+      return (number * 20).round() / 20;
     }
 
     // Calcula a nota final
@@ -208,7 +226,7 @@ abstract class EditPageControllerBase with Store {
       throw ArgumentError('A soma dos pesos não pode ser zero.');
     }
 
-    final result = roundToNearestHalf(productSum / weightSum);
+    final result = round(productSum / weightSum);
 
     // Atualiza o resultado final na tela
     finalScoreController.text = "$result";

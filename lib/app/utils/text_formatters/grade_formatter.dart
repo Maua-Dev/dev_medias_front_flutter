@@ -9,7 +9,7 @@ class GradeInputFormatter extends TextInputFormatter {
     String newText = '';
     final int newTextLength = newValue.text.length;
     if (newTextLength == 2) {
-      if (newValue.text[1] == "." || newValue.text[1] == ",") {
+      if ((newValue.text[1] == "." || newValue.text[1] == ",") || (!['0','5'].contains(newValue.text[1]))) {
         newText = newValue.text[0];
         return TextEditingValue(text: newText);
       } else {

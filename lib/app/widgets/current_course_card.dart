@@ -1,4 +1,4 @@
-import 'package:dev_medias_front_flutter/app/controller/home_page_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/common_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
@@ -22,6 +22,7 @@ class CurrentCourseCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed('/edit', arguments: {'course': course});
+        commonController.setPreviousPage("/home");
       },
       child: ClipRRect(
         borderRadius: Round.primary,
@@ -36,17 +37,22 @@ class CurrentCourseCard extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                       borderRadius: Round.secondary, color: AppColors.red),
-                  child: Center(
-                      child: Padding(
+                  child: Padding(
                     padding: const EdgeInsets.all(10),
-                    child: SizedBox(
-                      child: Text(
-                        finalScore,
-                        style:
-                            const TextStyle(fontSize: 18, color: AppColors.white),
+                    child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      minWidth: 28,
+                      minHeight: 20,
+                    ),
+                  child: Center(
+                    child: Text(
+                      finalScore == 'null' ? "N.A" : finalScore,
+                      style:
+                          const TextStyle(fontSize: 18, color: AppColors.white),
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                 ),
               ),
               Expanded(

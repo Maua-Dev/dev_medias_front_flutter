@@ -72,13 +72,13 @@ jobs:
 
       - name: Build Android
         run: |
-          flutter build appbundle --release
+          flutter build appbundle --release --build-name=2.0.1 --build-number=${{ steps.build_android.app_build_number }}
 
       - name: Upload to artifacts
         uses: actions/upload-artifact@v4
         with:
           name: app-release.aab
-          path: android/build/app/outputs/bundle/release/app-release.aab
+          path: android/build/app/outputs/bundle/release/
 
   deploy_to_play_store:
     needs: build_android
@@ -88,6 +88,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: app-release.aab
+          path: android/build/app/outputs/bundle/release/
 
       - name: Setup Fastlane
         uses: ruby/setup-ruby@v1

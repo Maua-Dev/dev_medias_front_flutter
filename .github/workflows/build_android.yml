@@ -79,3 +79,25 @@ jobs:
         with:
           name: app-release.aab
           path: android/build/app/outputs/bundle/release/app-release.aab
+
+  deploy_to_play_store:
+    needs: build_android
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release.aab
+
+      - name: Setup Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "2.6"
+          bundler-cache: true
+          working-directory: android
+
+      - name: Exec fastlane
+        run: bundle exec fastlane homolog
+        env:
+          PLAY_STORE_CONFIG_JSON: ${{ secrets.PLAY_STORE_CONFIG_JSON }}
+        working-directory: android

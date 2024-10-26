@@ -38,6 +38,9 @@ jobs:
       - name: Get flutter dependencies
         run: flutter pub get
 
+      - name: Bundle lock
+        run: bundle lock --add-platform x86_64-linux
+
       - name: Setup Fastlane
         uses: ruby/setup-ruby@v1
         with:
@@ -70,7 +73,6 @@ jobs:
 
       - name: Build Android
         run: |
-          bundlelock --add-platform x86_64-linux
           flutter build appbundle --release
 
       - name: Upload to artifacts

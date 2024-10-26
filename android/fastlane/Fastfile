@@ -5,20 +5,11 @@ platform :android do
   lane :test do
     gradle(task: "test")
   end
-
-  desc "Submit a new build to the Google Play internal track"
-  lane :dev do
-    upload_to_play_store(
-      track: 'alpha',
-      aab: '../build/app/outputs/bundle/release/app-release.aab',
-      json_key_data: ENV['PLAY_STORE_CONFIG_JSON'],
-      )
-  end
   
-  desc "Submit a new Beta Build to Google Play beta"
+  desc "Submit a new Beta Build to Google Play Closed"
   lane :homolog do
     upload_to_play_store(
-      track: 'beta',
+      track: 'alpha',
       aab: '../build/app/outputs/bundle/release/app-release.aab',
       json_key_data: ENV['PLAY_STORE_CONFIG_JSON'],
       )

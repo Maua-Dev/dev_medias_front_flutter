@@ -77,7 +77,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-release.aab
-          path: android/build/app/outputs/bundle/release/
+          path: build/app/outputs/bundle/release/
 
   deploy_to_play_store:
     needs: build_android
@@ -87,7 +87,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: app-release.aab
-          path: android/build/app/outputs/bundle/release/
+          path: build/app/outputs/bundle/release/
 
       - name: Setup Fastlane
         uses: ruby/setup-ruby@v1

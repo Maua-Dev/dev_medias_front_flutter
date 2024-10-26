@@ -40,7 +40,7 @@ jobs:
       - name: Setup Fastlane
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.0"
+          ruby-version: "2.6"
           bundler-cache: true
           working-directory: android
 

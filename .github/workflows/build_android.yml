@@ -3,7 +3,7 @@ name: Build and Deploy Android
 on:
   push:
     branches:
-      - deploy-android
+      - feature/deploy-android
   workflow_call:
 
 jobs:

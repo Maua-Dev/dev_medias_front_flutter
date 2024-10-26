@@ -24,6 +24,7 @@ jobs:
           app_build_number=$((${{ github.event.number }} + 80))
           app_build_name="2.0.1"
           echo "app_build_number=$app_build_number" >> $GITHUB_ENV
+          echo "app_build_name=$app_build_name" >> $GITHUB_ENV
 
       - name: Setup Java Version
         uses: actions/setup-java@v1
@@ -70,7 +71,7 @@ jobs:
 
       - name: Build Android
         run: |
-          flutter build appbundle --release --build-name=2.0.1 --build-number=$app_build_number
+          flutter build appbundle --release --build-name=$app_build_name --build-number=$app_build_number
 
       - name: Upload to artifacts
         uses: actions/upload-artifact@v4

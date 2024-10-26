@@ -333,6 +333,17 @@ mixin _$EditPageController on EditPageControllerBase, Store {
   }
 
   @override
+  void eraseTargetGrades() {
+    final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
+        name: 'EditPageControllerBase.eraseTargetGrades');
+    try {
+      return super.eraseTargetGrades();
+    } finally {
+      _$EditPageControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void calcFinalScore(Map<String, dynamic> weights) {
     final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
         name: 'EditPageControllerBase.calcFinalScore');

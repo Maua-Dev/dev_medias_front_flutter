@@ -54,32 +54,36 @@ class _AddPageState extends State<AddPage> {
                     builder: (_) => addController.coursesLoaded ?
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.7,
-                        child: Expanded(
-                          child: ScrollConfiguration(
-                            behavior: ScrollConfiguration.of(context).copyWith(
-                              scrollbars: false,
-                              overscroll: false,
-                              physics: const BouncingScrollPhysics(),
-                            ),
-                            child: RawScrollbar(
-                              child: ListView.builder(
-                                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                                padding: EdgeInsets.zero,
-                                shrinkWrap: true,
-                                itemCount: addController.availableCourses?.length,
-                                itemBuilder: (context, index) {
-                                  String? key =
-                                      addController.availableCourses?.keys.toList().elementAt(index);
-                                  CourseModel course = addController.availableCourses?[key];
-                                  return AddCourseCard(
-                                    key: UniqueKey(),
-                                    index: index,
-                                    course: course,
-                                  );
-                                  },
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: ScrollConfiguration(
+                                behavior: ScrollConfiguration.of(context).copyWith(
+                                  scrollbars: false,
+                                  overscroll: false,
+                                  physics: const BouncingScrollPhysics(),
                                 ),
+                                child: RawScrollbar(
+                                  child: ListView.builder(
+                                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                                    padding: EdgeInsets.zero,
+                                    shrinkWrap: true,
+                                    itemCount: addController.availableCourses?.length,
+                                    itemBuilder: (context, index) {
+                                      String? key =
+                                          addController.availableCourses?.keys.toList().elementAt(index);
+                                      CourseModel course = addController.availableCourses?[key];
+                                      return AddCourseCard(
+                                        key: UniqueKey(),
+                                        index: index,
+                                        course: course,
+                                      );
+                                      },
+                                    ),
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ) : SizedBox(
                             height: MediaQuery.of(context).size.height * 0.7,

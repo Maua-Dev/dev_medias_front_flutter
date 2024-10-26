@@ -64,43 +64,47 @@ class _AddCourseCardState extends State<AddCourseCard>
                   shape: RoundedRectangleBorder(borderRadius: Round.primary),
                   padding:
                       const EdgeInsets.symmetric(vertical: 7, horizontal: 7)),
-              child: Expanded(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.course.name,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                fontSize: 18, color: AppColors.black),
-                          ),
-                          FittedBox(
-                              fit: BoxFit.contain,
-                              child: Text(
-                                widget.course.code,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.course.name,
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                    fontSize: 12, color: AppColors.black),
-                              )),
-                        ],
-                      ),
+                                    fontSize: 18, color: AppColors.black),
+                              ),
+                              FittedBox(
+                                  fit: BoxFit.contain,
+                                  child: Text(
+                                    widget.course.code,
+                                    style: const TextStyle(
+                                        fontSize: 12, color: AppColors.black),
+                                  )),
+                            ],
+                          ),
+                        ),
+                        Stack(children: [
+                          Container(
+                            color: AppColors.white,
+                            height: 30,
+                            width: 30,
+                          ),
+                          const Icon(
+                            Icons.add_box,
+                            color: AppColors.red,
+                            size: 40,
+                          ),
+                        ]),
+                      ],
                     ),
-                    Stack(children: [
-                      Container(
-                        color: AppColors.white,
-                        height: 30,
-                        width: 30,
-                      ),
-                      const Icon(
-                        Icons.add_box,
-                        color: AppColors.red,
-                        size: 40,
-                      ),
-                    ]),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

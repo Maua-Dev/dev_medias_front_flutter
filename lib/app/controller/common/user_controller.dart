@@ -135,7 +135,7 @@ abstract class UserControllerBase with Store {
   Future<void> loadInitialCourses(String code, int year) async {
     code = code.split(" ")[0];
     coursesController.allCourses?.forEach((key, value) async {
-      if (value.courses.containsKey(code)) {
+      if (value.courses is Map && value.courses.containsKey(code)) {
         if (value.courses[code] == year) {
           await insertCurrentCourses(key);
         }

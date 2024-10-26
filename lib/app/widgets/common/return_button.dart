@@ -21,8 +21,8 @@ class ReturnButton extends StatelessWidget {
       onPressed: prevPage != null ? () {
         // Navegar para a tela anterior se tiver uma página anterior especificada no CommonController
           String? pageToPush = prevPage;
-          commonController.setPreviousPage(null);
           Navigator.pushNamed(context, pageToPush);
+          commonController.setPreviousPage(null);
       } : null,
     );
   }

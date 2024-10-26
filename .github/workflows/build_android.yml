@@ -21,7 +21,7 @@ jobs:
 
       - name: Get Version
         run: |
-          app_build_number=${{ github.event.number }}
+          app_build_number=$((${{ github.run_number }} + 54))
           app_build_name="2.0.1"
           echo "app_build_number=$app_build_number" >> $GITHUB_ENV
           echo "app_build_name=$app_build_name" >> $GITHUB_ENV

@@ -70,6 +70,7 @@ jobs:
 
       - name: Build Android
         run: |
+          bundlelock --add-platform x86_64-linux
           flutter build appbundle --release
 
       - name: Upload to artifacts

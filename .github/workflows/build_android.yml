@@ -32,7 +32,7 @@ jobs:
       - name: Setup Flutter Version
         uses: subosito/flutter-action@v1
         with:
-          flutter-version: "3.13.1"
+          flutter-version: "3.24.3"
 
       - name: Get flutter dependencies
         run: flutter pub get
@@ -40,7 +40,7 @@ jobs:
       - name: Setup Fastlane
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "2.6"
+          ruby-version: "3.2.0"
           bundler-cache: true
           working-directory: android
 

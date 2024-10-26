@@ -13,9 +13,6 @@ jobs:
     permissions:
       id-token: write
       contents: write
-    outputs:
-      app_build_name: 2.0.1 # The version that's shown in the store
-      app_build_number: ${{ steps.build_android.app_build_number }} # The number Play Console understands
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,6 +22,7 @@ jobs:
       - name: Get Version
         run: |
           app_build_number=$((${{ github.event.number }} + 80))
+          app_build_name="2.0.1"
           echo "app_build_number=$app_build_number" >> $GITHUB_ENV
 
       - name: Setup Java Version
@@ -72,7 +70,7 @@ jobs:
 
       - name: Build Android
         run: |
-          flutter build appbundle --release --build-name=2.0.1 --build-number=${{ steps.build_android.app_build_number }}
+          flutter build appbundle --release --build-name=2.0.1 --build-number=$app_build_number
 
       - name: Upload to artifacts
         uses: actions/upload-artifact@v4

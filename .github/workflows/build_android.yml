@@ -3,7 +3,9 @@ name: Build and Deploy Android
 on:
   push:
     branches:
-      - feature/deploy-android
+      - homolog
+      - prod
+
   workflow_call:
 
 jobs:
@@ -102,7 +104,7 @@ jobs:
           working-directory: android
 
       - name: Exec fastlane
-        run: bundle exec fastlane homolog
+        run: bundle exec fastlane ${{github.ref_name}}
         env:
           PLAY_STORE_CONFIG_JSON: ${{ secrets.PLAY_STORE_CONFIG_JSON }}
         working-directory: android

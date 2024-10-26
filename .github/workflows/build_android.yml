@@ -10,6 +10,9 @@ jobs:
   build_android:
     environment: homolog
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
     outputs:
       app_build_name: 2.0.1 # The version that's shown in the store
       app_build_number: ${{ steps.build_android.app_build_number }} # The number Play Console understands
@@ -38,9 +41,9 @@ jobs:
         run: flutter pub get
 
       - name: Setup Fastlane
-        uses: ruby/setup-ruby@v1.197.0
+        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.0.0"
+          ruby-version: "2.6"
           bundler-cache: true
           working-directory: android
 

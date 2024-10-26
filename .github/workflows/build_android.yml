@@ -38,13 +38,10 @@ jobs:
       - name: Get flutter dependencies
         run: flutter pub get
 
-      - name: Bundle lock
-        run: bundle lock --add-platform x86_64-linux
-
       - name: Setup Fastlane
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4"
+          ruby-version: "2.2"
           bundler-cache: true
           working-directory: android
 

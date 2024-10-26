@@ -38,7 +38,7 @@ jobs:
         run: flutter pub get
 
       - name: Setup Fastlane
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@v1.197.0
         with:
           ruby-version: "3.2.0"
           bundler-cache: true

@@ -11,7 +11,7 @@ platform :android do
     upload_to_play_store(
       root_url: "https://androidpublisher.googleapis.com/",
       track: 'alpha',
-      aab: 'app/build/outputs/bundle/release/app-release.aab',
+      aab: 'build/app/outputs/bundle/release/app-release.aab',
       json_key_data: ENV['PLAY_STORE_CONFIG_JSON'],
       )
       
@@ -22,7 +22,7 @@ platform :android do
     upload_to_play_store(
       root_url: "https://androidpublisher.googleapis.com/",
       track: 'beta',
-      aab: 'app/build/outputs/bundle/release/app-release.aab',
+      aab: 'build/app/outputs/bundle/release/app-release.aab',
       json_key_data: ENV['PLAY_STORE_CONFIG_JSON'],
       )
   end
@@ -32,7 +32,7 @@ platform :android do
     upload_to_play_store(
       root_url: "https://androidpublisher.googleapis.com/",
       track: 'production',
-      aab: 'app/build/outputs/bundle/release/app-release.aab',
+      aab: 'build/app/outputs/bundle/release/app-release.aab',
       json_key_data: ENV['PLAY_STORE_CONFIG_JSON'],
       )
   end

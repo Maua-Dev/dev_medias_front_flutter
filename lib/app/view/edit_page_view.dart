@@ -47,7 +47,7 @@ class _EditPageState extends State<EditPage> {
           padding: const EdgeInsets.all(30),
           child: Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Expanded(
                   child: Container()
@@ -92,18 +92,19 @@ class _EditPageState extends State<EditPage> {
                   ),
                 ),
                 // Menu Matéria
-                SizedBox(
-                  height: MediaQuery.of(context).size.height - 350,
-                  child: Observer(
-                    builder: (_) => Container(
-                        decoration: BoxDecoration(
-                            color: const Color.fromRGBO(255, 255, 255, 1),
-                            borderRadius: Round.primary),
-                        // Ternário necessário para carregar as cores das notas
-                        child: editController.gradeRendered && editController.targetCalcInProgress == false
-                        ? SingleChildScrollView(
+                Observer(
+                  builder: (_) => Container(
+                      decoration: BoxDecoration(
+                          color: const Color.fromRGBO(255, 255, 255, 1),
+                          borderRadius: Round.primary),
+                      // Ternário necessário para carregar as cores das notas
+                      child: editController.gradeRendered && editController.targetCalcInProgress == false
+                      ? SingleChildScrollView(
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height - 350,
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               // Menu de notas se não tiver trabalhos e nem provas
                               ((widget.course.exams?.isEmpty ?? true) && (widget.course.assignments?.isEmpty ?? true))
@@ -267,43 +268,44 @@ class _EditPageState extends State<EditPage> {
                                       }),
                                   )
                                   : Container(),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 96, bottom: 32),
-                                child: Column(
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(bottom: 16.0),
-                                      child: Text("Média Final",
-                                          style: TextStyle(
-                                              color: AppColors.black,
-                                              fontSize: 20)),
-                                    ),
-                                    GradeInput(
+                              const Spacer(),
+                              Column(
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(bottom: 16.0),
+                                    child: Text("Média Final",
+                                        style: TextStyle(
+                                            color: AppColors.black,
+                                            fontSize: 20)),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 16.0),
+                                    child: GradeInput(
                                       labelled: false,
                                       controller: editController.finalScoreController,
                                       type: editController.finalScoreType,
                                       enabled: false,
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               )
                             ],
                           ),
-                        )
-                        : const SizedBox(
-                          width: double.maxFinite,
-                          child: Center(
-                            child: SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: CircularProgressIndicator(
-                                  color: AppColors.red,
-                                ),
-                            ),
+                        ),
+                      )
+                      : const SizedBox(
+                        width: double.maxFinite,
+                        child: Center(
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: CircularProgressIndicator(
+                                color: AppColors.red,
+                              ),
                           ),
-                        )
-                      ),
-                  ),
+                        ),
+                      )
+                    ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),

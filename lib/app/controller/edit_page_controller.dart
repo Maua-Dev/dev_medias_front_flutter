@@ -201,10 +201,8 @@ abstract class EditPageControllerBase with Store {
 
     // Arrendonda número para o múltiplo de 0.05 mais próximo
     double round(double number) {
-      print(number);
       // Multiplica por 10 para considerar a segunda casa decimal e aplica arredondamento
       double multiplied = number * 10;
-      print(multiplied);
 
       // Verifica se a segunda casa decimal é 5 ou mais
       if ((multiplied - multiplied.floor()) >= 0.5) {
@@ -227,7 +225,6 @@ abstract class EditPageControllerBase with Store {
     double weightSum = 0;
     assignmentWeight = assignmentWeight / 100;
     examWeight = examWeight / 100;
-    print(auxGrades);
 
     auxGrades.forEach((key, grade) {
       double weight = key[0] == "T" ? weights[key]*assignmentWeight : weights[key]*examWeight ?? 0;
@@ -238,8 +235,7 @@ abstract class EditPageControllerBase with Store {
     if (weightSum == 0) {
       throw ArgumentError('A soma dos pesos não pode ser zero.');
     }
-    print(productSum);
-    print(weightSum);
+    
     final result = round(productSum / weightSum);
 
     // Atualiza o resultado final na tela

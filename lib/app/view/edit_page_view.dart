@@ -293,9 +293,10 @@ class _EditPageState extends State<EditPage> {
                           ),
                         ),
                       )
-                      : const SizedBox(
+                      : SizedBox(
                         width: double.maxFinite,
-                        child: Center(
+                        height: MediaQuery.of(context).size.height - 350,
+                        child: const Center(
                           child: SizedBox(
                             width: 50,
                             height: 50,

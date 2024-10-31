@@ -25,7 +25,6 @@ class _EditPageState extends State<EditPage> {
   }
 
   Future<void> initializeAsync() async {
-      editController.resetGradeControllers();
       final grades = widget.course.exams! + widget.course.assignments!;
       editController.setCourseCode(widget.course.code);
       editController.buildGrades(grades);
@@ -186,27 +185,29 @@ class _EditPageState extends State<EditPage> {
                                       ),
                                     )
                                   : Container(),
-                              Wrap(
+                              widget.course.exams!.isNotEmpty
+                              ? Wrap(
                                   runSpacing: 4,
                                   spacing: 4,
                                   alignment: WrapAlignment.center,
                                   children: List.generate(
-                                      widget.course.exams!.length, (index) {
+                                      widget.course.exams?.length ?? 0 , (index) {
                                     return Observer(
                                       builder: (_) => Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: GradeInput(
-                                          name: widget.course.exams![index].name,
+                                          name: widget.course.exams?[index].name,
                                           labelled: true,
-                                          type: editController.gradeTypes[widget.course.exams![index].name]!,
+                                          type: editController.gradeTypes[widget.course.exams?[index].name] != null ? editController.gradeTypes[widget.course.exams?[index].name]! : "normal",
                                           controller: editController.gradeControllers[widget
-                                                  .course.exams![index].name],
+                                                  .course.exams?[index].name],
                                         ),
                                       ),
                                     );
                                   }
                                 )
-                              ),
+                              )
+                              : Container(),
                               // Menu de notas se tiver só trabalhos
                               widget.course.assignments!.isNotEmpty
                                   ? Padding(
@@ -214,7 +215,7 @@ class _EditPageState extends State<EditPage> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                        widget.course.exams!.isEmpty ?
+                                        widget.course.assignments!.isEmpty ?
                                           IconButton(
                                                 icon: const Icon(
                                                     Icons.import_contacts,
@@ -244,25 +245,28 @@ class _EditPageState extends State<EditPage> {
                                       ),
                                     )
                                   : Container(),
-                              Wrap(
-                                  runSpacing: 4,
-                                  spacing: 4,
-                                  alignment: WrapAlignment.center,
-                                  children: List.generate(
-                                      widget.course.assignments!.length, (index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: GradeInput(
-                                        name: widget.course.assignments != null ? widget
-                                            .course.assignments![index].name : "",
-                                        labelled: true,
-                                        type: editController.gradeTypes[widget.course.assignments![index].name] != null ? editController.gradeTypes[widget.course.assignments![index].name]! : "normal",
-                                        controller:
-                                            editController.gradeControllers[widget
-                                                .course.assignments![index].name],
-                                      ),
-                                    );
-                                  })),
+                              widget.course.assignments!.isNotEmpty
+                                  ? Wrap(
+                                      runSpacing: 4,
+                                      spacing: 4,
+                                      alignment: WrapAlignment.center,
+                                      children: List.generate(
+                                          widget.course.assignments!.length, (index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: GradeInput(
+                                            name: widget.course.assignments != null ? widget
+                                                .course.assignments![index].name : "",
+                                            labelled: true,
+                                            type: editController.gradeTypes[widget.course.assignments?[index].name] != null ? editController.gradeTypes[widget.course.assignments![index].name]! : "normal",
+                                            controller:
+                                                editController.gradeControllers[widget
+                                                    .course.assignments?[index].name],
+                                          ),
+                                        );
+                                      }),
+                                  )
+                                  : Container(),
                               Padding(
                                 padding: const EdgeInsets.only(top: 96, bottom: 32),
                                 child: Column(
@@ -516,7 +520,7 @@ class _EditPageState extends State<EditPage> {
                                                     widget.course.assignments!) {
                                                   weights[grade.name] = grade.weight;
                                                 }
-                                                editController.calcFinalScore(weights);
+                                                editController.calcFinalScore(weights, widget.course.examWeight, widget.course.assignmentWeight);
                                                 final gradesToSave = editController.formatGradesForSaving();
                                                 gradeController.insertGrades(editController.getCourseCode(), gradesToSave);
                                                 Navigator.pop(context);
@@ -628,7 +632,7 @@ Future _showErasePopup(BuildContext context, CourseModel course) {
         builder: (BuildContext context) {
           return AlertDialog(
             content: SizedBox(
-                height: 160,
+                height: MediaQuery.of(context).size.height*0.25,
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

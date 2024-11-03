@@ -36,41 +36,39 @@ class GradeInput extends StatelessWidget {
             : Container(),
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.2,
-          child: Observer(
-            builder: (_) => TextField(
-              controller: controller,
-              style: TextStyle(fontSize: 20, color: type == "normal" ? AppColors.black : AppColors.red),
-              textAlign: TextAlign.center,
-              keyboardType: TextInputType.number,
-              enabled: enabled,
-              onChanged: (String value) {
-                if (changes) {
-                    if (value.isNotEmpty) {
-                      editController.grades[name] = double.parse(value);
-                      editController.gradeControllers[name]?.text = value;
-                      editController.gradeTypes[name] = "normal";
-                    } else {
-                      editController.grades[name] = null;
-                      editController.gradeControllers[name]?.text = "";
-                      editController.gradeTypes[name] = "normal";
-                    }
-                }
-                final grades = editController.formatGradesForSaving();
-                gradeController.insertGrades(editController.getCourseCode(), grades);
-              },
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(4),
-                GradeInputFormatter(),
-              ],
-              decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                  fillColor: AppColors.white,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: Round.secondary,
-                    borderSide: const BorderSide(color: AppColors.red, width: 4),
-                  )),
-            ),
+          child: TextField(
+            controller: controller,
+            style: TextStyle(fontSize: 20, color: type == "normal" ? AppColors.black : AppColors.red),
+            textAlign: TextAlign.center,
+            keyboardType: TextInputType.number,
+            enabled: enabled,
+            onChanged: (String value) {
+              if (changes) {
+                  if (value.isNotEmpty) {
+                    editController.grades[name] = double.parse(value);
+                    editController.gradeControllers[name]?.text = value;
+                    editController.gradeTypes[name] = "normal";
+                  } else {
+                    editController.grades[name] = null;
+                    editController.gradeControllers[name]?.text = "";
+                    editController.gradeTypes[name] = "normal";
+                  }
+              }
+              final grades = editController.formatGradesForSaving();
+              gradeController.insertGrades(editController.getCourseCode(), grades);
+            },
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(4),
+              GradeInputFormatter(),
+            ],
+            decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                fillColor: AppColors.white,
+                filled: true,
+                border: OutlineInputBorder(
+                  borderRadius: Round.secondary,
+                  borderSide: const BorderSide(color: AppColors.red, width: 4),
+                )),
           ),
         )
       ],

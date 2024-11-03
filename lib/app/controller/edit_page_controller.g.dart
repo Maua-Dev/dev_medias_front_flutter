@@ -344,11 +344,12 @@ mixin _$EditPageController on EditPageControllerBase, Store {
   }
 
   @override
-  void calcFinalScore(Map<String, dynamic> weights) {
+  void calcFinalScore(Map<String, dynamic> weights, double examWeight,
+      double assignmentWeight) {
     final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
         name: 'EditPageControllerBase.calcFinalScore');
     try {
-      return super.calcFinalScore(weights);
+      return super.calcFinalScore(weights, examWeight, assignmentWeight);
     } finally {
       _$EditPageControllerBaseActionController.endAction(_$actionInfo);
     }

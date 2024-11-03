@@ -30,7 +30,7 @@ abstract class EditPageControllerBase with Store {
   bool targetCalcError = false;
 
   @observable
-  TextEditingController finalScoreController = TextEditingController();
+  TextEditingController finalScoreController = TextEditingController(text: "");
 
   @observable
   ObservableMap<String, String> gradeTypes =
@@ -116,14 +116,14 @@ abstract class EditPageControllerBase with Store {
   void renderGrades(Map newGrades) {
     gradeRendered = false;
     editController.grades.forEach((key, value) {
-      if (newGrades[key]["value"] != null) {
+      if (newGrades[key] != null && newGrades[key]["value"] != null) {
           editController.grades[key] = newGrades[key]["value"];
           editController.gradeControllers[key]!.text = "${newGrades[key]["value"]}";
           editController.gradeTypes[key] = newGrades[key]["type"];
           }
         }
       );
-    if (newGrades["finalScore"]["value"] != null) {
+    if (newGrades["finalScore"] != null && newGrades["finalScore"]["value"] != null) {
       editController.finalScoreGrade = newGrades["finalScore"]["value"];
       editController.finalScoreController.text = "${newGrades["finalScore"]["value"]}";
       editController.finalScoreType = newGrades["finalScore"]["type"];
@@ -135,7 +135,7 @@ abstract class EditPageControllerBase with Store {
   @action
   void buildGrades(List<dynamic>? grades) {
     for (var grade in grades!) {
-      gradeControllers[grade.name] = TextEditingController();
+      gradeControllers[grade.name] = TextEditingController(text: "");
       gradeTypes[grade.name] = "normal";
       this.grades[grade.name] = null;
     }
@@ -149,7 +149,6 @@ abstract class EditPageControllerBase with Store {
     gradeControllers.forEach((key, value) {
       value.dispose();
     });
-    finalScoreController.text = "";
     gradeControllers = ObservableMap<String, TextEditingController>.of({});
     finalScoreType = "normal";
     gradeTypes = ObservableMap<String, String>.of({});
@@ -198,14 +197,23 @@ abstract class EditPageControllerBase with Store {
 
   // Calcula a nota final de acordo com as notas inseridas pelo usuário
   @action
-  void calcFinalScore(Map<String, dynamic> weights) {
+  void calcFinalScore(Map<String, dynamic> weights, double examWeight, double assignmentWeight) {
 
     // Arrendonda número para o múltiplo de 0.05 mais próximo
     double round(double number) {
-      return (number * 20).round() / 20;
+      // Multiplica por 10 para considerar a segunda casa decimal e aplica arredondamento
+      double multiplied = number * 10;
+
+      // Verifica se a segunda casa decimal é 5 ou mais
+      if ((multiplied - multiplied.floor()) >= 0.5) {
+        // Arredonda para cima
+        return multiplied.ceil() / 10;
+      } else {
+        // Arredonda para baixo
+        return multiplied.floor() / 10;
+      }
     }
 
-    // Calcula a nota final
     final auxGrades = {...grades};
     auxGrades.forEach((key, value) {
       if (value == null) {
@@ -215,9 +223,11 @@ abstract class EditPageControllerBase with Store {
 
     double productSum = 0;
     double weightSum = 0;
+    assignmentWeight = assignmentWeight / 100;
+    examWeight = examWeight / 100;
 
     auxGrades.forEach((key, grade) {
-      double weight = weights[key] ?? 0;
+      double weight = key[0] == "T" ? weights[key]*assignmentWeight : weights[key]*examWeight ?? 0;
       productSum += grade! * weight;
       weightSum += weight;
     });
@@ -225,7 +235,7 @@ abstract class EditPageControllerBase with Store {
     if (weightSum == 0) {
       throw ArgumentError('A soma dos pesos não pode ser zero.');
     }
-
+    
     final result = round(productSum / weightSum);
 
     // Atualiza o resultado final na tela

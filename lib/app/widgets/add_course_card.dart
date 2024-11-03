@@ -26,7 +26,8 @@ class _AddCourseCardState extends State<AddCourseCard>
     begin: Offset.zero,
     end: const Offset(-1.5, 0),
   ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
-  double _height = 72;
+
+  double? _height = 80;
 
   @override
   void dispose() {

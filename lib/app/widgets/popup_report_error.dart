@@ -25,7 +25,7 @@ class _PopupReportErrorState extends State<PopupReportError> {
             key: _formKey,
             child: SizedBox(
               width: 400,
-              height: 450,
+              height: MediaQuery.of(context).size.height * 0.55,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(

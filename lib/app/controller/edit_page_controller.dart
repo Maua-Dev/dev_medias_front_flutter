@@ -160,6 +160,7 @@ abstract class EditPageControllerBase with Store {
       Map<String, dynamic> grades, Map<String, dynamic> weights) async {
     // Se o tipo de uma das notas for diferente de normal, ele é considerado como zero
     final filteredGrades = grades;
+    print(filteredGrades);
     filteredGrades.forEach((key, value) {
       if (gradeTypes[key] != "normal") {
         filteredGrades[key] = null;
@@ -168,9 +169,15 @@ abstract class EditPageControllerBase with Store {
     // Obtém as notas meta e devolve um mapa
     Map targetGrades = {};
     try {
+        print('oi');
+        print(filteredGrades);
+        print(weights);
+        print(targetGrade);
         targetGrades = await gradeController.getTargetGrades(filteredGrades, weights, targetGrade.toDouble(), courseCode);
+        print(targetGrades);
     } catch (e) {
         targetGrades = {"erro": "Erro ao calcular as notas meta."};
+        print(e);
     }
 
     // Pega o mapa e utiliza ele para alterar os valores da tela
@@ -228,15 +235,19 @@ abstract class EditPageControllerBase with Store {
 
     auxGrades.forEach((key, grade) {
       double weight = key[0] == "T" ? weights[key]*assignmentWeight : weights[key]*examWeight ?? 0;
+      print("peso:$weight ");
       productSum += grade! * weight;
+      print(productSum);
       weightSum += weight;
+      print(weightSum);
     });
 
     if (weightSum == 0) {
       throw ArgumentError('A soma dos pesos não pode ser zero.');
     }
-    
+    print(productSum/weightSum);
     final result = round(productSum / weightSum);
+    print(result);
 
     // Atualiza o resultado final na tela
     finalScoreController.text = "$result";

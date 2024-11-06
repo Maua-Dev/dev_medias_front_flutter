@@ -38,6 +38,7 @@ class _EditPageState extends State<EditPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -49,10 +50,9 @@ class _EditPageState extends State<EditPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Expanded(
-                  child: Container()
-                ),
+                isKeyboardVisible ? Container() : Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top)),
                 //Top Barra de Navegação
+                isKeyboardVisible ? Container() :
                 const NavigationTopBar(prevPage: '/home',),
                 // Cabeçalho Matéria
                 Padding(
@@ -99,9 +99,10 @@ class _EditPageState extends State<EditPage> {
                           borderRadius: Round.primary),
                       // Ternário necessário para carregar as cores das notas
                       child: editController.gradeRendered && editController.targetCalcInProgress == false
-                      ? SingleChildScrollView(
-                        child: SizedBox(
-                          height: MediaQuery.of(context).size.height - 350,
+                      ? AnimatedContainer(
+                        height: MediaQuery.of(context).size.height - (isKeyboardVisible ? 500 : 375),
+                        duration: const Duration(milliseconds: 300),
+                        child: SingleChildScrollView(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -268,11 +269,10 @@ class _EditPageState extends State<EditPage> {
                                       }),
                                   )
                                   : Container(),
-                              const Spacer(),
                               Column(
                                 children: [
                                   const Padding(
-                                    padding: EdgeInsets.only(bottom: 16.0),
+                                    padding: EdgeInsets.only(bottom: 16.0, top: 32),
                                     child: Text("Média Final",
                                         style: TextStyle(
                                             color: AppColors.black,
@@ -317,6 +317,7 @@ class _EditPageState extends State<EditPage> {
                             onPressed: widget.course.assignments!.isEmpty && widget.course.exams!.isEmpty ?
                             () {} :
                             () {
+                                FocusScope.of(context).unfocus();
                                 showDialog(
                                   context: context,
                                   builder: (context) {
@@ -411,9 +412,8 @@ class _EditPageState extends State<EditPage> {
                                                     onPressed: isDisabled ? null : () async {
                                                       Navigator.pop(context);
                                                       editController.setTargetCalcProgress(true);
-                                                      editController.setTargetGrade(
-                                                          double.parse(
-                                                              targetController.text));
+                                                      print('aiaiaiaiaiaiaiiaa');
+                                                      editController.setTargetGrade(double.parse(targetController.text));
                                                       Map<String, dynamic> weights = {};
                                                       for (var grade in widget
                                                               .course.exams! +
@@ -422,10 +422,7 @@ class _EditPageState extends State<EditPage> {
                                                             grade.weight;
                                                       }
                                                       try {
-                                                        await editController
-                                                            .calcTargetGrade(
-                                                                editController.grades,
-                                                                weights);
+                                                        await editController.calcTargetGrade(editController.grades, weights);
                                                         final gradesToSave = editController.formatGradesForSaving();
                                                         gradeController.insertGrades(editController.getCourseCode(), gradesToSave);
                                                         editController.setTargetCalcProgress(false);
@@ -467,6 +464,7 @@ class _EditPageState extends State<EditPage> {
                             widget.course.assignments!.isEmpty && widget.course.exams!.isEmpty ?
                             () {} :
                             () {
+                              FocusScope.of(context).unfocus();
                               showDialog(
                                   context: context,
                                   builder: (context) {

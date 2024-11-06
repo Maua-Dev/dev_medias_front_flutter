@@ -77,10 +77,12 @@ abstract class GradeControllerBase with Store {
       }
     }
     gradeMap["media_desejada"] = targetGrade;
+    print(gradeMap);
     try {
       final response = await dio.post(
           dotenv.env['GRADE_OPTIMIZER_URL']!,
           data: gradeMap);
+          print(response);
       if (response.statusCode == 200) {
         return response.data;
       } else {

@@ -1,0 +1,84 @@
+name: Build and Deploy iOS
+
+on:
+  push:
+    branches:
+      - homolog
+      - prod
+
+jobs:
+  build_ios:
+    environment: homolog
+    runs-on: macos-latest
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter Version
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: "3.24.3"
+
+      - name: Get flutter dependencies
+        run: flutter pub get
+
+      - name: Create .env file
+        run: |
+          echo "GRADS_URL=${{ vars.API_COURSES }}" >> .env # The courses API
+          echo "COURSES_URL=${{ vars.API_SUBJECTS }}" >> .env # The subjects API
+          echo "GRADE_OPTIMIZER_URL=${{ vars.API_GRADE_OPTMIZER }}" >> .env # The grade optimizer API
+
+      - name: Setup Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "2.6"
+          bundler-cache: true
+          working-directory: ios
+
+      - name: Get Version
+        run: |
+          app_build_number=$((${{ github.run_number }} + 54))
+          app_build_name="2.0.$app_build_number"
+          echo "app_build_number=$app_build_number" >> $GITHUB_ENV
+          echo "app_build_name=$app_build_name" >> $GITHUB_ENV
+
+      - name: Build iOS
+        run: |
+          flutter build ipa --release --build-name=$app_build_name --build-number=$app_build_number
+
+      - name: Upload to artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release.ipa
+          path: build/ios/ipa/
+
+  deploy_to_app_store:
+    needs: build_ios
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release.ipa
+          path: build/ios/ipa/
+
+      - name: Setup Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "2.6"
+          bundler-cache: true
+          working-directory: ios
+
+      - name: Exec fastlane
+        run: bundle exec fastlane release
+        env:
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APPLLE_STORE_CONNECT_API_KEY }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APPLE_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APPLE_STORE_CONNECT_PRIVATE_KEY }}
+        working-directory: ios

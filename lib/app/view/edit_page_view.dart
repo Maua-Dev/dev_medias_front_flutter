@@ -412,7 +412,6 @@ class _EditPageState extends State<EditPage> {
                                                     onPressed: isDisabled ? null : () async {
                                                       Navigator.pop(context);
                                                       editController.setTargetCalcProgress(true);
-                                                      print('aiaiaiaiaiaiaiiaa');
                                                       editController.setTargetGrade(double.parse(targetController.text));
                                                       Map<String, dynamic> weights = {};
                                                       for (var grade in widget

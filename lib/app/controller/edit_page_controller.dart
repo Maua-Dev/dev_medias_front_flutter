@@ -114,6 +114,7 @@ abstract class EditPageControllerBase with Store {
 
   @action
   void renderGrades(Map newGrades) {
+    print(newGrades);
     gradeRendered = false;
     editController.grades.forEach((key, value) {
       if (newGrades[key] != null && newGrades[key]["value"] != null) {
@@ -146,11 +147,12 @@ abstract class EditPageControllerBase with Store {
   void resetGradeControllers() {
     grades = ObservableMap<String, double?>.of({});
     finalScoreGrade = null;
+    finalScoreType = "normal";
+    finalScoreController = TextEditingController(text: "");
     gradeControllers.forEach((key, value) {
       value.dispose();
     });
     gradeControllers = ObservableMap<String, TextEditingController>.of({});
-    finalScoreType = "normal";
     gradeTypes = ObservableMap<String, String>.of({});
   }
 

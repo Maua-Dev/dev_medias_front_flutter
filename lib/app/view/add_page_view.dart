@@ -1,7 +1,6 @@
 import 'package:dev_medias_front_flutter/app/controller/add_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/widgets/add_course_card.dart';
-import 'package:dev_medias_front_flutter/app/widgets/logo.dart';
 import 'package:dev_medias_front_flutter/app/widgets/common/navigation_top_bar.dart';
 import 'package:dev_medias_front_flutter/app/widgets/search_course_field.dart';
 import 'package:flutter/material.dart';

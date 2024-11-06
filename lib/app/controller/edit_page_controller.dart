@@ -146,11 +146,12 @@ abstract class EditPageControllerBase with Store {
   void resetGradeControllers() {
     grades = ObservableMap<String, double?>.of({});
     finalScoreGrade = null;
+    finalScoreType = "normal";
+    finalScoreController = TextEditingController(text: "");
     gradeControllers.forEach((key, value) {
       value.dispose();
     });
     gradeControllers = ObservableMap<String, TextEditingController>.of({});
-    finalScoreType = "normal";
     gradeTypes = ObservableMap<String, String>.of({});
   }
 
@@ -235,7 +236,7 @@ abstract class EditPageControllerBase with Store {
     if (weightSum == 0) {
       throw ArgumentError('A soma dos pesos não pode ser zero.');
     }
-    
+
     final result = round(productSum / weightSum);
 
     // Atualiza o resultado final na tela

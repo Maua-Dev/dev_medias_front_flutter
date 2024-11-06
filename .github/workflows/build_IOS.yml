@@ -3,8 +3,7 @@ name: Build and Deploy iOS
 on:
   push:
     branches:
-      - homolog
-      - prod
+      - test-ios
 
 jobs:
   build_ios:

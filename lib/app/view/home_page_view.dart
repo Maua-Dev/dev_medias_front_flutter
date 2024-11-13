@@ -11,6 +11,7 @@ import 'package:dev_medias_front_flutter/app/widgets/common/navigation_top_bar.d
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,7 +25,14 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     editController.resetGradeControllers();
+    _checkTermsOfService();
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    editController.resetGradeControllers();
+    super.didChangeDependencies();
   }
 
   Future<String> updateFinalScore(String courseCode) async {
@@ -220,6 +228,60 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+    );
+  }
+
+  void _checkTermsOfService() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool hasAcceptedTerms = prefs.getBool('hasAcceptedTerms') ?? false;
+
+    if (!hasAcceptedTerms) {
+      _showTermsOfServiceDialog();
+    }
+  }
+
+  void _showTermsOfServiceDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Termos de Serviço', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+          content: const Text('A Dev Community Mauá se isenta da responsabilidade de qualquer prejuízo causado por qualquer erro ou imprecisão no cálculo das médias.', softWrap: true, overflow: TextOverflow.clip, style: TextStyle(fontSize: 16.5),),
+          actions: [
+            Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.red,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                              fixedSize: const Size(150, 50),
+                            ),
+                            onPressed: () async {
+                              SharedPreferences prefs = await SharedPreferences.getInstance();
+                              await prefs.setBool('hasAcceptedTerms', true);
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text(
+                              "Aceitar",
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.white,
+                              ),
+                            ),
+                          ),
+                    ],
+                  ),
+                ),
+          ],
+        );
+      },
     );
   }
 }

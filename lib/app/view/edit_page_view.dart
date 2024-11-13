@@ -26,14 +26,21 @@ class _EditPageState extends State<EditPage> {
 
   Future<void> initializeAsync() async {
       final grades = widget.course.exams! + widget.course.assignments!;
+      editController.resetGradeControllers();
       editController.setCourseCode(widget.course.code);
       editController.buildGrades(grades);
       final savedGrades = await gradeController.getGrades(widget.course.code);
       if (savedGrades != null) {
         editController.renderGrades(savedGrades);
       } else {
-        editController.setRendered(true);
+        final gradesJson = grades.map((grade) => grade.toJson()).toList();
+        final defaultMap = {};
+        for (var grade in gradesJson) {
+          defaultMap[grade["name"]] = {"value": null, "type": "normal"};
+        }
+        editController.renderGrades(defaultMap);
       }
+      editController.setRendered(true);
   }
 
   @override
@@ -52,8 +59,11 @@ class _EditPageState extends State<EditPage> {
               children: <Widget>[
                 isKeyboardVisible ? Container() : Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top)),
                 //Top Barra de Navegação
-                isKeyboardVisible ? Container() :
-                const NavigationTopBar(prevPage: '/home',),
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  child: isKeyboardVisible ? Container() :
+                  const NavigationTopBar(prevPage: '/home',),
+                ),
                 // Cabeçalho Matéria
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -142,6 +152,7 @@ class _EditPageState extends State<EditPage> {
                                             padding: EdgeInsets.only(top: 32),
                                             child: Center(
                                                 child: Text(
+                                                    textAlign: TextAlign.center,
                                                     "Essa matéria não tem notas cadastradas."
                                                     )
                                                 ),
@@ -272,7 +283,7 @@ class _EditPageState extends State<EditPage> {
                               Column(
                                 children: [
                                   const Padding(
-                                    padding: EdgeInsets.only(bottom: 16.0, top: 32),
+                                    padding: EdgeInsets.only(bottom: 16.0, top: 30),
                                     child: Text("Média Final",
                                         style: TextStyle(
                                             color: AppColors.black,

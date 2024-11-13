@@ -47,7 +47,7 @@ class UserService {
   Future<void> resetUserData() async {
     await Hive.initFlutter();
     final userBox = await Hive.openBox('user');
-    userBox.deleteAll(['name', 'graduation', 'year', 'currentCourses']);
+    userBox.deleteAll(['name', 'graduation', 'year', 'currentCourses', 'grades']);
   }
 
   Future<Map<String, List<String>>> getCurrentCourses() async {

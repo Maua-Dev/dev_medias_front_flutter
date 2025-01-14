@@ -47,8 +47,6 @@ abstract class GradeControllerBase with Store {
       "trabalhos_que_quero": [],
       "media_desejada": 0
     };
-    print(grades);
-    print(weights);
     for (var item in grades.entries) {
       if (item.key[0] == "P") {
         item.value == null
@@ -79,7 +77,6 @@ abstract class GradeControllerBase with Store {
       }
     }
     gradeMap["media_desejada"] = targetGrade;
-    print(gradeMap);
     try {
       final response = await dio.post(
           dotenv.env['GRADE_OPTIMIZER_URL']!,
@@ -103,7 +100,6 @@ abstract class GradeControllerBase with Store {
     };
 
     for (var item in grades.entries) {
-      print(item.value);
       if (item.key[0] == "P") {
         gradeMap["provas_que_tenho"].add({
           "valor": item.value ?? 0.0,
@@ -116,8 +112,6 @@ abstract class GradeControllerBase with Store {
         });
       }
     }
-
-    print(gradeMap);
 
     try {
       final response = await dio.post(

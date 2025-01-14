@@ -1,4 +1,3 @@
-import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:flutter/material.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 

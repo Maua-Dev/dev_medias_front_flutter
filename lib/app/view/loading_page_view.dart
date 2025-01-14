@@ -24,9 +24,12 @@ class _LoadingPageState extends State<LoadingPage> {
   void initState() {
     Future.delayed(const Duration(seconds: 2), () async {
       loadingPageController.setLoading(true);
-      // await userController.resetUserData();
       final userDataMissing = await userController.checkUserDataExists();
-      coursesController.setAllCourses(await coursesController.fetchCourses());
+      try {
+        coursesController.setAllCourses(await coursesController.fetchCourses());
+      } catch (e) {
+        Navigator.pushReplacementNamed(context, '/disconnected');
+      }
       graduationsController.setAllGrads(await graduationsController.fetchGrads());
       await userController.fetchCurrentCourses();
       if (userDataMissing == false) {

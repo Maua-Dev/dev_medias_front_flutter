@@ -197,6 +197,16 @@ mixin _$EditPageController on EditPageControllerBase, Store {
         .run(() => super.calcTargetGrade(grades, weights));
   }
 
+  late final _$calcFinalScoreAsyncAction =
+      AsyncAction('EditPageControllerBase.calcFinalScore', context: context);
+
+  @override
+  Future<void> calcFinalScore(
+      Map<String, dynamic> weights, Map<String, dynamic> grades) {
+    return _$calcFinalScoreAsyncAction
+        .run(() => super.calcFinalScore(weights, grades));
+  }
+
   late final _$EditPageControllerBaseActionController =
       ActionController(name: 'EditPageControllerBase', context: context);
 
@@ -338,18 +348,6 @@ mixin _$EditPageController on EditPageControllerBase, Store {
         name: 'EditPageControllerBase.eraseTargetGrades');
     try {
       return super.eraseTargetGrades();
-    } finally {
-      _$EditPageControllerBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void calcFinalScore(Map<String, dynamic> weights, double examWeight,
-      double assignmentWeight) {
-    final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
-        name: 'EditPageControllerBase.calcFinalScore');
-    try {
-      return super.calcFinalScore(weights, examWeight, assignmentWeight);
     } finally {
       _$EditPageControllerBaseActionController.endAction(_$actionInfo);
     }

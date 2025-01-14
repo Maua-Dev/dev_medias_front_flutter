@@ -3,6 +3,7 @@ import 'package:dev_medias_front_flutter/app/widgets/common/return_button.dart';
 import 'package:dev_medias_front_flutter/app/widgets/popup_report_error.dart';
 import 'package:dev_medias_front_flutter/app/widgets/logo.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 
 class NavigationTopBar extends StatelessWidget {
@@ -36,7 +37,7 @@ class SupportButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       icon: const Icon(
-        Icons.headset_mic_rounded,
+        LucideIcons.headphones,
         size: 30,
         color: AppColors.white,
       ),

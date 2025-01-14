@@ -5,7 +5,6 @@ import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 
 class GradeInput extends StatelessWidget {
   final String name;
@@ -26,6 +25,7 @@ class GradeInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(editController.grades);
     return Column(
       children: [
         labelled
@@ -43,8 +43,10 @@ class GradeInput extends StatelessWidget {
             keyboardType: TextInputType.number,
             enabled: enabled,
             onChanged: (String value) {
+              print(editController.grades);
               if (changes) {
                   if (value.isNotEmpty) {
+                    print(editController.grades);
                     editController.grades[name] = double.parse(value);
                     editController.gradeControllers[name]?.text = value;
                     editController.gradeTypes[name] = "normal";
@@ -53,6 +55,7 @@ class GradeInput extends StatelessWidget {
                     editController.gradeControllers[name]?.text = "";
                     editController.gradeTypes[name] = "normal";
                   }
+                  print(editController.grades);
               }
               final grades = editController.formatGradesForSaving();
               gradeController.insertGrades(editController.getCourseCode(), grades);

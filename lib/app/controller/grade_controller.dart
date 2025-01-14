@@ -90,6 +90,42 @@ abstract class GradeControllerBase with Store {
       throw Exception('Erro de rede: $e');
     }
   }
+
+  @action
+  Future<Map<String, dynamic>> getFinalScore(Map<String, dynamic> grades, Map<String, dynamic> weights, String courseCode) async {
+
+    Map<String, dynamic> gradeMap = {
+      "provas_que_tenho": [],
+      "trabalhos_que_tenho": [],
+    };
+
+    for (var item in grades.entries) {
+      if (item.key[0] == "P") {
+        gradeMap["provas_que_tenho"].add({
+          "valor": item.value ?? 0.0,
+          "peso": weights[item.key] * (coursesController.allCourses![courseCode].examWeight / 100)
+        });
+      } else {
+        gradeMap["trabalhos_que_tenho"].add({
+          "valor": item.value ?? 0.0,
+          "peso": weights[item.key]  * (coursesController.allCourses![courseCode].assignmentWeight / 100)
+        });
+      }
+    }
+
+    try {
+      final response = await dio.post(
+          "https://q9vsokat65.execute-api.us-east-2.amazonaws.com/prod/mss-medias/calculate-mean",
+          data: gradeMap);
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception('Erro na solicitação POST');
+      }
+    } catch (e) {
+      throw Exception('Erro de rede: $e');
+    }
+  }
 }
 
 GradeController gradeController = GradeController();

@@ -1,6 +1,7 @@
 import 'package:dev_medias_front_flutter/app/controller/common/common_controller.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 class ReturnButton extends StatelessWidget {
 
@@ -13,7 +14,7 @@ class ReturnButton extends StatelessWidget {
     String? prevPage = commonController.getPreviousPage;
     return IconButton(
       icon: Icon(
-        Icons.arrow_back_ios_rounded,
+        LucideIcons.chevronLeft,
         size: 30,
         // Muda cor se tiver uma página anterior especificada
         color: prevPage != null ? AppColors.white : Colors.transparent,

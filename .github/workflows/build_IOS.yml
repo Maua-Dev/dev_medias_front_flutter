@@ -77,7 +77,8 @@ jobs:
       - name: Exec fastlane
         run: bundle exec fastlane release
         env:
-          APP_STORE_CONNECT_API_KEY: ${{ secrets.APPLLE_STORE_CONNECT_API_KEY }}
-          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APPLE_STORE_CONNECT_ISSUER_ID }}
-          APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APPLE_STORE_CONNECT_PRIVATE_KEY }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APPSTORE_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+          APPLE_TEAM_ID: ${{ secrets.TEAM_ID }}
         working-directory: ios

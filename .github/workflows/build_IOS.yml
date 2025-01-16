@@ -3,7 +3,7 @@ name: Build and Deploy iOS
 on:
   push:
     branches:
-      - test-ios
+      - dev
 
 jobs:
   build_ios:

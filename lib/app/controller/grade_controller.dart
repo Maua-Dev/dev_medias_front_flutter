@@ -97,6 +97,8 @@ abstract class GradeControllerBase with Store {
     Map<String, dynamic> gradeMap = {
       "provas_que_tenho": [],
       "trabalhos_que_tenho": [],
+      "peso_prova": coursesController.allCourses![courseCode].examWeight / 100,
+      "peso_trabalho": coursesController.allCourses![courseCode].assignmentWeight / 100
     };
 
     for (var item in grades.entries) {

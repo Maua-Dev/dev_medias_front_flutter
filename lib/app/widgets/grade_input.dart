@@ -25,7 +25,6 @@ class GradeInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(editController.grades);
     return Column(
       children: [
         labelled
@@ -43,10 +42,8 @@ class GradeInput extends StatelessWidget {
             keyboardType: TextInputType.number,
             enabled: enabled,
             onChanged: (String value) {
-              print(editController.grades);
               if (changes) {
                   if (value.isNotEmpty) {
-                    print(editController.grades);
                     editController.grades[name] = double.parse(value);
                     editController.gradeControllers[name]?.text = value;
                     editController.gradeTypes[name] = "normal";
@@ -55,7 +52,6 @@ class GradeInput extends StatelessWidget {
                     editController.gradeControllers[name]?.text = "";
                     editController.gradeTypes[name] = "normal";
                   }
-                  print(editController.grades);
               }
               final grades = editController.formatGradesForSaving();
               gradeController.insertGrades(editController.getCourseCode(), grades);

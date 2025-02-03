@@ -104,7 +104,6 @@ abstract class EditPageControllerBase with Store {
         }
       }
     );
-    print(editController.grades);
     // Faz o mesmo para a nota final
     editController.finalScoreController.text = "$targetGrade";
     editController.finalScoreGrade = targetGrade;
@@ -160,7 +159,7 @@ abstract class EditPageControllerBase with Store {
   @action
   Future<void> calcTargetGrade(
       Map<String, dynamic> grades, Map<String, dynamic> weights) async {
-    print(grades);
+
     // Se o tipo de uma das notas for diferente de normal, ele é considerado como zero
     final filteredGrades = grades;
     filteredGrades.forEach((key, value) {
@@ -173,7 +172,6 @@ abstract class EditPageControllerBase with Store {
     try {
         targetGrades = await gradeController.getTargetGrades(filteredGrades, weights, targetGrade.toDouble(), courseCode);
     } catch (e) {
-        print(e);
         targetGrades = {"erro": "Erro ao calcular as notas meta."};
     }
 
@@ -209,7 +207,6 @@ abstract class EditPageControllerBase with Store {
       finalScoreGrade = result["media"];
     } catch (e) {
       finalScoreGrade = null;
-      print(e);
     }
 
     // Atualiza o resultado final na tela

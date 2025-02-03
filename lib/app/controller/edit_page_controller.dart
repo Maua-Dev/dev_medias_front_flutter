@@ -159,6 +159,7 @@ abstract class EditPageControllerBase with Store {
   @action
   Future<void> calcTargetGrade(
       Map<String, dynamic> grades, Map<String, dynamic> weights) async {
+
     // Se o tipo de uma das notas for diferente de normal, ele é considerado como zero
     final filteredGrades = grades;
     filteredGrades.forEach((key, value) {
@@ -198,50 +199,19 @@ abstract class EditPageControllerBase with Store {
 
   // Calcula a nota final de acordo com as notas inseridas pelo usuário
   @action
-  void calcFinalScore(Map<String, dynamic> weights, double examWeight, double assignmentWeight) {
+  Future<void> calcFinalScore(Map<String, dynamic> weights, Map<String, dynamic> grades) async {
 
-    // Arrendonda número para o múltiplo de 0.05 mais próximo
-    double round(double number) {
-      // Multiplica por 10 para considerar a segunda casa decimal e aplica arredondamento
-      double multiplied = number * 10;
 
-      // Verifica se a segunda casa decimal é 5 ou mais
-      if ((multiplied - multiplied.floor()) >= 0.5) {
-        // Arredonda para cima
-        return multiplied.ceil() / 10;
-      } else {
-        // Arredonda para baixo
-        return multiplied.floor() / 10;
-      }
+    try {
+      Map result = await gradeController.getFinalScore(grades, weights, courseCode);
+      finalScoreGrade = result["media"];
+    } catch (e) {
+      finalScoreGrade = null;
     }
-
-    final auxGrades = {...grades};
-    auxGrades.forEach((key, value) {
-      if (value == null) {
-        auxGrades[key] = 0.0;
-      }
-    });
-
-    double productSum = 0;
-    double weightSum = 0;
-    assignmentWeight = assignmentWeight / 100;
-    examWeight = examWeight / 100;
-
-    auxGrades.forEach((key, grade) {
-      double weight = key[0] == "T" ? weights[key]*assignmentWeight : weights[key]*examWeight ?? 0;
-      productSum += grade! * weight;
-      weightSum += weight;
-    });
-
-    if (weightSum == 0) {
-      throw ArgumentError('A soma dos pesos não pode ser zero.');
-    }
-
-    final result = round(productSum / weightSum);
 
     // Atualiza o resultado final na tela
-    finalScoreController.text = "$result";
-    finalScoreGrade = result;
+    finalScoreController.text = finalScoreGrade != null ? "$finalScoreGrade" : "";
+    finalScoreGrade = finalScoreGrade;
     finalScoreType = "normal";
   }
 

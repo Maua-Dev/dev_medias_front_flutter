@@ -45,41 +45,76 @@ abstract class GradeControllerBase with Store {
       "trabalhos_que_tenho": [],
       "provas_que_quero": [],
       "trabalhos_que_quero": [],
-      "media_desejada": 0
+      "media_desejada": 0,
+      "peso_prova": coursesController.allCourses![courseCode].examWeight / 100,
+      "peso_trabalho": coursesController.allCourses![courseCode].assignmentWeight / 100
     };
     for (var item in grades.entries) {
       if (item.key[0] == "P") {
         item.value == null
             ? gradeMap["provas_que_quero"].add({
-                "peso": weights[item.key] *
-                    (coursesController.allCourses![courseCode].examWeight / 100)
+                "peso": weights[item.key]
               })
             : gradeMap["provas_que_tenho"].add({
                 "valor": item.value,
-                "peso": weights[item.key] *
-                    (coursesController.allCourses![courseCode].examWeight / 100)
+                "peso": weights[item.key]
               });
       } else {
         item.value == null
             ? gradeMap["trabalhos_que_quero"].add({
-                "peso": weights[item.key] *
-                    (coursesController
-                            .allCourses![courseCode].assignmentWeight /
-                        100)
+                "peso": weights[item.key]
               })
             : gradeMap["trabalhos_que_tenho"].add({
                 "valor": item.value,
-                "peso": weights[item.key] *
-                    (coursesController
-                            .allCourses![courseCode].assignmentWeight /
-                        100)
+                "peso": weights[item.key]
               });
       }
     }
     gradeMap["media_desejada"] = targetGrade;
+    print(gradeMap);
     try {
       final response = await dio.post(
           dotenv.env['GRADE_OPTIMIZER_URL']!,
+          data: gradeMap);
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception('Erro na solicitação POST');
+      }
+    } catch (e) {
+      throw Exception('Erro de rede: $e');
+    }
+  }
+
+  @action
+  Future<Map<String, dynamic>> getFinalScore(Map<String, dynamic> grades, Map<String, dynamic> weights, String courseCode) async {
+
+    Map<String, dynamic> gradeMap = {
+      "provas_que_tenho": [],
+      "trabalhos_que_tenho": [],
+      "peso_prova": coursesController.allCourses![courseCode].examWeight / 100,
+      "peso_trabalho": coursesController.allCourses![courseCode].assignmentWeight / 100
+    };
+
+    for (var item in grades.entries) {
+      if (item.key[0] == "P") {
+        gradeMap["provas_que_tenho"].add({
+          "valor": item.value ?? 0.0,
+          "peso": weights[item.key]
+        });
+      } else {
+        gradeMap["trabalhos_que_tenho"].add({
+          "valor": item.value ?? 0.0,
+          "peso": weights[item.key]
+        });
+      }
+    }
+
+    print(gradeMap);
+    try {
+
+      final response = await dio.post(
+          dotenv.env['FINAL_SCORE_URL']!,
           data: gradeMap);
       if (response.statusCode == 200) {
         return response.data;

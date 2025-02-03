@@ -7,6 +7,7 @@ import 'package:dev_medias_front_flutter/app/widgets/common/navigation_top_bar.d
 import 'package:flutter/material.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 class EditPage extends StatefulWidget {
   final CourseModel course;
@@ -128,7 +129,7 @@ class _EditPageState extends State<EditPage> {
                                               children: [
                                                   IconButton(
                                                           icon: const Icon(
-                                                          Icons.import_contacts,
+                                                          LucideIcons.bookOpen,
                                                           color: AppColors.red,
                                                           size: 30,
                                                       ),
@@ -138,7 +139,7 @@ class _EditPageState extends State<EditPage> {
                                                   ),
                                                   IconButton(
                                                       icon: const Icon(
-                                                            Icons.close,
+                                                            LucideIcons.eraser,
                                                             color: AppColors.gray,
                                                             size: 30,
                                                        ),
@@ -170,7 +171,7 @@ class _EditPageState extends State<EditPage> {
                                         children: [
                                             IconButton(
                                                 icon: const Icon(
-                                                    Icons.import_contacts,
+                                                    LucideIcons.bookOpen,
                                                     color: AppColors.red,
                                                     size: 30,
                                                 ),
@@ -186,7 +187,7 @@ class _EditPageState extends State<EditPage> {
                                               ),
                                             IconButton(
                                                 icon: const Icon(
-                                                    Icons.close,
+                                                    LucideIcons.eraser,
                                                     color: AppColors.red,
                                                     size: 30,
                                                 ),
@@ -231,7 +232,7 @@ class _EditPageState extends State<EditPage> {
                                         widget.course.assignments!.isEmpty ?
                                           IconButton(
                                                 icon: const Icon(
-                                                    Icons.import_contacts,
+                                                    LucideIcons.bookOpen,
                                                     color: AppColors.red,
                                                     size: 30,
                                                 ),
@@ -246,7 +247,7 @@ class _EditPageState extends State<EditPage> {
                                         widget.course.exams!.isEmpty ?
                                         IconButton(
                                                 icon: const Icon(
-                                                    Icons.close,
+                                                    LucideIcons.eraser,
                                                     color: AppColors.red,
                                                     size: 30,
                                                 ),
@@ -306,7 +307,7 @@ class _EditPageState extends State<EditPage> {
                       )
                       : SizedBox(
                         width: double.maxFinite,
-                        height: MediaQuery.of(context).size.height - 350,
+                        height: MediaQuery.of(context).size.height - 375,
                         child: const Center(
                           child: SizedBox(
                             width: 50,
@@ -431,6 +432,7 @@ class _EditPageState extends State<EditPage> {
                                                         weights[grade.name] =
                                                             grade.weight;
                                                       }
+
                                                       try {
                                                         await editController.calcTargetGrade(editController.grades, weights);
                                                         final gradesToSave = editController.formatGradesForSaving();
@@ -526,15 +528,21 @@ class _EditPageState extends State<EditPage> {
                                               padding: const EdgeInsets.symmetric(
                                                   vertical: 7, horizontal: 7)),
                                               onPressed: () async {
+                                                editController.setTargetCalcProgress(true);
                                                 Map<String, dynamic> weights = {};
                                                 for (var grade in widget.course.exams! +
                                                     widget.course.assignments!) {
                                                   weights[grade.name] = grade.weight;
                                                 }
-                                                editController.calcFinalScore(weights, widget.course.examWeight, widget.course.assignmentWeight);
-                                                final gradesToSave = editController.formatGradesForSaving();
-                                                gradeController.insertGrades(editController.getCourseCode(), gradesToSave);
                                                 Navigator.pop(context);
+                                                try {
+                                                  await editController.calcFinalScore(weights, editController.grades);
+                                                  final gradesToSave = editController.formatGradesForSaving();
+                                                  gradeController.insertGrades(editController.getCourseCode(), gradesToSave);
+                                                  editController.setTargetCalcProgress(false);
+                                                } catch(e) {
+                                                  editController.setTargetCalcProgress(false);
+                                                }
                                               },
                                               child: const Text("Confirmar"))
                                         ],

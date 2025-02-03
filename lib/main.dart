@@ -3,6 +3,7 @@ import 'package:dev_medias_front_flutter/app/view/edit_page_view.dart';
 import 'package:dev_medias_front_flutter/app/view/home_page_view.dart';
 import 'package:dev_medias_front_flutter/app/view/intro_page_view.dart';
 import 'package:dev_medias_front_flutter/app/view/loading_page_view.dart';
+import 'package:dev_medias_front_flutter/app/view/no_connection_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
           final args = ModalRoute.of(context)?.settings.arguments as Map;
           return EditPage(course: args['course']);
         },
+        '/disconnected': (_) => const NoConnectionPage(),
 
       },
       // onGenerateRoute: (settings) {

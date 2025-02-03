@@ -36,6 +36,16 @@ mixin _$GradeController on GradeControllerBase, Store {
         () => super.getTargetGrades(grades, weights, targetGrade, courseCode));
   }
 
+  late final _$getFinalScoreAsyncAction =
+      AsyncAction('GradeControllerBase.getFinalScore', context: context);
+
+  @override
+  Future<Map<String, dynamic>> getFinalScore(Map<String, dynamic> grades,
+      Map<String, dynamic> weights, String courseCode) {
+    return _$getFinalScoreAsyncAction
+        .run(() => super.getFinalScore(grades, weights, courseCode));
+  }
+
   @override
   String toString() {
     return '''

@@ -29,12 +29,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  @override
-  void didChangeDependencies() {
-    editController.resetGradeControllers();
-    super.didChangeDependencies();
-  }
-
   Future<String> updateFinalScore(String courseCode) async {
     return await homeController.getFinalScore(courseCode);
   }

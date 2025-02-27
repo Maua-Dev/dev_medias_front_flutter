@@ -47,6 +47,8 @@ class _EditPageState extends State<EditPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(MediaQuery.of(context).viewInsets.bottom);
+    print(MediaQuery.of(context).size.height);
     bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -112,7 +114,7 @@ class _EditPageState extends State<EditPage> {
                       // Ternário necessário para carregar as cores das notas
                       child: editController.gradeRendered && editController.targetCalcInProgress == false
                       ? AnimatedContainer(
-                        height: MediaQuery.of(context).size.height - (isKeyboardVisible ? MediaQuery.of(context).viewInsets.bottom : 375),
+                        height: MediaQuery.of(context).size.height - (isKeyboardVisible ? 500 : 352),
                         duration: const Duration(milliseconds: 300),
                         child: SingleChildScrollView(
                           child: Column(

@@ -45,6 +45,8 @@ dependencies:
   hive_flutter: ^1.1.0
   flutter_dotenv: ^5.1.0
   lucide_icons: ^0.257.0
+  flutter_screenutil: ^5.9.3
+  device_preview: ^1.2.0
 
 dev_dependencies:
   flutter_test:

@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
                   builder: (_) => coursesController.loadedCourses
                       ? userController.currentCourses.isNotEmpty
                           ? SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.7,
+                            height: MediaQuery.of(context).size.height * 0.7 - 13,
                             child: Column(
                               children: [
                                 Expanded(

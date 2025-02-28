@@ -7,6 +7,7 @@ import 'package:dev_medias_front_flutter/app/widgets/common/navigation_top_bar.d
 import 'package:flutter/material.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 class EditPage extends StatefulWidget {
@@ -46,6 +47,8 @@ class _EditPageState extends State<EditPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(MediaQuery.of(context).viewInsets.bottom);
+    print(MediaQuery.of(context).size.height);
     bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -111,7 +114,7 @@ class _EditPageState extends State<EditPage> {
                       // Ternário necessário para carregar as cores das notas
                       child: editController.gradeRendered && editController.targetCalcInProgress == false
                       ? AnimatedContainer(
-                        height: MediaQuery.of(context).size.height - (isKeyboardVisible ? 500 : 375),
+                        height: MediaQuery.of(context).size.height - (isKeyboardVisible ? 500 : 352),
                         duration: const Duration(milliseconds: 300),
                         child: SingleChildScrollView(
                           child: Column(
@@ -463,7 +466,7 @@ class _EditPageState extends State<EditPage> {
                               child: Text(
                                 "Definir meta",
                                 style: TextStyle(
-                                    color: widget.course.assignments!.isEmpty && widget.course.exams!.isEmpty ? AppColors.white.withOpacity(0.5) : AppColors.white, fontSize: 18),
+                                    color: widget.course.assignments!.isEmpty && widget.course.exams!.isEmpty ? AppColors.white.withOpacity(0.5) : AppColors.white, fontSize: 16.sp),
                               ),
                             )),
                       ),
@@ -566,7 +569,7 @@ class _EditPageState extends State<EditPage> {
                                   Text(
                                     "Calcular média",
                                     style: TextStyle(
-                                        color: widget.course.assignments!.isEmpty && widget.course.exams!.isEmpty ? AppColors.white.withOpacity(0.5) : AppColors.white, fontSize: 18),
+                                        color: widget.course.assignments!.isEmpty && widget.course.exams!.isEmpty ? AppColors.white.withOpacity(0.5) : AppColors.white, fontSize: 16.sp),
                                   ),
                                 ],
                               ),

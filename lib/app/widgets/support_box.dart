@@ -1,6 +1,5 @@
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
-import 'package:dev_medias_front_flutter/app/widgets/popup_delete_course.dart';
 import 'package:flutter/material.dart';
 
 class SupportBox extends StatelessWidget {

@@ -52,7 +52,7 @@ class _AddPageState extends State<AddPage> {
                   Observer(
                     builder: (_) => addController.coursesLoaded ?
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.7,
+                        height: MediaQuery.of(context).size.height * 0.7 - 12,
                         child: Column(
                           children: [
                             Expanded(

@@ -13,7 +13,7 @@ Future main() async {
   await dotenv.load(fileName: ".env");
   runApp(
     DevicePreview(
-      enabled: true,
+      enabled: false,
       builder: (context) => const MyApp()
     )
   );

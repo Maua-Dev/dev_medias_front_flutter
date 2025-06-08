@@ -46,27 +46,27 @@ abstract class GradeControllerBase with Store {
       "provas_que_quero": [],
       "trabalhos_que_quero": [],
       "media_desejada": 0,
-      "peso_prova": coursesController.allCourses![courseCode].examWeight / 100,
-      "peso_trabalho": coursesController.allCourses![courseCode].assignmentWeight / 100
+      "peso_prova": coursesController.allCourses![courseCode].examWeight / 10,
+      "peso_trabalho": coursesController.allCourses![courseCode].assignmentWeight / 10
     };
     for (var item in grades.entries) {
       if (item.key[0] == "P") {
         item.value == null
             ? gradeMap["provas_que_quero"].add({
-                "peso": weights[item.key]
+                "peso": weights[item.key]/10
               })
             : gradeMap["provas_que_tenho"].add({
                 "valor": item.value,
-                "peso": weights[item.key]
+                "peso": weights[item.key]/10
               });
       } else {
         item.value == null
             ? gradeMap["trabalhos_que_quero"].add({
-                "peso": weights[item.key]
+                "peso": weights[item.key]/10
               })
             : gradeMap["trabalhos_que_tenho"].add({
                 "valor": item.value,
-                "peso": weights[item.key]
+                "peso": weights[item.key]/10
               });
       }
     }
@@ -92,20 +92,20 @@ abstract class GradeControllerBase with Store {
     Map<String, dynamic> gradeMap = {
       "provas_que_tenho": [],
       "trabalhos_que_tenho": [],
-      "peso_prova": coursesController.allCourses![courseCode].examWeight / 100,
-      "peso_trabalho": coursesController.allCourses![courseCode].assignmentWeight / 100
+      "peso_prova": coursesController.allCourses![courseCode].examWeight / 10,
+      "peso_trabalho": coursesController.allCourses![courseCode].assignmentWeight / 10
     };
 
     for (var item in grades.entries) {
       if (item.key[0] == "P") {
         gradeMap["provas_que_tenho"].add({
           "valor": item.value ?? 0.0,
-          "peso": weights[item.key]
+          "peso": weights[item.key]/10
         });
       } else {
         gradeMap["trabalhos_que_tenho"].add({
           "valor": item.value ?? 0.0,
-          "peso": weights[item.key]
+          "peso": weights[item.key]/10
         });
       }
     }

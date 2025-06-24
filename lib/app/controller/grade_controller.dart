@@ -17,15 +17,13 @@ abstract class GradeControllerBase with Store {
   Future<dynamic> getGrades(String code) async {
     await Hive.initFlutter();
     var box = await Hive.openBox('user');
-    final grades =
-        box.get('grades', defaultValue: <String, dynamic>{});
+    final grades = box.get('grades', defaultValue: <String, dynamic>{});
     final subjectGrades = grades?[code];
     return subjectGrades;
   }
 
-
   @action
-  Future<void> insertGrades (String code, Map<String, dynamic> grades) async {
+  Future<void> insertGrades(String code, Map<String, dynamic> grades) async {
     await Hive.initFlutter();
     var box = await Hive.openBox('user');
     final oldGrades = box.get('grades', defaultValue: <String, Map>{});
@@ -46,36 +44,27 @@ abstract class GradeControllerBase with Store {
       "provas_que_quero": [],
       "trabalhos_que_quero": [],
       "media_desejada": 0,
-      "peso_prova": coursesController.allCourses![courseCode].examWeight / 10,
-      "peso_trabalho": coursesController.allCourses![courseCode].assignmentWeight / 10
+      "peso_prova": coursesController.allCourses![courseCode].examWeight / 100,
+      "peso_trabalho":
+          coursesController.allCourses![courseCode].assignmentWeight / 100
     };
     for (var item in grades.entries) {
       if (item.key[0] == "P") {
         item.value == null
-            ? gradeMap["provas_que_quero"].add({
-                "peso": weights[item.key]/10
-              })
-            : gradeMap["provas_que_tenho"].add({
-                "valor": item.value,
-                "peso": weights[item.key]/10
-              });
+            ? gradeMap["provas_que_quero"].add({"peso": weights[item.key]})
+            : gradeMap["provas_que_tenho"]
+                .add({"valor": item.value, "peso": weights[item.key]});
       } else {
         item.value == null
-            ? gradeMap["trabalhos_que_quero"].add({
-                "peso": weights[item.key]/10
-              })
-            : gradeMap["trabalhos_que_tenho"].add({
-                "valor": item.value,
-                "peso": weights[item.key]/10
-              });
+            ? gradeMap["trabalhos_que_quero"].add({"peso": weights[item.key]})
+            : gradeMap["trabalhos_que_tenho"]
+                .add({"valor": item.value, "peso": weights[item.key]});
       }
     }
     gradeMap["media_desejada"] = targetGrade;
-    print(gradeMap);
     try {
-      final response = await dio.post(
-          dotenv.env['GRADE_OPTIMIZER_URL']!,
-          data: gradeMap);
+      final response =
+          await dio.post(dotenv.env['API_GRADE_OPTMIZER']!, data: gradeMap);
       if (response.statusCode == 200) {
         return response.data;
       } else {
@@ -87,35 +76,28 @@ abstract class GradeControllerBase with Store {
   }
 
   @action
-  Future<Map<String, dynamic>> getFinalScore(Map<String, dynamic> grades, Map<String, dynamic> weights, String courseCode) async {
-
+  Future<Map<String, dynamic>> getFinalScore(Map<String, dynamic> grades,
+      Map<String, dynamic> weights, String courseCode) async {
     Map<String, dynamic> gradeMap = {
       "provas_que_tenho": [],
       "trabalhos_que_tenho": [],
-      "peso_prova": coursesController.allCourses![courseCode].examWeight / 10,
-      "peso_trabalho": coursesController.allCourses![courseCode].assignmentWeight / 10
+      "peso_prova": coursesController.allCourses![courseCode].examWeight / 100,
+      "peso_trabalho":
+          coursesController.allCourses![courseCode].assignmentWeight / 100
     };
 
     for (var item in grades.entries) {
       if (item.key[0] == "P") {
-        gradeMap["provas_que_tenho"].add({
-          "valor": item.value ?? 0.0,
-          "peso": weights[item.key]/10
-        });
+        gradeMap["provas_que_tenho"]
+            .add({"valor": item.value ?? 0.0, "peso": weights[item.key]});
       } else {
-        gradeMap["trabalhos_que_tenho"].add({
-          "valor": item.value ?? 0.0,
-          "peso": weights[item.key]/10
-        });
+        gradeMap["trabalhos_que_tenho"]
+            .add({"valor": item.value ?? 0.0, "peso": weights[item.key]});
       }
     }
-
-    print(gradeMap);
     try {
-
-      final response = await dio.post(
-          dotenv.env['FINAL_SCORE_URL']!,
-          data: gradeMap);
+      final response =
+          await dio.post(dotenv.env['API_FINAL_SCORE_URL']!, data: gradeMap);
       if (response.statusCode == 200) {
         return response.data;
       } else {

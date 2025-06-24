@@ -9,8 +9,7 @@ class CourseService {
 
   Future<Map<String, dynamic>> getCourses() async {
     try {
-      final response = await dio
-          .get(dotenv.env['COURSES_URL']!);
+      final response = await dio.get(dotenv.env['API_SUBJECTS']!);
       if (response.statusCode == 200) {
         Map<String, dynamic> data = response.data;
         Map<String, CourseModel> aux = {};
@@ -43,7 +42,6 @@ class CourseService {
       throw Exception('Erro de rede: $e');
     }
   }
-
 }
 
 CourseService courseService = CourseService();

@@ -2,13 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SupportService {
+  final Dio dio = Dio();
 
-    final Dio dio = Dio();
-
-    Future<Map> postMessage(Map message) async {
+  Future<Map> postMessage(Map message) async {
     try {
       final response =
-          await dio.post(dotenv.env['SUPPORT_URL']!, data: message);
+          await dio.post(dotenv.env['API_SUPPORT_URL']!, data: message);
       if (response.statusCode == 200) {
         return message;
       } else {

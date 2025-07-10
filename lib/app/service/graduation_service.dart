@@ -2,13 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class GraduationService {
+  final Dio dio = Dio();
 
-    final Dio dio = Dio();
-
-    Future<Map<String, dynamic>> getGraduations() async {
+  Future<Map<String, dynamic>> getGraduations() async {
     try {
-      final response =
-          await dio.get(dotenv.env['GRADS_URL']!);
+      final response = await dio.get(dotenv.env['API_COURSES']!);
       if (response.statusCode == 200) {
         Map<String, dynamic> data = response.data;
         return data;

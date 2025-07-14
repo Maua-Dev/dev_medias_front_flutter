@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 class ReturnButton extends StatelessWidget {
-
   const ReturnButton({
     super.key,
   });
@@ -19,12 +18,14 @@ class ReturnButton extends StatelessWidget {
         // Muda cor se tiver uma página anterior especificada
         color: prevPage != null ? AppColors.white : Colors.transparent,
       ),
-      onPressed: prevPage != null ? () {
-        // Navegar para a tela anterior se tiver uma página anterior especificada no CommonController
-          String? pageToPush = prevPage;
-          Navigator.pushNamed(context, pageToPush);
-          commonController.setPreviousPage(null);
-      } : null,
+      onPressed: prevPage != null
+          ? () {
+              // Navegar para a tela anterior se tiver uma página anterior especificada no CommonController
+              String? pageToPush = prevPage;
+              Navigator.pop(context);
+              commonController.setPreviousPage(null);
+            }
+          : null,
     );
   }
 }

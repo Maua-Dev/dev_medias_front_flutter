@@ -1,10 +1,8 @@
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/widgets/common/return_button.dart';
 import 'package:dev_medias_front_flutter/app/widgets/popup_report_error.dart';
-import 'package:dev_medias_front_flutter/app/widgets/logo.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-
 
 class NavigationTopBar extends StatelessWidget {
   final String? prevPage;
@@ -19,8 +17,6 @@ class NavigationTopBar extends StatelessWidget {
       children: [
         // Botão de ícone voltar com ação interna
         ReturnButton(),
-        // Logo
-        Logo(),
         // Botão de ícone Reportar erro
         SupportButton(),
       ],
@@ -45,8 +41,8 @@ class SupportButton extends StatelessWidget {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-         return const PopupReportError();
-         },
+            return const PopupReportError();
+          },
         );
       },
     );

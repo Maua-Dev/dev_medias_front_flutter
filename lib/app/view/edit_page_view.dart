@@ -54,7 +54,7 @@ class _EditPageState extends State<EditPage> {
         resizeToAvoidBottomInset: false,
         backgroundColor: AppColors.background,
         body: Padding(
-          padding: const EdgeInsets.all(30),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,

@@ -19,6 +19,7 @@ class CurrentCourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double score = double.tryParse(finalScore.replaceAll(',', '.')) ?? 0.0;
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed('/edit', arguments: {'course': course});
@@ -35,8 +36,10 @@ class CurrentCourseCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(5),
                 child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: Round.secondary, color: AppColors.red),
+                    decoration: BoxDecoration(
+                      borderRadius: Round.secondary,
+                      color: score <= 6.0 ? AppColors.red : const Color(0xFF00398C),
+                    ),
                   child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: ConstrainedBox(

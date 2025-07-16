@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:dev_medias_front_flutter/app/controller/common/common_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/common/courses_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
@@ -30,7 +32,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<String> updateFinalScore(String courseCode) async {
-    return await homeController.getFinalScore(courseCode);
+    final result = await homeController.getFinalScore(courseCode);
+    return result;
   }
 
   @override
@@ -52,7 +55,7 @@ class _HomePageState extends State<HomePage> {
             child: FractionallySizedBox(
               widthFactor: 1,
               child: Padding(
-                padding: const EdgeInsets.only(top: 36.0),
+                padding: const EdgeInsets.only(top: 56.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[

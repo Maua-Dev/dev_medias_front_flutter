@@ -18,7 +18,7 @@ class NavigationTopBar extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Botão de ícone voltar com ação interna
-        if (prevPage != null) const ReturnButton(),
+        if (prevPage != null && !isHomePage) const ReturnButton(),
         // Botão de ícone menu lateral
         if (isHomePage) const MenuButton(),
         // Botão de ícone Reportar erro

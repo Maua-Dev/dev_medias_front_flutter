@@ -25,7 +25,7 @@ class _AddCourseFormState extends State<AddCourseForm> {
       key: _formKey,
       child: SizedBox(
         width: 400,
-        height: MediaQuery.of(context).size.height * 0.6,
+        height: MediaQuery.of(context).size.height * 0.7,
         child: Column(
           children: [
             const Center(

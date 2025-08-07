@@ -98,7 +98,12 @@ class _EditPageState extends State<EditPage> {
                                       fontSize: 20, color: AppColors.black),
                                   maxLines: 2,
                                   softWrap: true,
-                                )
+                                ),
+                                Text(
+                                  widget.course.code,
+                                  style: const TextStyle(
+                                      fontSize: 12, color: AppColors.textFaded),
+                                ),
                               ],
                             ),
                           ),

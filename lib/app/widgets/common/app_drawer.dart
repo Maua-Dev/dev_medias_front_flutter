@@ -1,4 +1,5 @@
 import 'package:dev_medias_front_flutter/app/controller/common/courses_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/user_controller.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/widgets/add_course_form.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,7 @@ class AppDrawer extends StatelessWidget {
                   color: AppColors.white,
                 ),
                 title: const Text(
-                  'Trocar ano',
+                  'Mudar ano/curso',
                   style: TextStyle(
                     color: AppColors.white,
                     fontSize: 18,
@@ -51,24 +52,25 @@ class AppDrawer extends StatelessWidget {
                   );
                 },
               ),
-              ListTile(
-                leading: const Icon(
-                  LucideIcons.trash,
-                  color: AppColors.white,
-                ),
-                title: const Text(
-                  'Apagar todas as matérias',
-                  style: TextStyle(
+              if (userController.currentCourses.isNotEmpty)
+                ListTile(
+                  leading: const Icon(
+                    LucideIcons.trash,
                     color: AppColors.white,
-                    fontSize: 18,
                   ),
+                  title: const Text(
+                    'Apagar todas as matérias',
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontSize: 18,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    // Confirma antes de remover todas as matérias
+                    _showDeleteAllCoursesDialog(context);
+                  },
                 ),
-                onTap: () {
-                  Navigator.pop(context);
-                  // Confirma antes de remover todas as matérias
-                  _showDeleteAllCoursesDialog(context);
-                },
-              ),
             ],
           ),
         ),

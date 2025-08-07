@@ -1,3 +1,4 @@
+import 'package:dev_medias_front_flutter/app/controller/common/courses_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/common/graduations_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/intro_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/common/user_controller.dart';
@@ -128,6 +129,7 @@ class _AddCourseFormState extends State<AddCourseForm> {
             ElevatedButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
+                  coursesController.deleteAllCurrentCourses();
                   await userController.insertUserData(UserModel(
                       graduation: graduationController.text,
                       year: int.parse(yearController.text)));

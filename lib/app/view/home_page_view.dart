@@ -1,5 +1,4 @@
 // ignore_for_file: avoid_print
-
 import 'package:dev_medias_front_flutter/app/controller/common/common_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/common/courses_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
@@ -10,6 +9,7 @@ import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:dev_medias_front_flutter/app/widgets/add_course_navigation_button.dart';
 import 'package:dev_medias_front_flutter/app/widgets/current_course_card.dart';
 import 'package:dev_medias_front_flutter/app/widgets/common/navigation_top_bar.dart';
+import 'package:dev_medias_front_flutter/app/widgets/common/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -49,6 +49,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: AppColors.background,
+        drawer: const AppDrawer(),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
           child: Center(
@@ -62,6 +63,7 @@ class _HomePageState extends State<HomePage> {
                     //Top Barra de Navegação sem botão de voltar
                     NavigationTopBar(
                       prevPage: commonController.getPreviousPage,
+                      isHomePage: true,
                     ),
                     // Botão Adicionar Matérias
                     const Padding(
@@ -107,149 +109,137 @@ class _HomePageState extends State<HomePage> {
                                                     return ClipRRect(
                                                       borderRadius:
                                                           Round.primary,
-                                                      child: Dismissible(
-                                                        key: UniqueKey(),
-                                                        direction:
-                                                            DismissDirection
-                                                                .endToStart,
-                                                        confirmDismiss:
-                                                            (direction) async {
-                                                          return await showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return AlertDialog(
-                                                                content:
-                                                                    SizedBox(
-                                                                  height: 128,
-                                                                  child: Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      const Text(
-                                                                        "Remover matéria?",
-                                                                        style: TextStyle(
-                                                                            fontWeight: FontWeight
-                                                                                .bold,
-                                                                            fontSize:
-                                                                                18,
-                                                                            color:
-                                                                                AppColors.red),
-                                                                      ),
-                                                                      const SizedBox(
-                                                                          height:
-                                                                              8),
-                                                                      Text(
-                                                                        "Remover ${course.name}?",
-                                                                        style:
-                                                                            const TextStyle(
-                                                                          fontSize:
-                                                                              14,
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                                actions: <Widget>[
-                                                                  TextButton(
-                                                                      style: TextButton.styleFrom(
-                                                                          backgroundColor: AppColors
-                                                                              .red,
-                                                                          foregroundColor: AppColors
-                                                                              .white,
-                                                                          shape: RoundedRectangleBorder(
-                                                                              borderRadius: Round
-                                                                                  .primary),
-                                                                          minimumSize: const Size
-                                                                              .fromHeight(
-                                                                              50),
-                                                                          padding: const EdgeInsets
-                                                                              .symmetric(
-                                                                              vertical:
-                                                                                  7,
-                                                                              horizontal:
-                                                                                  7)),
-                                                                      onPressed:
-                                                                          () {
-                                                                        Navigator.of(context)
-                                                                            .pop(true);
-                                                                      },
-                                                                      child: const Text(
-                                                                          "Excluir")),
-                                                                  TextButton(
-                                                                      style: TextButton.styleFrom(
-                                                                          foregroundColor: AppColors
-                                                                              .red,
-                                                                          shape: RoundedRectangleBorder(
-                                                                              borderRadius: Round
-                                                                                  .primary),
-                                                                          minimumSize: const Size
-                                                                              .fromHeight(
-                                                                              50),
-                                                                          padding: const EdgeInsets
-                                                                              .symmetric(
-                                                                              vertical:
-                                                                                  7,
-                                                                              horizontal:
-                                                                                  7)),
-                                                                      onPressed:
-                                                                          () {
-                                                                        Navigator.of(context)
-                                                                            .pop(false);
-                                                                      },
-                                                                      child: const Text(
-                                                                          "Cancelar"))
-                                                                ],
-                                                              );
-                                                            },
-                                                          );
-                                                        },
-                                                        onDismissed:
-                                                            (direction) {
-                                                          userController
-                                                              .removeCurrentCourse(
-                                                                  course.code);
-                                                        },
-                                                        background: Container(
-                                                          margin:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  bottom: 12),
-                                                          decoration: BoxDecoration(
-                                                              color:
-                                                                  AppColors.red,
-                                                              borderRadius:
-                                                                  Round
-                                                                      .primary),
-                                                          child: Row(
-                                                            children: [
-                                                              Expanded(
-                                                                  child:
-                                                                      Container()),
-                                                              const Padding(
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        right:
+                                                      child: IntrinsicHeight(
+                                                        // <- Isso força o Stack a medir baseado no conteúdo mais alto
+                                                        child: Stack(
+                                                          children: [
+                                                            // Background do delete (vermelho)
+                                                            Positioned.fill(
+                                                              child: Container(
+                                                                margin:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        bottom:
                                                                             12),
-                                                                child: Icon(
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color:
+                                                                      AppColors
+                                                                          .red,
+                                                                  borderRadius:
+                                                                      Round
+                                                                          .primary,
+                                                                ),
+                                                                alignment: Alignment
+                                                                    .centerRight,
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        right:
+                                                                            20),
+                                                                child:
+                                                                    const Icon(
                                                                   Icons.delete,
                                                                   color:
                                                                       AppColors
                                                                           .white,
                                                                 ),
                                                               ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        child:
-                                                            CurrentCourseCard(
-                                                          key: UniqueKey(),
-                                                          index: index,
-                                                          finalScore:
-                                                              finalScore,
-                                                          course: course,
+                                                            ),
+                                                            // Conteúdo principal (card)
+                                                            Dismissible(
+                                                              key: UniqueKey(),
+                                                              direction:
+                                                                  DismissDirection
+                                                                      .endToStart,
+                                                              confirmDismiss:
+                                                                  (direction) async {
+                                                                return await showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return AlertDialog(
+                                                                      content:
+                                                                          SizedBox(
+                                                                        height:
+                                                                            128,
+                                                                        child:
+                                                                            Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            const Text(
+                                                                              "Remover matéria?",
+                                                                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.red),
+                                                                            ),
+                                                                            const SizedBox(height: 8),
+                                                                            Text(
+                                                                              "Remover ${course.name}?",
+                                                                              style: const TextStyle(
+                                                                                fontSize: 14,
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                      actions: <Widget>[
+                                                                        TextButton(
+                                                                          style: TextButton.styleFrom(
+                                                                              backgroundColor: AppColors.red,
+                                                                              foregroundColor: AppColors.white,
+                                                                              shape: RoundedRectangleBorder(borderRadius: Round.primary),
+                                                                              minimumSize: const Size.fromHeight(50),
+                                                                              padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 7)),
+                                                                          onPressed:
+                                                                              () {
+                                                                            Navigator.of(context).pop(true);
+                                                                          },
+                                                                          child:
+                                                                              const Text("Excluir"),
+                                                                        ),
+                                                                        TextButton(
+                                                                          style: TextButton.styleFrom(
+                                                                              foregroundColor: AppColors.red,
+                                                                              shape: RoundedRectangleBorder(borderRadius: Round.primary),
+                                                                              minimumSize: const Size.fromHeight(50),
+                                                                              padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 7)),
+                                                                          onPressed:
+                                                                              () {
+                                                                            Navigator.of(context).pop(false);
+                                                                          },
+                                                                          child:
+                                                                              const Text("Cancelar"),
+                                                                        ),
+                                                                      ],
+                                                                    );
+                                                                  },
+                                                                );
+                                                              },
+                                                              onDismissed:
+                                                                  (direction) {
+                                                                userController
+                                                                    .removeCurrentCourse(
+                                                                        course
+                                                                            .code);
+                                                              },
+                                                              background:
+                                                                  Container(
+                                                                color: Colors
+                                                                    .transparent,
+                                                              ),
+                                                              child:
+                                                                  CurrentCourseCard(
+                                                                key:
+                                                                    UniqueKey(),
+                                                                index: index,
+                                                                finalScore:
+                                                                    finalScore,
+                                                                course: course,
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
                                                     );
@@ -266,6 +256,8 @@ class _HomePageState extends State<HomePage> {
                                     height: MediaQuery.of(context).size.height *
                                         0.7,
                                     child: const Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Expanded(
                                           child: Column(
@@ -276,7 +268,7 @@ class _HomePageState extends State<HomePage> {
                                                 "Você não tem matérias cadastradas :(",
                                                 style: TextStyle(
                                                     fontSize: 16.0,
-                                                    color: AppColors.textFaded),
+                                                    color: AppColors.white),
                                               ),
                                             ],
                                           ),

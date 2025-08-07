@@ -96,12 +96,9 @@ class _EditPageState extends State<EditPage> {
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                       fontSize: 20, color: AppColors.black),
-                                ),
-                                Text(
-                                  widget.course.code,
-                                  style: const TextStyle(
-                                      fontSize: 12, color: AppColors.black),
-                                ),
+                                  maxLines: 2,
+                                  softWrap: true,
+                                )
                               ],
                             ),
                           ),

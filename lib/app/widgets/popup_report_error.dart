@@ -70,25 +70,33 @@ class _PopupReportErrorState extends State<PopupReportError> {
                     const SizedBox(height: 16),
 
                     // Nome do erro
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0),
-                      child: Text(
-                        "Seu e-mail institucional",
-                        style: TextStyle(
-                          color: AppColors.black,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 16,
+                    const Flexible(
+                      fit: FlexFit.loose,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          "Seu e-mail institucional",
+                          style: TextStyle(
+                            color: AppColors.black,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0),
-                      child: TextField(
-                        controller: supportController.emailController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColors.black, width: 2.0),
-                            borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                    Flexible(
+                      fit: FlexFit.loose,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                        child: TextField(
+                          controller: supportController.emailController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: AppColors.black, width: 2.0),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12.0)),
+                            ),
                           ),
                         ),
                       ),
@@ -113,8 +121,10 @@ class _PopupReportErrorState extends State<PopupReportError> {
                         maxLines: 4,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColors.black, width: 2.0),
-                            borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                            borderSide:
+                                BorderSide(color: AppColors.black, width: 2.0),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(12.0)),
                           ),
                         ),
                       ),

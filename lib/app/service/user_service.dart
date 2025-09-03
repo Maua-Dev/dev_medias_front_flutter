@@ -78,4 +78,11 @@ class UserService {
     userBox.put('currentCourses', courseList);
     return {'currentCourses': courseList};
   }
+
+  Future<void> deleteAllCurrentCourses() async {
+    await Hive.initFlutter();
+    final userBox = await Hive.openBox('user');
+    userBox.delete('currentCourses');
+    userBox.delete('grades');
+  }
 }

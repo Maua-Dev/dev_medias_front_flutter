@@ -1,4 +1,5 @@
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
+import 'package:dev_medias_front_flutter/app/view/home_page_view.dart';
 import 'package:dev_medias_front_flutter/app/widgets/common/return_button.dart';
 import 'package:dev_medias_front_flutter/app/widgets/popup_report_error.dart';
 import 'package:flutter/material.dart';
@@ -6,20 +7,43 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 class NavigationTopBar extends StatelessWidget {
   final String? prevPage;
+  final bool isHomePage;
 
-  const NavigationTopBar({super.key, this.prevPage});
+  const NavigationTopBar({super.key, this.prevPage, this.isHomePage = false});
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Botão de ícone voltar com ação interna
-        ReturnButton(),
+        if (prevPage != null && !isHomePage) const ReturnButton(),
+        // Botão de ícone menu lateral
+        if (isHomePage) const MenuButton(),
         // Botão de ícone Reportar erro
-        SupportButton(),
+        const SupportButton(),
       ],
+    );
+  }
+}
+
+class MenuButton extends StatelessWidget {
+  const MenuButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: const Icon(
+        LucideIcons.menu,
+        size: 30,
+        color: AppColors.white,
+      ),
+      onPressed: () {
+        Scaffold.of(context).openDrawer();
+      },
     );
   }
 }

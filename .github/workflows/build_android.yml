@@ -10,7 +10,7 @@ on:
 
 jobs:
   build_android:
-    environment: homolog
+    environment: ${{ github.ref_name }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -85,6 +85,7 @@ jobs:
 
   deploy_to_play_store:
     needs: build_android
+    environment: ${{ github.ref_name }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

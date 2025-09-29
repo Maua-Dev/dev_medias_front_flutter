@@ -116,19 +116,29 @@ abstract class UserControllerBase with Store {
   @action
   Future<void> fetchCurrentCourses() async {
     final response = await service.getCurrentCourses();
-    setCurrentCourses(ObservableList<String>.of(response['currentCourses']!.toList()));
+    setCurrentCourses(
+        ObservableList<String>.of(response['currentCourses']!.toList()));
   }
 
   @action
   Future<void> insertCurrentCourses(String code) async {
     final response = await service.insertCurrentCourses(code);
-    setCurrentCourses(ObservableList<String>.of(response['currentCourses']!.toList()));
+    setCurrentCourses(
+        ObservableList<String>.of(response['currentCourses']!.toList()));
   }
 
   @action
   Future<void> removeCurrentCourse(String code) async {
     final response = await service.removeCurrentCourse(code);
-    setCurrentCourses(ObservableList<String>.of(response['currentCourses']!.toList()));
+    setCurrentCourses(
+        ObservableList<String>.of(response['currentCourses']!.toList()));
+  }
+
+  @action
+  Future<void> deleteAllCurrentCourses() async {
+    await service.deleteAllCurrentCourses();
+    // Limpa a lista observável para atualizar a UI
+    currentCourses.clear();
   }
 
   @action

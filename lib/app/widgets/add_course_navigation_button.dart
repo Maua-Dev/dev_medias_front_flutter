@@ -21,10 +21,7 @@ class AddCourseNavigationButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 10)),
       onPressed: () {
         commonController.setPreviousPage("/home");
-        Navigator.of(context).push(HorizontalPush(
-            exitPage: const HomePage(),
-            enterPage: const AddPage(),
-            routeName: "/add"));
+        Navigator.of(context).pushNamed("/add");
       },
       child: Row(
         children: [

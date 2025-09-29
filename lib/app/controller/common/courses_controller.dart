@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:dev_medias_front_flutter/app/controller/common/user_controller.dart';
 import 'package:dev_medias_front_flutter/app/service/course_service.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
@@ -39,6 +40,12 @@ abstract class CoursesControllerBase with Store {
   @action
   void setLoadedCourses(bool status) {
     loadedCourses = status;
+  }
+
+  // delete all current courses
+  @action
+  void deleteAllCurrentCourses() {
+    userController.deleteAllCurrentCourses();
   }
 
   // Requisição de matérias

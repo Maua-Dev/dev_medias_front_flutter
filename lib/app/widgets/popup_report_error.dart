@@ -33,70 +33,67 @@ class _PopupReportErrorState extends State<PopupReportError> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Título e botão de fechar
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: AppColors.red,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            height: 50,
-                            child: const Text(
-                              "Reportar Erro",
-                              style: TextStyle(
-                                color: AppColors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 20,
+                    Flexible(
+                      fit: FlexFit.loose,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: AppColors.red,
+                                borderRadius: BorderRadius.circular(16),
                               ),
-                              overflow: TextOverflow.ellipsis,
+                              height: 50,
+                              child: const Text(
+                                "Reportar Erro",
+                                style: TextStyle(
+                                  color: AppColors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
-                        ),
-                        IconButton(
-                          padding: const EdgeInsets.only(left: 20.0),
-                          icon: const Icon(
-                            Icons.disabled_by_default_rounded,
-                            size: 30,
-                            color: AppColors.red,
+                          IconButton(
+                            padding: const EdgeInsets.only(left: 20.0),
+                            icon: const Icon(
+                              Icons.disabled_by_default_rounded,
+                              size: 30,
+                              color: AppColors.red,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
                           ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 16),
 
                     // Nome do erro
-                    const Flexible(
-                      fit: FlexFit.loose,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text(
-                          "Seu e-mail institucional",
-                          style: TextStyle(
-                            color: AppColors.black,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 16,
-                          ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text(
+                        "Seu e-mail institucional",
+                        style: TextStyle(
+                          color: AppColors.black,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 16,
                         ),
                       ),
                     ),
-                    Flexible(
-                      fit: FlexFit.loose,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: TextField(
-                          controller: supportController.emailController,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: AppColors.black, width: 2.0),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(12.0)),
-                            ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5.0),
+                      child: TextField(
+                        controller: supportController.emailController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: AppColors.black, width: 2.0),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(12.0)),
                           ),
                         ),
                       ),
@@ -131,38 +128,41 @@ class _PopupReportErrorState extends State<PopupReportError> {
                     ),
 
                     // Botão Enviar
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.red,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
+                    Flexible(
+                      fit: FlexFit.loose,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                fixedSize: const Size(150, 50),
                               ),
-                              fixedSize: const Size(150, 50),
-                            ),
-                            onPressed: () {
-                              supportController.sendSupport();
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return const PopupErrorSent();
-                                },
-                              );
-                            },
-                            child: const Text(
-                              "Enviar",
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.white,
+                              onPressed: () {
+                                supportController.sendSupport();
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const PopupErrorSent();
+                                  },
+                                );
+                              },
+                              child: const Text(
+                                "Enviar",
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.white,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],

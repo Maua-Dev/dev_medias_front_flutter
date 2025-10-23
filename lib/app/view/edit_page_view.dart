@@ -269,8 +269,10 @@ class _EditPageState extends State<EditPage> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                widget.course.assignments!
-                                                        .isEmpty
+                                                ((widget.course.assignments!
+                                                            .isNotEmpty) &&
+                                                        (widget.course.exams!
+                                                            .isEmpty))
                                                     ? IconButton(
                                                         icon: const Icon(
                                                           LucideIcons.bookOpen,

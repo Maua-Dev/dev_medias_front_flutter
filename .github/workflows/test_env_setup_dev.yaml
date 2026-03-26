@@ -42,16 +42,25 @@ jobs:
 
           API_BASE=$(aws ssm get-parameter \
             --name "/devmedias/$STAGE/api/url" \
-            --query "Parameter.Value" --output text)
+            --query "Parameter.Value" --output text) || true
 
           CDN_SUBJECTS=$(aws ssm get-parameter \
             --name "/devmedias/$STAGE/cdn/subjects" \
-            --query "Parameter.Value" --output text)
+            --query "Parameter.Value" --output text) || true
+
+          if [ -n "$API_BASE" ]; then
+            echo "::add-mask::$API_BASE"
+          fi
+          
+          if [ -n "$CDN_SUBJECTS" ]; then
+            echo "::add-mask::$CDN_SUBJECTS"
+          fi
 
           echo "API_BASE=$API_BASE" >> $GITHUB_ENV
           echo "CDN_SUBJECTS=$CDN_SUBJECTS" >> $GITHUB_ENV
 
-      - name: Create .env file
+      - name: Validate .env
+        shell: /usr/bin/bash -e {0}
         run: |
           missing=()
       
@@ -71,3 +80,5 @@ jobs:
             printf ' - %s\n' "${missing[@]}"
             exit 1
           fi
+      
+          echo "✅ All environment variables are set"

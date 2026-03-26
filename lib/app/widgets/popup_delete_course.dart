@@ -6,7 +6,7 @@ import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 class PopupDeleteCourseWidget extends StatelessWidget {
   final PopupDeleteController controller;
 
-  const PopupDeleteCourseWidget({super.key, required this.controller});
+  const PopupDeleteCourseWidget({required this.controller});
 
   @override
   Widget build(BuildContext context) {

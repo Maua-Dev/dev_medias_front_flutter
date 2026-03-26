@@ -540,7 +540,7 @@ class _EditPageState extends State<EditPage> {
                                 backgroundColor:
                                     widget.course.assignments!.isEmpty &&
                                             widget.course.exams!.isEmpty
-                                        ? AppColors.red.withValues(alpha: 0.5)
+                                        ? AppColors.red.withOpacity(0.5)
                                         : AppColors.red,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: Round.primary),
@@ -558,7 +558,7 @@ class _EditPageState extends State<EditPage> {
                                         color: widget.course.assignments!
                                                     .isEmpty &&
                                                 widget.course.exams!.isEmpty
-                                            ? AppColors.white.withValues(alpha: 0.5)
+                                            ? AppColors.white.withOpacity(0.5)
                                             : AppColors.white,
                                         fontSize: 16.sp),
                                   ),
@@ -736,8 +736,8 @@ class _EditPageState extends State<EditPage> {
                                                                   TextButton(
                                                                       style: TextButton.styleFrom(
                                                                           backgroundColor: isDisabled
-                                                                              ? AppColors.red.withValues(
-                                                                                  alpha: 0.5)
+                                                                              ? AppColors.red.withOpacity(
+                                                                                  0.5)
                                                                               : AppColors
                                                                                   .red,
                                                                           shape: RoundedRectangleBorder(
@@ -774,7 +774,7 @@ class _EditPageState extends State<EditPage> {
                                                                         "Confirmar",
                                                                         style: TextStyle(
                                                                             color: isDisabled
-                                                                                ? AppColors.white.withValues(alpha: 0.5)
+                                                                                ? AppColors.white.withOpacity(0.5)
                                                                                 : AppColors.white),
                                                                       )),
                                                             ),
@@ -788,7 +788,7 @@ class _EditPageState extends State<EditPage> {
                                 backgroundColor:
                                     widget.course.assignments!.isEmpty &&
                                             widget.course.exams!.isEmpty
-                                        ? AppColors.red.withValues(alpha: 0.5)
+                                        ? AppColors.red.withOpacity(0.5)
                                         : AppColors.red,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: Round.primary),
@@ -802,7 +802,7 @@ class _EditPageState extends State<EditPage> {
                                 style: TextStyle(
                                     color: widget.course.assignments!.isEmpty &&
                                             widget.course.exams!.isEmpty
-                                        ? AppColors.white.withValues(alpha: 0.5)
+                                        ? AppColors.white.withOpacity(0.5)
                                         : AppColors.white,
                                     fontSize: 16.sp),
                               ),

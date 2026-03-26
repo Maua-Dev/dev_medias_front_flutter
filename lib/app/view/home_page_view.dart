@@ -348,7 +348,7 @@ class _HomePageState extends State<HomePage> {
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
                       await prefs.setBool('hasAcceptedTerms', true);
-                      if (context.mounted) Navigator.of(context).pop();
+                      Navigator.of(context).pop();
                     },
                     child: const Text(
                       "Aceitar",

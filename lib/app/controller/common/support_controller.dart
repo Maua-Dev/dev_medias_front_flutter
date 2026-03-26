@@ -4,9 +4,9 @@ import 'package:mobx/mobx.dart';
 
 part 'support_controller.g.dart';
 
-class SupportController = SupportControllerBase with _$SupportController;
+class SupportController = _SupportControllerBase with _$SupportController;
 
-abstract class SupportControllerBase with Store {
+abstract class _SupportControllerBase with Store {
 
   SupportService supportService = SupportService();
 

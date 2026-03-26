@@ -57,7 +57,7 @@ android {
 
     defaultConfig {
         applicationId "com.dev_medias_front_rn_v2"
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 21
         targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

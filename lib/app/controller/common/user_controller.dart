@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:dev_medias_front_flutter/app/controller/common/courses_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/user.dart';
 import 'package:dev_medias_front_flutter/app/service/user_service.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:mobx/mobx.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 part 'user_controller.g.dart';
 
 class UserController = UserControllerBase with _$UserController;

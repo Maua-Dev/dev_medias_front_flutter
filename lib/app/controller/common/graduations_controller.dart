@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:dev_medias_front_flutter/app/service/graduation_service.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mobx/mobx.dart';
 part 'graduations_controller.g.dart';
 

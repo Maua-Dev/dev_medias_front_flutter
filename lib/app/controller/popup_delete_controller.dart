@@ -2,9 +2,9 @@ import 'package:mobx/mobx.dart';
 
 part 'popup_delete_controller.g.dart';
 
-class PopupDeleteController = _PopupDeleteController with _$PopupDeleteController;
+class PopupDeleteController = PopupDeleteControllerBase with _$PopupDeleteController;
 
-abstract class _PopupDeleteController with Store {
+abstract class PopupDeleteControllerBase with Store {
   @observable
   bool isVisible = false;
 

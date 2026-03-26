@@ -137,7 +137,7 @@ class _AddCourseFormState extends State<AddCourseForm> {
                       graduationController.text,
                       int.parse(yearController.text));
                   introPageController.setLoginSuccesful(true);
-                  Navigator.pushReplacementNamed(context, '/home');
+                  if (context.mounted) Navigator.pushReplacementNamed(context, '/home');
                 }
               },
               style: TextButton.styleFrom(

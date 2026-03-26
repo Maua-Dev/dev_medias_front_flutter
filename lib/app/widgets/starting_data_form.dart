@@ -141,7 +141,7 @@ class _StartingDataFormState extends State<StartingDataForm> {
                       graduationController.text,
                       int.parse(yearController.text));
                   introPageController.setLoginSuccesful(true);
-                  Navigator.pushReplacementNamed(context, '/home');
+                  if (context.mounted) Navigator.pushReplacementNamed(context, '/home');
                 }
               },
               style: TextButton.styleFrom(

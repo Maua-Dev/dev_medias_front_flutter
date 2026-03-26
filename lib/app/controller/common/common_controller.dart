@@ -2,9 +2,9 @@ import 'package:mobx/mobx.dart';
 
 part 'common_controller.g.dart';
 
-class CommonController = _CommonControllerBase with _$CommonController;
+class CommonController = CommonControllerBase with _$CommonController;
 
-abstract class _CommonControllerBase with Store {
+abstract class CommonControllerBase with Store {
 
   @observable
   String? previousPage;

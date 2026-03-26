@@ -1,0 +1,69 @@
+name: Test ENV Setup
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  test_envs:
+    environment: dev
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set AWS Account ID and other variables
+        run: |
+            if [[ "${{ github.ref_name }}" == "dev" ]]; then
+            echo "AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID_DEV }}" >> $GITHUB_ENV
+            elif [[ "${{ github.ref_name }}" == "homolog" ]]; then
+            echo "AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID_HOML }}" >> $GITHUB_ENV
+            elif [[ "${{ github.ref_name }}" == "prod" ]]; then
+            echo "AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID_PROD }}" >> $GITHUB_ENV
+            else
+            echo "Invalid branch name!" && exit 1
+            fi
+            echo "STACK_NAME=DevMediasStack${{github.ref_name}}" >> $GITHUB_ENV
+  
+      - name: Setup AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/GithubActionsRole
+          role-session-name: github-action
+
+      - name: Fetch config from SSM
+        run: |
+          STAGE=dev
+
+          API_BASE=$(aws ssm get-parameter \
+            --name "/devmedias/$STAGE/api/url" \
+            --query "Parameter.Value" --output text)
+
+          CDN_PLANS=$(aws ssm get-parameter \
+            --name "/devmedias/$STAGE/cdn/plans" \
+            --query "Parameter.Value" --output text)
+
+          CDN_SUBJECTS=$(aws ssm get-parameter \
+            --name "/devmedias/$STAGE/cdn/subjects" \
+            --query "Parameter.Value" --output text)
+
+          echo "API_BASE=$API_BASE" >> $GITHUB_ENV
+          echo "CDN_PLANS=$CDN_PLANS" >> $GITHUB_ENV
+          echo "CDN_SUBJECTS=$CDN_SUBJECTS" >> $GITHUB_ENV
+
+      - name: Create .env file
+        run: |
+          echo "API_COURSES=https://$CDN_PLANS" >> .env
+          echo "API_SUBJECTS=https://$CDN_SUBJECTS" >> .env
+          echo "API_GRADE_OPTMIZER=${API_BASE}grade-optmizer" >> .env
+          echo "API_GENETIC_ALGORITHM=${API_BASE}genetic-algorithm" >> .env
+          echo "API_SUPPORT_URL=${API_BASE}public/contact-us" >> .env
+          echo "API_FINAL_SCORE_URL=${API_BASE}calculate-mean" >> .env
+
+      - name: Print .env
+        run: cat .env

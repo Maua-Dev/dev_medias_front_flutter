@@ -44,10 +44,6 @@ jobs:
             --name "/devmedias/$STAGE/api/url" \
             --query "Parameter.Value" --output text)
 
-          CDN_PLANS=$(aws ssm get-parameter \
-            --name "/devmedias/$STAGE/cdn/plans" \
-            --query "Parameter.Value" --output text)
-
           CDN_SUBJECTS=$(aws ssm get-parameter \
             --name "/devmedias/$STAGE/cdn/subjects" \
             --query "Parameter.Value" --output text)

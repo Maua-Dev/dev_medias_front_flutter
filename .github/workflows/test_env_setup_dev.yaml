@@ -53,13 +53,12 @@ jobs:
             --query "Parameter.Value" --output text)
 
           echo "API_BASE=$API_BASE" >> $GITHUB_ENV
-          echo "CDN_PLANS=$CDN_PLANS" >> $GITHUB_ENV
           echo "CDN_SUBJECTS=$CDN_SUBJECTS" >> $GITHUB_ENV
 
       - name: Create .env file
         run: |
-          echo "API_COURSES=https://$CDN_PLANS" >> .env
-          echo "API_SUBJECTS=https://$CDN_SUBJECTS" >> .env
+          echo "API_COURSES=https://$CDN_SUBJECTS/courses.json" >> .env
+          echo "API_SUBJECTS=https://$CDN_SUBJECTS/allSubjects.json" >> .env
           echo "API_GRADE_OPTMIZER=${API_BASE}grade-optmizer" >> .env
           echo "API_GENETIC_ALGORITHM=${API_BASE}genetic-algorithm" >> .env
           echo "API_SUPPORT_URL=${API_BASE}public/contact-us" >> .env

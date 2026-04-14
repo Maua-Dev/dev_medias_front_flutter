@@ -90,6 +90,17 @@ mixin _$CoursesController on CoursesControllerBase, Store {
   }
 
   @override
+  void deleteAllCurrentCourses() {
+    final _$actionInfo = _$CoursesControllerBaseActionController.startAction(
+        name: 'CoursesControllerBase.deleteAllCurrentCourses');
+    try {
+      return super.deleteAllCurrentCourses();
+    } finally {
+      _$CoursesControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 allCourses: ${allCourses},

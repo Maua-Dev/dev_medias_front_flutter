@@ -51,6 +51,10 @@ android {
         jvmTarget = '17'
     }
 
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
     defaultConfig {
         applicationId "com.dev_medias_front_rn_v2"
         minSdkVersion flutter.minSdkVersion

@@ -4,13 +4,16 @@ import 'package:dev_medias_front_flutter/app/controller/common/courses_controlle
 import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/home_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/common/user_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/notifications_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:dev_medias_front_flutter/app/widgets/add_course_navigation_button.dart';
 import 'package:dev_medias_front_flutter/app/widgets/current_course_card.dart';
 import 'package:dev_medias_front_flutter/app/widgets/common/navigation_top_bar.dart';
 import 'package:dev_medias_front_flutter/app/widgets/common/app_drawer.dart';
+import 'package:dev_medias_front_flutter/app/widgets/notice_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
@@ -311,14 +314,56 @@ class _HomePageState extends State<HomePage> {
 
     if (!hasAcceptedTerms) {
       _showTermsOfServiceDialog();
+    } else {
+      _scheduleNotificationsDialog();
     }
   }
 
+  void _scheduleNotificationsDialog() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      await _loadAndShowNotificationsIfAny(context);
+    });
+  }
+
+  Future<void> _loadAndShowNotificationsIfAny(BuildContext pageContext) async {
+    final notificationsUrl = dotenv.env['API_NOTIFICATIONS'];
+    final notificationsConfigured = notificationsUrl != null &&
+        notificationsUrl.trim().isNotEmpty;
+
+    if (notificationsConfigured) {
+      await notificationsController.fetchNotifications();
+    }
+
+    if (!pageContext.mounted) return;
+
+    // Sem URL no .env: mostra o aviso estático (até você apontar API_NOTIFICATIONS).
+    if (!notificationsConfigured) {
+      showBlockingNoticeDialog(pageContext);
+      return;
+    }
+
+    final items = notificationsController.notices;
+    if (items.isEmpty) return;
+    final title = items.length == 1 ? items.first.title : 'Avisos';
+    final description = items.length == 1
+        ? items.first.body
+        : items
+            .map((n) => '${n.title}\n\n${n.body}')
+            .join('\n\n────────────\n\n');
+    showBlockingNoticeDialog(
+      pageContext,
+      title: title,
+      description: description,
+    );
+  }
+
   void _showTermsOfServiceDialog() {
+    final pageContext = context;
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text(
             'Termos de Serviço',
@@ -345,10 +390,16 @@ class _HomePageState extends State<HomePage> {
                       fixedSize: const Size(150, 50),
                     ),
                     onPressed: () async {
-                      SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
+                      final nav = Navigator.of(dialogContext);
+                      final prefs = await SharedPreferences.getInstance();
+                      if (!mounted) return;
                       await prefs.setBool('hasAcceptedTerms', true);
-                      Navigator.of(context).pop();
+                      if (!dialogContext.mounted) return;
+                      nav.pop();
+                      WidgetsBinding.instance.addPostFrameCallback((_) async {
+                        if (!mounted) return;
+                        await _loadAndShowNotificationsIfAny(pageContext);
+                      });
                     },
                     child: const Text(
                       "Aceitar",

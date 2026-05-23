@@ -64,6 +64,15 @@ mixin _$CoursesController on CoursesControllerBase, Store {
     return _$fetchCoursesAsyncAction.run(() => super.fetchCourses());
   }
 
+  late final _$refreshAllSubjectsAsyncAction =
+      AsyncAction('CoursesControllerBase.refreshAllSubjects', context: context);
+
+  @override
+  Future<bool> refreshAllSubjects() {
+    return _$refreshAllSubjectsAsyncAction
+        .run(() => super.refreshAllSubjects());
+  }
+
   late final _$CoursesControllerBaseActionController =
       ActionController(name: 'CoursesControllerBase', context: context);
 

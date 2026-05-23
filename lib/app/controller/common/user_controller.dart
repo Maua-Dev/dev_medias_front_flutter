@@ -141,6 +141,22 @@ abstract class UserControllerBase with Store {
     currentCourses.clear();
   }
 
+  /// Remove da home códigos que não existem mais no catálogo da API.
+  @action
+  Future<void> pruneCurrentCoursesWithCatalog() async {
+    final catalog = coursesController.allCourses;
+    if (catalog == null || catalog.isEmpty) return;
+
+    final valid = currentCourses
+        .where((code) => catalog.containsKey(code))
+        .toList();
+    if (valid.length == currentCourses.length) return;
+
+    final response = await service.replaceCurrentCourses(valid);
+    setCurrentCourses(
+        ObservableList<String>.of(response['currentCourses']!.toList()));
+  }
+
   @action
   Future<void> loadInitialCourses(String code, int year) async {
     code = code.split(" ")[0];

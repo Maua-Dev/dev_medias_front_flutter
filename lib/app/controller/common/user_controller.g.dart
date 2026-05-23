@@ -217,6 +217,16 @@ mixin _$UserController on UserControllerBase, Store {
         .run(() => super.deleteAllCurrentCourses());
   }
 
+  late final _$pruneCurrentCoursesWithCatalogAsyncAction = AsyncAction(
+      'UserControllerBase.pruneCurrentCoursesWithCatalog',
+      context: context);
+
+  @override
+  Future<void> pruneCurrentCoursesWithCatalog() {
+    return _$pruneCurrentCoursesWithCatalogAsyncAction
+        .run(() => super.pruneCurrentCoursesWithCatalog());
+  }
+
   late final _$loadInitialCoursesAsyncAction =
       AsyncAction('UserControllerBase.loadInitialCourses', context: context);
 

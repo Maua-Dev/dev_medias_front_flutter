@@ -11,36 +11,70 @@ class CourseService {
     try {
       final response = await dio.get(dotenv.env['API_SUBJECTS']!);
       if (response.statusCode == 200) {
-        Map<String, dynamic> data = response.data;
-        Map<String, CourseModel> aux = {};
+        final subjects = _parseSubjectsPayload(response.data);
+        final Map<String, CourseModel> aux = {};
 
-        data.forEach((code, course) {
-          // converte as provas no formato GradeModel
-          final prevExams = course["exams"];
-          final newExamList = [];
-          for (Map<String, dynamic> exam in prevExams) {
-            newExamList.add(GradeModel.fromJson(exam));
-          }
-          course["exams"] = newExamList;
-          // converte os trabalhos no formato GradeModel
-          final prevAssignments = course["assignments"];
-          final newAssignmentList = [];
-          for (Map<String, dynamic> assignment in prevAssignments) {
-            newAssignmentList.add(GradeModel.fromJson(assignment));
-          }
-          course["assignments"] = newAssignmentList;
-          course = CourseModel.fromJson(course);
-          aux[code] = course;
-        });
+        for (final raw in subjects) {
+          final course = _toCourseModel(raw);
+          aux[course.code] = course;
+        }
 
-        Map<String, CourseModel> courses = aux;
-        return courses;
+        return aux;
       } else {
         throw Exception('Erro na solicitação GET');
       }
     } catch (e) {
       throw Exception('Erro de rede: $e');
     }
+  }
+
+  /// API nova: lista JSON; CDN antigo: mapa indexado por código.
+  List<Map<String, dynamic>> _parseSubjectsPayload(dynamic data) {
+    if (data is List) {
+      return data
+          .map((item) => Map<String, dynamic>.from(item as Map))
+          .toList();
+    }
+    if (data is Map) {
+      return data.entries.map((entry) {
+        final subject = Map<String, dynamic>.from(entry.value as Map);
+        subject.putIfAbsent('code', () => entry.key.toString());
+        return subject;
+      }).toList();
+    }
+    throw Exception('Formato de disciplinas não reconhecido');
+  }
+
+  Map<String, dynamic> _normalizeSubjectFields(Map<String, dynamic> raw) {
+    return {
+      'code': raw['code'],
+      'name': raw['name'],
+      'period': raw['period'],
+      'examWeight': raw['examWeight'] ?? raw['exam_weight'],
+      'assignmentWeight': raw['assignmentWeight'] ?? raw['assignment_weight'],
+      'exams': raw['exams'] ?? [],
+      'assignments': raw['assignments'] ?? [],
+      'courses': raw['courses'],
+    };
+  }
+
+  CourseModel _toCourseModel(Map<String, dynamic> raw) {
+    final course = _normalizeSubjectFields(raw);
+
+    final exams = <GradeModel>[];
+    for (final exam in course['exams'] as List) {
+      exams.add(GradeModel.fromJson(Map<String, dynamic>.from(exam as Map)));
+    }
+    course['exams'] = exams;
+
+    final assignments = <GradeModel>[];
+    for (final assignment in course['assignments'] as List) {
+      assignments.add(
+          GradeModel.fromJson(Map<String, dynamic>.from(assignment as Map)));
+    }
+    course['assignments'] = assignments;
+
+    return CourseModel.fromJson(course);
   }
 }
 

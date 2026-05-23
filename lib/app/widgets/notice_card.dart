@@ -4,26 +4,26 @@ import 'package:flutter/material.dart';
 const String _kDefaultNoticeTitle = 'Aviso';
 
 const String _kDefaultNoticeBody = '''
-Este é um aviso estático de exemplo. Quando a integração com a API estiver pronta, o título e o texto virão do servidor.
-
-A Dev Community Mauá pode publicar avisos sobre manutenção, mudanças no cálculo de médias ou novidades do aplicativo. Leia com atenção antes de continuar.
 
 Lembre-se de conferir suas notas oficiais no sistema da instituição. Este aplicativo é uma ferramenta de apoio e pode conter erros ou interpretações diferentes do regulamento vigente.
-
-Ao usar o app, você concorda em manter seus dados de cadastro atualizados e em não compartilhar credenciais de acesso com terceiros.
 
 Se encontrar inconsistências, utilize o canal de suporte para reportar o problema com o máximo de detalhes possível.
 
 Obrigado por utilizar o DevMédias. Role até o final deste texto para habilitar o botão de confirmação.
 ''';
 
+/// Aviso já fechado nesta execução do app; reinicia ao fechar e reabrir o app.
+bool noticeDismissedThisAppSession = false;
+
 /// Mostra o card de aviso em tela quase cheia; só fecha após rolar até o fim e tocar em ENTENDI.
 Future<void> showBlockingNoticeDialog(
   BuildContext context, {
   String? title,
   String? description,
-}) {
-  return showDialog<void>(
+}) async {
+  if (noticeDismissedThisAppSession) return;
+
+  await showDialog<void>(
     context: context,
     barrierDismissible: false,
     builder: (dialogContext) {
@@ -100,6 +100,7 @@ class _NoticeCardState extends State<NoticeCard> {
   }
 
   void _onEntendi() {
+    noticeDismissedThisAppSession = true;
     Navigator.of(context).pop();
   }
 

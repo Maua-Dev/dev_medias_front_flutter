@@ -44,60 +44,51 @@ class _HomePageState extends State<HomePage> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light, // Ícones brancos
-        statusBarBrightness: Brightness.dark, // Para iOS
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarDividerColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+        systemNavigationBarContrastEnforced: false,
       ),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: AppColors.background,
         drawer: const AppDrawer(),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-          child: Center(
-            child: FractionallySizedBox(
-              widthFactor: 1,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 56.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    //Top Barra de Navegação sem botão de voltar
-                    NavigationTopBar(
-                      prevPage: commonController.getPreviousPage,
-                      isHomePage: true,
-                    ),
-                    // Botão Adicionar Matérias
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child: AddCourseNavigationButton(),
-                    ),
-                    // Lista de Matérias
-                    Observer(
-                        builder: (_) => coursesController.loadedCourses
-                            ? userController.currentCourses.isNotEmpty
-                                ? SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                            0.7 -
-                                        13,
-                                    child: Column(
-                                      children: [
-                                        Expanded(
-                                          child: ListView.builder(
-                                            padding: EdgeInsets.zero,
-                                            shrinkWrap: true,
-                                            itemCount: userController
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                NavigationTopBar(
+                  prevPage: commonController.getPreviousPage,
+                  isHomePage: true,
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: AddCourseNavigationButton(),
+                ),
+                Expanded(
+                  child: Observer(
+                      builder: (_) => coursesController.loadedCourses
+                          ? userController.currentCourses.isNotEmpty
+                              ? ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  itemCount: userController
                                                 .currentCourses.length,
                                             itemBuilder: (context, index) {
-                                              CourseModel? course =
-                                                  coursesController.allCourses?[
-                                                      userController
-                                                              .currentCourses[
-                                                          index]];
+                                              final courseCode = userController
+                                                  .currentCourses[index];
+                                              final CourseModel? course =
+                                                  coursesController
+                                                      .allCourses?[courseCode];
+                                              if (course == null) {
+                                                return const SizedBox.shrink();
+                                              }
                                               return FutureBuilder<String>(
                                                 future: updateFinalScore(
-                                                    course!.code),
+                                                    course.code),
                                                 builder: (context, snapshot) {
                                                   if (snapshot
                                                           .connectionState ==
@@ -250,57 +241,29 @@ class _HomePageState extends State<HomePage> {
                                                 },
                                               );
                                             },
-                                          ),
-                                        ),
-                                      ],
+                                          )
+                              : const Center(
+                                  child: Text(
+                                    "Você não tem matérias cadastradas",
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.white,
                                     ),
-                                  )
-                                : SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.7,
-                                    child: const Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Center(
-                                                child: Text(
-                                                  "Você não tem matérias cadastradas",
-                                                  style: TextStyle(
-                                                      fontSize: 16.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: AppColors.white),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                            : SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.7,
-                                width: double.maxFinite,
-                                child: const Center(
-                                  child: SizedBox(
-                                    width: 50,
-                                    height: 50,
-                                    child: CircularProgressIndicator(
-                                      color: AppColors.red,
-                                    ),
+                                    textAlign: TextAlign.center,
                                   ),
+                                )
+                          : const Center(
+                              child: SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: CircularProgressIndicator(
+                                  color: AppColors.red,
                                 ),
-                              )),
-                  ],
+                              ),
+                            )),
                 ),
-              ),
+              ],
             ),
           ),
         ),
@@ -320,13 +283,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _scheduleNotificationsDialog() {
+    if (noticeDismissedThisAppSession) return;
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!mounted) return;
+      if (!mounted || noticeDismissedThisAppSession) return;
       await _loadAndShowNotificationsIfAny(context);
     });
   }
 
   Future<void> _loadAndShowNotificationsIfAny(BuildContext pageContext) async {
+    if (noticeDismissedThisAppSession) return;
     final notificationsUrl = dotenv.env['API_NOTIFICATIONS'];
     final notificationsConfigured = notificationsUrl != null &&
         notificationsUrl.trim().isNotEmpty;

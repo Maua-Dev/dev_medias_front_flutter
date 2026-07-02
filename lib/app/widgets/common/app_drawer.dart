@@ -3,7 +3,7 @@ import 'package:dev_medias_front_flutter/app/controller/common/user_controller.d
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:dev_medias_front_flutter/app/widgets/add_course_form.dart';
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});

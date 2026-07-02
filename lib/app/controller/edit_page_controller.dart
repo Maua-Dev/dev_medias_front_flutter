@@ -1,4 +1,6 @@
+import 'package:dev_medias_front_flutter/app/controller/common/courses_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/grade_controller.dart';
+import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 part 'edit_page_controller.g.dart';
@@ -28,6 +30,9 @@ abstract class EditPageControllerBase with Store {
 
   @observable
   bool targetCalcError = false;
+
+  @observable
+  bool finalScoreCalcError = false;
 
   @observable
   TextEditingController finalScoreController = TextEditingController(text: "");
@@ -82,34 +87,120 @@ abstract class EditPageControllerBase with Store {
     targetCalcError = value;
   }
 
+  @action
+  void setFinalScoreCalcError(bool value) {
+    finalScoreCalcError = value;
+  }
+
+  bool _needsTargetFill(String gradeName) {
+    return gradeControllers[gradeName]!.text.isEmpty ||
+        gradeTypes[gradeName] != 'normal';
+  }
+
+  int _filledExamsCount(CourseModel course) {
+    var count = 0;
+    for (final exam in course.exams ?? <dynamic>[]) {
+      if (!_needsTargetFill(exam.name as String)) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  int _filledAssignmentsCount(CourseModel course) {
+    var count = 0;
+    for (final assignment in course.assignments ?? <dynamic>[]) {
+      if (!_needsTargetFill(assignment.name as String)) {
+        count++;
+      }
+    }
+    return count;
+  }
+
   // Desenha as notas meta na tela
   @action
-  void renderTargetGrades(Map grades) {
+  bool renderTargetGrades(Map grades) {
     gradeRendered = false;
-    if (grades.containsKey("erro")) {
+    targetCalcError = false;
+
+    if (grades.containsKey('erro') ||
+        grades['notas'] == null ||
+        grades['notas']['provas'] == null ||
+        grades['notas']['trabalhos'] == null) {
       targetCalcError = true;
       gradeRendered = true;
       targetCalcInProgress = false;
-      return;
+      return false;
     }
-    final allGrades = grades["notas"]["provas"] + grades["notas"]["trabalhos"];
-    int index = 0;
-    // Define os valores das notas restantes como as metas recebidas
-    editController.grades.forEach((key, value) {
-      if (editController.gradeControllers[key]!.text.isEmpty || editController.gradeTypes[key] != "normal") {
-        editController.grades[key] = allGrades[index]["valor"];
-        editController.gradeControllers[key]!.text = "${allGrades[index]["valor"]}";
-        editController.gradeTypes[key] = "targetcalc";
-        index++;
-        }
-      }
+
+    final course = coursesController.allCourses?[courseCode] as CourseModel?;
+    if (course == null) {
+      targetCalcError = true;
+      gradeRendered = true;
+      targetCalcInProgress = false;
+      return false;
+    }
+
+    final provasMeta = List<Map<String, dynamic>>.from(
+      (grades['notas']['provas'] as List).map(
+        (item) => Map<String, dynamic>.from(item as Map),
+      ),
     );
-    // Faz o mesmo para a nota final
-    editController.finalScoreController.text = "$targetGrade";
-    editController.finalScoreGrade = targetGrade;
-    editController.finalScoreType = "targetcalc";
+    final trabalhosMeta = List<Map<String, dynamic>>.from(
+      (grades['notas']['trabalhos'] as List).map(
+        (item) => Map<String, dynamic>.from(item as Map),
+      ),
+    );
+
+    var provaQueroIndex = 0;
+    var trabalhoQueroIndex = 0;
+    final provasTenho = _filledExamsCount(course);
+    final trabalhosTenho = _filledAssignmentsCount(course);
+
+    for (final exam in course.exams ?? <dynamic>[]) {
+      final name = exam.name as String;
+      if (!_needsTargetFill(name)) {
+        continue;
+      }
+      final responseIndex = provasTenho + provaQueroIndex;
+      if (responseIndex >= provasMeta.length) {
+        targetCalcError = true;
+        gradeRendered = true;
+        targetCalcInProgress = false;
+        return false;
+      }
+      final valor = (provasMeta[responseIndex]['valor'] as num).toDouble();
+      grades[name] = valor;
+      gradeControllers[name]!.text = '$valor';
+      gradeTypes[name] = 'targetcalc';
+      provaQueroIndex++;
+    }
+
+    for (final assignment in course.assignments ?? <dynamic>[]) {
+      final name = assignment.name as String;
+      if (!_needsTargetFill(name)) {
+        continue;
+      }
+      final responseIndex = trabalhosTenho + trabalhoQueroIndex;
+      if (responseIndex >= trabalhosMeta.length) {
+        targetCalcError = true;
+        gradeRendered = true;
+        targetCalcInProgress = false;
+        return false;
+      }
+      final valor = (trabalhosMeta[responseIndex]['valor'] as num).toDouble();
+      grades[name] = valor;
+      gradeControllers[name]!.text = '$valor';
+      gradeTypes[name] = 'targetcalc';
+      trabalhoQueroIndex++;
+    }
+
+    finalScoreController.text = '$targetGrade';
+    finalScoreGrade = targetGrade;
+    finalScoreType = 'targetcalc';
     gradeRendered = true;
     targetCalcInProgress = false;
+    return true;
   }
 
   @action
@@ -157,26 +248,25 @@ abstract class EditPageControllerBase with Store {
 
   // Calcula as metas de nota para cada avaliação de acordo com a meta inserida com o usuário
   @action
-  Future<void> calcTargetGrade(
+  Future<bool> calcTargetGrade(
       Map<String, dynamic> grades, Map<String, dynamic> weights) async {
+    setTargetCalcError(false);
 
-    // Se o tipo de uma das notas for diferente de normal, ele é considerado como zero
-    final filteredGrades = grades;
+    final filteredGrades = Map<String, dynamic>.from(grades);
     filteredGrades.forEach((key, value) {
       if (gradeTypes[key] != "normal") {
         filteredGrades[key] = null;
       }
     });
-    // Obtém as notas meta e devolve um mapa
-    Map targetGrades = {};
-    try {
-        targetGrades = await gradeController.getTargetGrades(filteredGrades, weights, targetGrade.toDouble(), courseCode);
-    } catch (e) {
-        targetGrades = {"erro": "Erro ao calcular as notas meta."};
-    }
 
-    // Pega o mapa e utiliza ele para alterar os valores da tela
-    renderTargetGrades(targetGrades);
+    final targetGrades = await gradeController.getTargetGrades(
+      filteredGrades,
+      weights,
+      targetGrade.toDouble(),
+      courseCode,
+    );
+
+    return renderTargetGrades(targetGrades);
   }
 
   @action
@@ -199,20 +289,25 @@ abstract class EditPageControllerBase with Store {
 
   // Calcula a nota final de acordo com as notas inseridas pelo usuário
   @action
-  Future<void> calcFinalScore(Map<String, dynamic> weights, Map<String, dynamic> grades) async {
+  Future<bool> calcFinalScore(
+      Map<String, dynamic> weights, Map<String, dynamic> grades) async {
+    setFinalScoreCalcError(false);
 
+    final result =
+        await gradeController.getFinalScore(grades, weights, courseCode);
 
-    try {
-      Map result = await gradeController.getFinalScore(grades, weights, courseCode);
-      finalScoreGrade = result["media"];
-    } catch (e) {
+    if (result.containsKey('erro')) {
+      finalScoreCalcError = true;
       finalScoreGrade = null;
+      finalScoreController.text = '';
+      return false;
     }
 
-    // Atualiza o resultado final na tela
-    finalScoreController.text = finalScoreGrade != null ? "$finalScoreGrade" : "";
-    finalScoreGrade = finalScoreGrade;
-    finalScoreType = "normal";
+    finalScoreGrade = (result['media'] as num?)?.toDouble();
+    finalScoreController.text =
+        finalScoreGrade != null ? '$finalScoreGrade' : '';
+    finalScoreType = 'normal';
+    return true;
   }
 
   // Formata as notas para serem enviadas ao salvamento local no Hive

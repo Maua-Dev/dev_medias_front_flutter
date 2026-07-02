@@ -65,8 +65,7 @@ class PopupErrorSent extends StatelessWidget {
                     fixedSize: const Size(150, 50),
                   ),
                   onPressed: () {
-                    // Fecha ambos os popups e retorna à página anterior
-                    Navigator.of(context).pop;
+                    Navigator.of(context).pop();
                   },
                   child: const Text(
                     "Concluir",

@@ -28,7 +28,6 @@
         # run: |
           # echo "GRADS_URL=${{ vars.API_COURSES }}" >> .env # The courses API
           # echo "COURSES_URL=${{ vars.API_SUBJECTS }}" >> .env # The subjects API
-          # echo "GRADE_OPTIMIZER_URL=${{ vars.API_GRADE_OPTMIZER }}" >> .env # The grade optimizer API
 
       # - name: Setup Fastlane
         # uses: ruby/setup-ruby@v1

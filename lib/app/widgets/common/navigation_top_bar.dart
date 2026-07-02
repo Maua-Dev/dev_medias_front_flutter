@@ -3,7 +3,7 @@ import 'package:dev_medias_front_flutter/app/view/home_page_view.dart';
 import 'package:dev_medias_front_flutter/app/widgets/common/return_button.dart';
 import 'package:dev_medias_front_flutter/app/widgets/popup_report_error.dart';
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class NavigationTopBar extends StatelessWidget {
   final String? prevPage;

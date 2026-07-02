@@ -85,4 +85,12 @@ class UserService {
     userBox.delete('currentCourses');
     userBox.delete('grades');
   }
+
+  Future<Map<String, List<String>>> replaceCurrentCourses(
+      List<String> courseList) async {
+    await Hive.initFlutter();
+    final userBox = await Hive.openBox('user');
+    userBox.put('currentCourses', courseList);
+    return {'currentCourses': courseList};
+  }
 }

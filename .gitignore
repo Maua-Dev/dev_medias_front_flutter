@@ -1,7 +1,9 @@
 # Miscellaneous
 *.class
 *.log
+# Lock files (do not ignore Dart/Flutter lockfile — commit pubspec.lock)
 *.lock
+!pubspec.lock
 *.pyc
 *.swp
 .DS_Store
@@ -34,6 +36,11 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+
+# Platform build outputs (Gradle, CMake, etc.)
+/android/build/
+/android/app/build/
+/ios/build/
 
 # Symbolication related
 app.*.symbols

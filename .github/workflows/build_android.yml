@@ -6,15 +6,13 @@ on:
       - homolog
       - prod
 
-  workflow_call:
-
 jobs:
   build_android:
     environment: ${{ github.ref_name }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
-      contents: write
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,26 +25,20 @@ jobs:
           echo "app_build_name=$app_build_name" >> $GITHUB_ENV
 
       - name: Setup Java Version
-        uses: actions/setup-java@v4        # era v1
+        uses: actions/setup-java@v4
         with:
-          java-version: "17"               # era 12, Flutter 3.24 exige 17+
+          java-version: "17"
+          distribution: 'temurin'
 
       - name: Setup Flutter Version
-        uses: subosito/flutter-action@v2   # era v1
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.24.3"
 
       - name: Get flutter dependencies
         run: flutter pub get
 
-      - name: Setup Fastlane
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "2.6"
-          bundler-cache: true
-          working-directory: android
-
-      - name: Set AWS Account ID and other variables
+      - name: Set AWS Account ID
         run: |
           if [[ "${{ github.ref_name }}" == "dev" ]]; then
             echo "AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID_DEV }}" >> $GITHUB_ENV
@@ -66,9 +58,6 @@ jobs:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/GithubActionsRole
           role-session-name: github-action
 
-      - name: Set envs
-        run: |
-
       - name: Configure Keystore
         run: |
           echo "$ANDROID_PLAY_STORE_KEYSTORE_BASE64" | base64 --decode > app/upload-keystore.jks
@@ -83,60 +72,51 @@ jobs:
           ANDROID_KEYSTORE_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_STORE_PASSWORD }}
         working-directory: android
 
-      # esse processo busca o endpoint do APIGW direto da variável setada pelo SSM configurado no back
-      # evitando essa passagem manual dessa endpoint pro secrets do github e evitando possíveis erros
-      # de passagem manual
-
+      # Busca o endpoint do APIGW no SSM (configurado no back).
       - name: Fetch config from SSM
         run: |
-          STAGE=dev
+          STAGE=$(echo "${{ github.ref_name }}" | tr '[:upper:]' '[:lower:]')
 
           API_BASE=$(aws ssm get-parameter \
             --name "/devmedias/$STAGE/api/url" \
             --query "Parameter.Value" --output text)
 
-          CDN_PLANS=$(aws ssm get-parameter \
-            --name "/devmedias/$STAGE/cdn/plans" \
-            --query "Parameter.Value" --output text)
-
-          CDN_SUBJECTS=$(aws ssm get-parameter \
-            --name "/devmedias/$STAGE/cdn/subjects" \
-            --query "Parameter.Value" --output text)
-
+          API_BASE="${API_BASE%/}/"
           echo "API_BASE=$API_BASE" >> $GITHUB_ENV
-          echo "CDN_SUBJECTS=$CDN_SUBJECTS" >> $GITHUB_ENV
 
       - name: Create .env file
         run: |
-          echo "API_COURSES=https://$CDN_SUBJECTS/courses.json" >> .env
-          echo "API_SUBJECTS=https://$CDN_SUBJECTS/allSubjects.json" >> .env
-          echo "API_GRADE_OPTMIZER=${API_BASE}grade-optmizer" >> .env
-          echo "API_GENETIC_ALGORITHM=${API_BASE}genetic-algorithm" >> .env
-          echo "API_SUPPORT_URL=${API_BASE}public/contact-us" >> .env
-          echo "API_FINAL_SCORE_URL=${API_BASE}calculate-mean" >> .env
+          {
+            echo "API_COURSES=${API_BASE}get-all-cursos"
+            echo "API_SUBJECTS=${API_BASE}get-all-disciplinas"
+            echo "API_GENETIC_ALGORITHM=${API_BASE}genetic-algorithm"
+            echo "API_SUPPORT_URL=${API_BASE}public/contact-us"
+            echo "API_FINAL_SCORE_URL=${API_BASE}calculate-mean"
+            echo "API_NOTIFICATIONS="
+          } >> .env
 
       - name: Build Android
         run: |
           flutter build appbundle --release \
             --build-name=$app_build_name \
             --build-number=$app_build_number
-    
+
       - name: Upload to artifacts
         uses: actions/upload-artifact@v4
         with:
           name: app-release.aab
           path: build/app/outputs/bundle/release/
-          retention-days: 1 
+          retention-days: 1
 
   deploy_to_play_store:
     needs: build_android
     environment: ${{ github.ref_name }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          repository: ${{ inputs.repository }}
 
       - name: Download artifact
         uses: actions/download-artifact@v4

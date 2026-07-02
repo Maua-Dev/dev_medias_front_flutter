@@ -64,6 +64,15 @@ mixin _$CoursesController on CoursesControllerBase, Store {
     return _$fetchCoursesAsyncAction.run(() => super.fetchCourses());
   }
 
+  late final _$refreshAllSubjectsAsyncAction =
+      AsyncAction('CoursesControllerBase.refreshAllSubjects', context: context);
+
+  @override
+  Future<bool> refreshAllSubjects() {
+    return _$refreshAllSubjectsAsyncAction
+        .run(() => super.refreshAllSubjects());
+  }
+
   late final _$CoursesControllerBaseActionController =
       ActionController(name: 'CoursesControllerBase', context: context);
 
@@ -84,6 +93,17 @@ mixin _$CoursesController on CoursesControllerBase, Store {
         name: 'CoursesControllerBase.setLoadedCourses');
     try {
       return super.setLoadedCourses(status);
+    } finally {
+      _$CoursesControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void deleteAllCurrentCourses() {
+    final _$actionInfo = _$CoursesControllerBaseActionController.startAction(
+        name: 'CoursesControllerBase.deleteAllCurrentCourses');
+    try {
+      return super.deleteAllCurrentCourses();
     } finally {
       _$CoursesControllerBaseActionController.endAction(_$actionInfo);
     }

@@ -62,7 +62,7 @@ mixin _$SupportController on _SupportControllerBase, Store {
       AsyncAction('_SupportControllerBase.sendSupport', context: context);
 
   @override
-  Future<Map<dynamic, dynamic>> sendSupport() {
+  Future<Map<String, dynamic>> sendSupport() {
     return _$sendSupportAsyncAction.run(() => super.sendSupport());
   }
 

@@ -23,17 +23,17 @@ abstract class _SupportControllerBase with Store {
   TextEditingController get getMessageController => messageController;
 
   @action
-  Future<Map> sendSupport() async {
+  Future<Map<String, dynamic>> sendSupport() async {
     final message = {
-      "email": emailController.text,
-      "message": messageController.text,
+      "email": emailController.text.trim(),
+      "message": messageController.text.trim(),
     };
-    try {
-      final response = await supportService.postMessage(message);
-      return response;
-    } catch (e) {
-      throw Exception('Erro de rede: $e');
+    final response = await supportService.postMessage(message);
+    if (response['success'] == true) {
+      emailController.clear();
+      messageController.clear();
     }
+    return response;
   }
 }
 

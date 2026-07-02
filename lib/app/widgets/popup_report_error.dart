@@ -13,6 +13,64 @@ class PopupReportError extends StatefulWidget {
 
 class _PopupReportErrorState extends State<PopupReportError> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _isSending = false;
+
+  Future<void> _submitSupport() async {
+    final email = supportController.emailController.text.trim();
+    final message = supportController.messageController.text.trim();
+
+    if (email.isEmpty || message.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preencha o e-mail e a descrição antes de enviar.'),
+          backgroundColor: AppColors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isSending = true);
+
+    try {
+      final result = await supportController.sendSupport();
+
+      if (!mounted) return;
+
+      if (result['success'] == true) {
+        Navigator.of(context).pop();
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const PopupErrorSent();
+          },
+        );
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            result['error']?.toString() ?? 'Não foi possível enviar a mensagem.',
+          ),
+          backgroundColor: AppColors.red,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro inesperado ao enviar: $e'),
+          backgroundColor: AppColors.red,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isSending = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Observer(
@@ -143,23 +201,24 @@ class _PopupReportErrorState extends State<PopupReportError> {
                                 ),
                                 fixedSize: const Size(150, 50),
                               ),
-                              onPressed: () {
-                                supportController.sendSupport();
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return const PopupErrorSent();
-                                  },
-                                );
-                              },
-                              child: const Text(
-                                "Enviar",
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.white,
-                                ),
-                              ),
+                              onPressed: _isSending ? null : _submitSupport,
+                              child: _isSending
+                                  ? const SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: AppColors.white,
+                                      ),
+                                    )
+                                  : const Text(
+                                      "Enviar",
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.white,
+                                      ),
+                                    ),
                             ),
                           ],
                         ),

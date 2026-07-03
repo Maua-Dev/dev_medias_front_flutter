@@ -26,7 +26,8 @@ class _LoadingPageState extends State<LoadingPage> {
       loadingPageController.setLoading(true);
       final userDataMissing = await userController.checkUserDataExists();
       try {
-        coursesController.setAllCourses(await coursesController.fetchCourses());
+        final refreshed = await coursesController.refreshAllSubjects();
+        if (!refreshed) throw Exception('Falha ao atualizar disciplinas');
       } catch (e) {
         Navigator.pushReplacementNamed(context, '/disconnected');
       }

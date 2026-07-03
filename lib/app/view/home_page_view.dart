@@ -4,13 +4,16 @@ import 'package:dev_medias_front_flutter/app/controller/common/courses_controlle
 import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/home_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/common/user_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/notifications_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:dev_medias_front_flutter/app/widgets/add_course_navigation_button.dart';
 import 'package:dev_medias_front_flutter/app/widgets/current_course_card.dart';
 import 'package:dev_medias_front_flutter/app/widgets/common/navigation_top_bar.dart';
 import 'package:dev_medias_front_flutter/app/widgets/common/app_drawer.dart';
+import 'package:dev_medias_front_flutter/app/widgets/notice_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
@@ -41,60 +44,51 @@ class _HomePageState extends State<HomePage> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light, // Ícones brancos
-        statusBarBrightness: Brightness.dark, // Para iOS
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarDividerColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+        systemNavigationBarContrastEnforced: false,
       ),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: AppColors.background,
         drawer: const AppDrawer(),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-          child: Center(
-            child: FractionallySizedBox(
-              widthFactor: 1,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 56.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    //Top Barra de Navegação sem botão de voltar
-                    NavigationTopBar(
-                      prevPage: commonController.getPreviousPage,
-                      isHomePage: true,
-                    ),
-                    // Botão Adicionar Matérias
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child: AddCourseNavigationButton(),
-                    ),
-                    // Lista de Matérias
-                    Observer(
-                        builder: (_) => coursesController.loadedCourses
-                            ? userController.currentCourses.isNotEmpty
-                                ? SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                            0.7 -
-                                        13,
-                                    child: Column(
-                                      children: [
-                                        Expanded(
-                                          child: ListView.builder(
-                                            padding: EdgeInsets.zero,
-                                            shrinkWrap: true,
-                                            itemCount: userController
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                NavigationTopBar(
+                  prevPage: commonController.getPreviousPage,
+                  isHomePage: true,
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: AddCourseNavigationButton(),
+                ),
+                Expanded(
+                  child: Observer(
+                      builder: (_) => coursesController.loadedCourses
+                          ? userController.currentCourses.isNotEmpty
+                              ? ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  itemCount: userController
                                                 .currentCourses.length,
                                             itemBuilder: (context, index) {
-                                              CourseModel? course =
-                                                  coursesController.allCourses?[
-                                                      userController
-                                                              .currentCourses[
-                                                          index]];
+                                              final courseCode = userController
+                                                  .currentCourses[index];
+                                              final CourseModel? course =
+                                                  coursesController
+                                                      .allCourses?[courseCode];
+                                              if (course == null) {
+                                                return const SizedBox.shrink();
+                                              }
                                               return FutureBuilder<String>(
                                                 future: updateFinalScore(
-                                                    course!.code),
+                                                    course.code),
                                                 builder: (context, snapshot) {
                                                   if (snapshot
                                                           .connectionState ==
@@ -247,57 +241,29 @@ class _HomePageState extends State<HomePage> {
                                                 },
                                               );
                                             },
-                                          ),
-                                        ),
-                                      ],
+                                          )
+                              : const Center(
+                                  child: Text(
+                                    "Você não tem matérias cadastradas",
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.white,
                                     ),
-                                  )
-                                : SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.7,
-                                    child: const Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Center(
-                                                child: Text(
-                                                  "Você não tem matérias cadastradas",
-                                                  style: TextStyle(
-                                                      fontSize: 16.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: AppColors.white),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                            : SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.7,
-                                width: double.maxFinite,
-                                child: const Center(
-                                  child: SizedBox(
-                                    width: 50,
-                                    height: 50,
-                                    child: CircularProgressIndicator(
-                                      color: AppColors.red,
-                                    ),
+                                    textAlign: TextAlign.center,
                                   ),
+                                )
+                          : const Center(
+                              child: SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: CircularProgressIndicator(
+                                  color: AppColors.red,
                                 ),
-                              )),
-                  ],
+                              ),
+                            )),
                 ),
-              ),
+              ],
             ),
           ),
         ),
@@ -311,24 +277,73 @@ class _HomePageState extends State<HomePage> {
 
     if (!hasAcceptedTerms) {
       _showTermsOfServiceDialog();
+    } else {
+      _scheduleNotificationsDialog();
     }
   }
 
+  void _scheduleNotificationsDialog() {
+    if (noticeDismissedThisAppSession) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted || noticeDismissedThisAppSession) return;
+      await _loadAndShowNotificationsIfAny(context);
+    });
+  }
+
+  Future<void> _loadAndShowNotificationsIfAny(BuildContext pageContext) async {
+    if (noticeDismissedThisAppSession) return;
+    final notificationsUrl = dotenv.env['API_NOTIFICATIONS'];
+    final notificationsConfigured = notificationsUrl != null &&
+        notificationsUrl.trim().isNotEmpty;
+
+    if (notificationsConfigured) {
+      await notificationsController.fetchNotifications();
+    }
+
+    if (!pageContext.mounted) return;
+
+    // Sem URL no .env: mostra o aviso estático (até você apontar API_NOTIFICATIONS).
+    if (!notificationsConfigured) {
+      showBlockingNoticeDialog(pageContext);
+      return;
+    }
+
+    final items = notificationsController.notices;
+    if (items.isEmpty) return;
+    final title = items.length == 1 ? items.first.title : 'Avisos';
+    final description = items.length == 1
+        ? items.first.body
+        : items
+            .map((n) => '${n.title}\n\n${n.body}')
+            .join('\n\n────────────\n\n');
+    showBlockingNoticeDialog(
+      pageContext,
+      title: title,
+      description: description,
+    );
+  }
+
   void _showTermsOfServiceDialog() {
+    final pageContext = context;
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text(
             'Termos de Serviço',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          content: const Text(
-            'A Dev Community Mauá se isenta da responsabilidade de qualquer prejuízo causado por qualquer erro ou imprecisão no cálculo das médias.',
-            softWrap: true,
-            overflow: TextOverflow.clip,
-            style: TextStyle(fontSize: 16.5),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: SingleChildScrollView(
+              child: Text(
+                kDefaultAppNoticeBody.trim(),
+                softWrap: true,
+                style: const TextStyle(fontSize: 16.5),
+              ),
+            ),
           ),
           actions: [
             Padding(
@@ -345,10 +360,16 @@ class _HomePageState extends State<HomePage> {
                       fixedSize: const Size(150, 50),
                     ),
                     onPressed: () async {
-                      SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
+                      final nav = Navigator.of(dialogContext);
+                      final prefs = await SharedPreferences.getInstance();
+                      if (!mounted) return;
                       await prefs.setBool('hasAcceptedTerms', true);
-                      Navigator.of(context).pop();
+                      if (!dialogContext.mounted) return;
+                      nav.pop();
+                      WidgetsBinding.instance.addPostFrameCallback((_) async {
+                        if (!mounted) return;
+                        await _loadAndShowNotificationsIfAny(pageContext);
+                      });
                     },
                     child: const Text(
                       "Aceitar",

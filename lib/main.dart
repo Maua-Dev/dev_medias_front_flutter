@@ -1,3 +1,4 @@
+import 'package:dev_medias_front_flutter/app/widgets/common/app_lifecycle_refresh.dart';
 import 'package:dev_medias_front_flutter/app/view/add_page_view.dart';
 import 'package:dev_medias_front_flutter/app/view/edit_page_view.dart';
 import 'package:dev_medias_front_flutter/app/view/home_page_view.dart';
@@ -11,7 +12,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(DevicePreview(enabled: false, builder: (context) => const MyApp()));
 }
 
@@ -24,7 +30,8 @@ class MyApp extends StatelessWidget {
       designSize: const Size(375, 812),
       minTextAdapt: true,
       splitScreenMode: true,
-      builder: (context, child) => MaterialApp(
+      builder: (context, child) => AppLifecycleRefresh(
+        child: MaterialApp(
         title: 'DevMédias',
         theme: ThemeData(
           useMaterial3: true,
@@ -52,6 +59,7 @@ class MyApp extends StatelessWidget {
           },
           '/disconnected': (_) => const NoConnectionPage(),
         },
+        ),
       ),
     );
   }

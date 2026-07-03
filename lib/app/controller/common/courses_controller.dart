@@ -57,7 +57,21 @@ abstract class CoursesControllerBase with Store {
       setLoadedCourses(true);
       return response;
     } catch (e) {
-      throw Exception('Erro de rede: $e');
+      setLoadedCourses(allCourses != null && allCourses!.isNotEmpty);
+      rethrow;
+    }
+  }
+
+  /// GET de todas as disciplinas + atualização do catálogo e lista da home.
+  @action
+  Future<bool> refreshAllSubjects() async {
+    try {
+      final courses = await fetchCourses();
+      setAllCourses(courses);
+      await userController.pruneCurrentCoursesWithCatalog();
+      return true;
+    } catch (_) {
+      return false;
     }
   }
 }

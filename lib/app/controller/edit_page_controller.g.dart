@@ -122,6 +122,22 @@ mixin _$EditPageController on EditPageControllerBase, Store {
     });
   }
 
+  late final _$finalScoreCalcErrorAtom = Atom(
+      name: 'EditPageControllerBase.finalScoreCalcError', context: context);
+
+  @override
+  bool get finalScoreCalcError {
+    _$finalScoreCalcErrorAtom.reportRead();
+    return super.finalScoreCalcError;
+  }
+
+  @override
+  set finalScoreCalcError(bool value) {
+    _$finalScoreCalcErrorAtom.reportWrite(value, super.finalScoreCalcError, () {
+      super.finalScoreCalcError = value;
+    });
+  }
+
   late final _$finalScoreControllerAtom = Atom(
       name: 'EditPageControllerBase.finalScoreController', context: context);
 
@@ -191,7 +207,7 @@ mixin _$EditPageController on EditPageControllerBase, Store {
       AsyncAction('EditPageControllerBase.calcTargetGrade', context: context);
 
   @override
-  Future<void> calcTargetGrade(
+  Future<bool> calcTargetGrade(
       Map<String, dynamic> grades, Map<String, dynamic> weights) {
     return _$calcTargetGradeAsyncAction
         .run(() => super.calcTargetGrade(grades, weights));
@@ -201,7 +217,7 @@ mixin _$EditPageController on EditPageControllerBase, Store {
       AsyncAction('EditPageControllerBase.calcFinalScore', context: context);
 
   @override
-  Future<void> calcFinalScore(
+  Future<bool> calcFinalScore(
       Map<String, dynamic> weights, Map<String, dynamic> grades) {
     return _$calcFinalScoreAsyncAction
         .run(() => super.calcFinalScore(weights, grades));
@@ -299,7 +315,18 @@ mixin _$EditPageController on EditPageControllerBase, Store {
   }
 
   @override
-  void renderTargetGrades(Map<dynamic, dynamic> grades) {
+  void setFinalScoreCalcError(bool value) {
+    final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
+        name: 'EditPageControllerBase.setFinalScoreCalcError');
+    try {
+      return super.setFinalScoreCalcError(value);
+    } finally {
+      _$EditPageControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  bool renderTargetGrades(Map<dynamic, dynamic> grades) {
     final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
         name: 'EditPageControllerBase.renderTargetGrades');
     try {
@@ -374,6 +401,7 @@ courseCode: ${courseCode},
 finalScoreType: ${finalScoreType},
 finalScoreGrade: ${finalScoreGrade},
 targetCalcError: ${targetCalcError},
+finalScoreCalcError: ${finalScoreCalcError},
 finalScoreController: ${finalScoreController},
 gradeTypes: ${gradeTypes},
 grades: ${grades},

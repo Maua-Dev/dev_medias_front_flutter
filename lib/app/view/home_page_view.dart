@@ -335,11 +335,15 @@ class _HomePageState extends State<HomePage> {
             'Termos de Serviço',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          content: const Text(
-            'A Dev Community Mauá se isenta da responsabilidade de qualquer prejuízo causado por qualquer erro ou imprecisão no cálculo das médias.',
-            softWrap: true,
-            overflow: TextOverflow.clip,
-            style: TextStyle(fontSize: 16.5),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: SingleChildScrollView(
+              child: Text(
+                kDefaultAppNoticeBody.trim(),
+                softWrap: true,
+                style: const TextStyle(fontSize: 16.5),
+              ),
+            ),
           ),
           actions: [
             Padding(

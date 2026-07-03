@@ -1,16 +1,21 @@
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
-const String _kDefaultNoticeTitle = 'Aviso';
+const String kDefaultAppNoticeTitle = 'Aviso';
 
-const String _kDefaultNoticeBody = '''
+const String kDefaultAppNoticeBody = '''
+Por favor, sempre verifique se a quantidade de notas e os pesos delas estão corretos e de acordo com o plano de ensino.
 
-Lembre-se de conferir suas notas oficiais no sistema da instituição. Este aplicativo é uma ferramenta de apoio e pode conter erros ou interpretações diferentes do regulamento vigente.
+Caso não esteja, entre em contato conosco pela aba de contato.
 
-Se encontrar inconsistências, utilize o canal de suporte para reportar o problema com o máximo de detalhes possível.
+A Dev Community Mauá se isenta da responsabilidade de qualquer prejuízo causado por qualquer erro ou imprecisão no cálculo das médias.
 
-Obrigado por utilizar o DevMédias. Role até o final deste texto para habilitar o botão de confirmação.
+Sabemos que alguns planos de ensino estão faltando - dependemos da própria secretaria nesse quesito para enviar os planos e conforme forem nos liberando tais planos, as matérias serão atualizadas e inseridas.
 ''';
+
+const String _kDefaultNoticeTitle = kDefaultAppNoticeTitle;
+
+const String _kDefaultNoticeBody = kDefaultAppNoticeBody;
 
 /// Aviso já fechado nesta execução do app; reinicia ao fechar e reabrir o app.
 bool noticeDismissedThisAppSession = false;

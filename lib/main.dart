@@ -1,5 +1,6 @@
 import 'package:dev_medias_front_flutter/app/widgets/common/app_lifecycle_refresh.dart';
 import 'package:dev_medias_front_flutter/app/view/add_page_view.dart';
+import 'package:dev_medias_front_flutter/app/view/create_custom_course_view.dart';
 import 'package:dev_medias_front_flutter/app/view/edit_page_view.dart';
 import 'package:dev_medias_front_flutter/app/view/home_page_view.dart';
 import 'package:dev_medias_front_flutter/app/view/intro_page_view.dart';
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
           '/first': (_) => const IntroPage(),
           '/home': (_) => const HomePage(),
           '/add': (_) => const AddPage(),
+          '/create-custom': (_) => const CreateCustomCoursePage(),
           '/edit': (context) {
             final args = ModalRoute.of(context)?.settings.arguments as Map;
             return EditPage(course: args['course']);

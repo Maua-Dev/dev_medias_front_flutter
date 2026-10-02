@@ -82,10 +82,33 @@ class _AddCourseCardState extends State<AddCourseCard>
                               ),
                               FittedBox(
                                   fit: BoxFit.contain,
-                                  child: Text(
-                                    widget.course.code,
-                                    style: const TextStyle(
-                                        fontSize: 12, color: AppColors.black),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        widget.course.code,
+                                        style: const TextStyle(
+                                            fontSize: 12,
+                                            color: AppColors.black),
+                                      ),
+                                      if (widget.course.isCustom) ...[
+                                        const SizedBox(width: 6),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 6, vertical: 1),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.purpleButton,
+                                            borderRadius: Round.secondary,
+                                          ),
+                                          child: const Text(
+                                            'Personalizada',
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              color: AppColors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
                                   )),
                             ],
                           ),

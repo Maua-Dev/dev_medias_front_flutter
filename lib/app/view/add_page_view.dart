@@ -1,5 +1,7 @@
 import 'package:dev_medias_front_flutter/app/controller/add_page_controller.dart';
+import 'package:dev_medias_front_flutter/app/controller/common/common_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
+import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:dev_medias_front_flutter/app/widgets/add_course_card.dart';
 import 'package:dev_medias_front_flutter/app/widgets/common/navigation_top_bar.dart';
 import 'package:dev_medias_front_flutter/app/widgets/common/app_drawer.dart';
@@ -58,69 +60,85 @@ class _AddPageState extends State<AddPage> {
                         padding: EdgeInsets.symmetric(vertical: 16),
                         child: SearchCourseField(),
                       ),
-                      // Lista de Matérias
-                      Observer(
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 40,
+                          child: OutlinedButton.icon(
+                            onPressed: () async {
+                              commonController.setPreviousPage('/add');
+                              final created = await Navigator.of(context)
+                                  .pushNamed('/create-custom');
+                              if (created == true && mounted) {
+                                await addController.loadCourses();
+                              }
+                            },
+                            icon: const Icon(Icons.add,
+                                size: 18, color: AppColors.white),
+                            label: const Text(
+                              'Criar matéria personalizada',
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontSize: 14,
+                              ),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: AppColors.white),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: Round.primary),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 10),
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Lista de Matérias — Expanded evita overflow no loading
+                      Expanded(
+                        child: Observer(
                           builder: (_) => addController.coursesLoaded
-                              ? SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.7 -
-                                          12,
-                                  child: Column(
-                                    children: [
-                                      Expanded(
-                                        child: ScrollConfiguration(
-                                          behavior:
-                                              ScrollConfiguration.of(context)
-                                                  .copyWith(
-                                            scrollbars: false,
-                                            overscroll: false,
-                                            physics:
-                                                const BouncingScrollPhysics(),
-                                          ),
-                                          child: RawScrollbar(
-                                            child: ListView.builder(
-                                              keyboardDismissBehavior:
-                                                  ScrollViewKeyboardDismissBehavior
-                                                      .onDrag,
-                                              padding: EdgeInsets.zero,
-                                              shrinkWrap: true,
-                                              itemCount: addController
-                                                  .availableCourses?.length,
-                                              itemBuilder: (context, index) {
-                                                String? key = addController
-                                                    .availableCourses?.keys
-                                                    .toList()
-                                                    .elementAt(index);
-                                                CourseModel course =
-                                                    addController
-                                                        .availableCourses?[key];
-                                                return AddCourseCard(
-                                                  key: UniqueKey(),
-                                                  index: index,
-                                                  course: course,
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                              ? ScrollConfiguration(
+                                  behavior:
+                                      ScrollConfiguration.of(context).copyWith(
+                                    scrollbars: false,
+                                    overscroll: false,
+                                    physics: const BouncingScrollPhysics(),
                                   ),
-                                )
-                              : SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.7,
-                                  width: double.maxFinite,
-                                  child: const Center(
-                                    child: SizedBox(
-                                      width: 50,
-                                      height: 50,
-                                      child: CircularProgressIndicator(
-                                        color: AppColors.red,
-                                      ),
+                                  child: RawScrollbar(
+                                    child: ListView.builder(
+                                      keyboardDismissBehavior:
+                                          ScrollViewKeyboardDismissBehavior
+                                              .onDrag,
+                                      padding: EdgeInsets.zero,
+                                      itemCount: addController
+                                          .availableCourses?.length,
+                                      itemBuilder: (context, index) {
+                                        String? key = addController
+                                            .availableCourses?.keys
+                                            .toList()
+                                            .elementAt(index);
+                                        CourseModel course = addController
+                                            .availableCourses?[key];
+                                        return AddCourseCard(
+                                          key: UniqueKey(),
+                                          index: index,
+                                          course: course,
+                                        );
+                                      },
                                     ),
                                   ),
-                                ))
+                                )
+                              : const Center(
+                                  child: SizedBox(
+                                    width: 50,
+                                    height: 50,
+                                    child: CircularProgressIndicator(
+                                      color: AppColors.red,
+                                    ),
+                                  ),
+                                ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

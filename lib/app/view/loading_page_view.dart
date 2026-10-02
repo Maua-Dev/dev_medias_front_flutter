@@ -7,6 +7,7 @@ import 'package:dev_medias_front_flutter/app/controller/common/graduations_contr
 import 'package:dev_medias_front_flutter/app/controller/intro_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/loading_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/common/user_controller.dart';
+import 'package:dev_medias_front_flutter/app/service/device_id_service.dart';
 import 'package:dev_medias_front_flutter/app/widgets/community_logo.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,7 @@ class _LoadingPageState extends State<LoadingPage> {
       loadingPageController.setLoading(true);
       final userDataMissing = await userController.checkUserDataExists();
       try {
+        await deviceIdService.getOrCreateDeviceId();
         final refreshed = await coursesController.refreshAllSubjects();
         if (!refreshed) throw Exception('Falha ao atualizar disciplinas');
       } catch (e) {

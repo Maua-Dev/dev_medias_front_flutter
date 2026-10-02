@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:dev_medias_front_flutter/app/controller/common/user_controller.dart';
+import 'package:dev_medias_front_flutter/app/model/course.dart';
 import 'package:dev_medias_front_flutter/app/service/course_service.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
@@ -12,7 +13,7 @@ abstract class CoursesControllerBase with Store {
 
   final dio = Dio();
 
-  final service = CourseService();
+  final service = courseService;
 
   @observable
   ObservableMap<String, dynamic>? allCourses;
@@ -25,6 +26,20 @@ abstract class CoursesControllerBase with Store {
     });
     return result;
   }
+
+  @computed
+  int get customCoursesCount {
+    final catalog = allCourses;
+    if (catalog == null || catalog.isEmpty) return 0;
+    return catalog.values
+        .whereType<CourseModel>()
+        .where((course) => course.isCustom)
+        .length;
+  }
+
+  @computed
+  bool get atCustomLimit =>
+      customCoursesCount >= kMaxCustomSubjectsPerDevice;
 
   @action
   void setAllCourses(Map<String, dynamic> courses) {
@@ -73,6 +88,18 @@ abstract class CoursesControllerBase with Store {
     } catch (_) {
       return false;
     }
+  }
+
+  /// Remove da home. Catálogo oficial: só Hive. Custom: DELETE na API + refetch.
+  @action
+  Future<void> removeCourseFromHome(CourseModel course) async {
+    if (course.isCustom) {
+      await service.deleteCustomCourse(course.code);
+      await userController.removeCurrentCourse(course.code);
+      await refreshAllSubjects();
+      return;
+    }
+    await userController.removeCurrentCourse(course.code);
   }
 }
 

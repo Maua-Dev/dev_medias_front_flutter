@@ -16,6 +16,20 @@ mixin _$CoursesController on CoursesControllerBase, Store {
           Computed<Map<String, dynamic>>(() => super.getAllCourses,
               name: 'CoursesControllerBase.getAllCourses'))
       .value;
+  Computed<int>? _$customCoursesCountComputed;
+
+  @override
+  int get customCoursesCount => (_$customCoursesCountComputed ??= Computed<int>(
+          () => super.customCoursesCount,
+          name: 'CoursesControllerBase.customCoursesCount'))
+      .value;
+  Computed<bool>? _$atCustomLimitComputed;
+
+  @override
+  bool get atCustomLimit =>
+      (_$atCustomLimitComputed ??= Computed<bool>(() => super.atCustomLimit,
+              name: 'CoursesControllerBase.atCustomLimit'))
+          .value;
   Computed<bool>? _$getLoadedCoursesComputed;
 
   @override
@@ -73,6 +87,16 @@ mixin _$CoursesController on CoursesControllerBase, Store {
         .run(() => super.refreshAllSubjects());
   }
 
+  late final _$removeCourseFromHomeAsyncAction = AsyncAction(
+      'CoursesControllerBase.removeCourseFromHome',
+      context: context);
+
+  @override
+  Future<void> removeCourseFromHome(CourseModel course) {
+    return _$removeCourseFromHomeAsyncAction
+        .run(() => super.removeCourseFromHome(course));
+  }
+
   late final _$CoursesControllerBaseActionController =
       ActionController(name: 'CoursesControllerBase', context: context);
 
@@ -115,6 +139,8 @@ mixin _$CoursesController on CoursesControllerBase, Store {
 allCourses: ${allCourses},
 loadedCourses: ${loadedCourses},
 getAllCourses: ${getAllCourses},
+customCoursesCount: ${customCoursesCount},
+atCustomLimit: ${atCustomLimit},
 getLoadedCourses: ${getLoadedCourses}
     ''';
   }

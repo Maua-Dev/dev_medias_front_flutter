@@ -1,6 +1,7 @@
 import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/grade_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
+import 'package:dev_medias_front_flutter/app/service/grade_api_payload.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:dev_medias_front_flutter/app/widgets/grade_input.dart';
 import 'package:dev_medias_front_flutter/app/widgets/common/navigation_top_bar.dart';
@@ -9,6 +10,7 @@ import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EditPage extends StatefulWidget {
   final CourseModel course;
@@ -73,7 +75,7 @@ class _EditPageState extends State<EditPage> {
                           prevPage: '/home',
                         ),
                 ),
-                // Cabeçalho Matéria
+                // Cabeçalho Matéria (estilo experimental)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Container(
@@ -83,9 +85,9 @@ class _EditPageState extends State<EditPage> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+                          horizontal: 16, vertical: 14),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Expanded(
                             child: Column(
@@ -93,19 +95,72 @@ class _EditPageState extends State<EditPage> {
                               children: [
                                 Text(
                                   widget.course.name,
+                                  maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                      fontSize: 20, color: AppColors.black),
-                                  maxLines: 2,
-                                  softWrap: true,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.black,
+                                  ),
                                 ),
-                                Text(
-                                  widget.course.code,
-                                  style: const TextStyle(
-                                      fontSize: 12, color: AppColors.textFaded),
+                                const SizedBox(height: 4),
+                                Text.rich(
+                                  TextSpan(
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                      fontStyle: hasExamsCode(widget.course)
+                                          ? FontStyle.normal
+                                          : FontStyle.italic,
+                                      color: AppColors.textFaded,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text:
+                                            '${widget.course.code} · ${hasExamsCode(widget.course) ? widget.course.examsCode! : 'Sem critério'}',
+                                      ),
+                                      WidgetSpan(
+                                        alignment:
+                                            PlaceholderAlignment.middle,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 4),
+                                          child: GestureDetector(
+                                            onTap: () =>
+                                                _showExamsCodeInfo(context),
+                                            child: const Icon(
+                                              LucideIcons.info,
+                                              color: AppColors.red,
+                                              size: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),
+                          ),
+                          IconButton(
+                            visualDensity: VisualDensity.compact,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            tooltip: hasStudyPlanPdf(widget.course)
+                                ? 'Abrir plano de ensino'
+                                : 'Plano de ensino indisponível',
+                            icon: Icon(
+                              LucideIcons.fileText,
+                              color: hasStudyPlanPdf(widget.course)
+                                  ? AppColors.red
+                                  : AppColors.gray,
+                              size: 26,
+                            ),
+                            onPressed: hasStudyPlanPdf(widget.course)
+                                ? () => _openStudyPlanPdf(widget.course)
+                                : null,
                           ),
                         ],
                       ),
@@ -1063,4 +1118,129 @@ String _genWeightsText(List? activities) {
     text += "${activity.name}: ${activity.weight * 100}% ";
   }
   return text;
+}
+
+Future<void> _openStudyPlanPdf(CourseModel course) async {
+  final url = course.studyPlanDownloadPdfUrl;
+  if (url == null || url.isEmpty) return;
+  final uri = Uri.parse(url);
+  await launchUrl(uri, mode: LaunchMode.externalApplication);
+}
+
+Future<void> _showExamsCodeInfo(BuildContext context) {
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        titlePadding: const EdgeInsets.fromLTRB(20, 16, 12, 0),
+        contentPadding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+        title: const Text(
+          'Critério de aprovação',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: AppColors.red,
+          ),
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 10, left: 8, right: 8),
+                  child: Text(
+                    'O código (ex.: C4/2015) indica a família do critério. '
+                    'A estrutura esperada segue a tabela abaixo.',
+                    style: TextStyle(fontSize: 13, color: AppColors.textFaded),
+                  ),
+                ),
+                Table(
+                  columnWidths: const {
+                    0: FlexColumnWidth(1.2),
+                    1: FlexColumnWidth(1.6),
+                  },
+                  border: TableBorder(
+                    horizontalInside: BorderSide(
+                      color: AppColors.gray.withValues(alpha: 0.8),
+                    ),
+                  ),
+                  children: [
+                    const TableRow(
+                      children: [
+                        Padding(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                          child: Text(
+                            'Família',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                              color: AppColors.black,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                          child: Text(
+                            'Estrutura',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                              color: AppColors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    ...examsCodeReferenceRows.map(
+                      (row) => TableRow(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 7, horizontal: 8),
+                            child: Text(
+                              row.family,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.black,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 7, horizontal: 8),
+                            child: Text(
+                              row.structure,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textFaded,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text(
+              'Fechar',
+              style: TextStyle(fontSize: 16, color: AppColors.red),
+            ),
+          ),
+        ],
+      );
+    },
+  );
 }

@@ -24,6 +24,37 @@ bool isExamGrade(String gradeName, CourseModel course) {
   return examNamesFor(course).contains(gradeName);
 }
 
+/// Família do critério (ex.: C4 de C4/2015). Null se exams_code ausente.
+String? examsCodeFamily(String? examsCode) {
+  if (examsCode == null || examsCode.isEmpty) return null;
+  final match = RegExp(r'^([A-Za-z]\d+)').firstMatch(examsCode.trim());
+  return match?.group(1)?.toUpperCase();
+}
+
+bool hasExamsCode(CourseModel course) {
+  final code = course.examsCode;
+  return code != null && code.isNotEmpty;
+}
+
+bool hasStudyPlanPdf(CourseModel course) {
+  final url = course.studyPlanDownloadPdfUrl;
+  return url != null && url.isNotEmpty;
+}
+
+/// Referência UI: família do critério → estrutura esperada de provas/trabalhos.
+const List<({String family, String structure})> examsCodeReferenceRows = [
+  (family: 'A*', structure: '0 provas + trabalhos'),
+  (family: 'B1', structure: '2 provas'),
+  (family: 'B2', structure: '4 provas'),
+  (family: 'B3', structure: '1 prova'),
+  (family: 'outros B*', structure: '2 provas'),
+  (family: 'C1', structure: 'trabalhos + 2 provas'),
+  (family: 'C2', structure: 'trabalhos + 4 provas'),
+  (family: 'C3', structure: 'trabalhos + 1 prova'),
+  (family: 'outros C* (inclui C4)', structure: 'trabalhos + 2 provas'),
+  (family: 'E*', structure: 'tratamento específico no plano'),
+];
+
 String? errorMessageFromApiBody(dynamic body) {
   if (body is Map && body['erro'] != null) {
     return body['erro'].toString();

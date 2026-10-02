@@ -92,7 +92,7 @@ class AppDrawer extends StatelessWidget {
             ),
           ),
           content: const Text(
-            'Esta ação irá remover todas as suas matérias cadastradas e suas notas. Esta ação não pode ser desfeita.',
+            'Remove todas as matérias e notas da lista. Matérias personalizadas também são apagadas do servidor e não voltam na tela de adicionar.',
             style: TextStyle(fontSize: 16),
           ),
           actions: [
@@ -111,13 +111,24 @@ class AppDrawer extends StatelessWidget {
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
-                coursesController.deleteAllCurrentCourses();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Todas as matérias foram removidas'),
-                    backgroundColor: AppColors.red,
-                  ),
-                );
+                try {
+                  await coursesController.deleteAllCurrentCourses();
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Todas as matérias foram removidas'),
+                      backgroundColor: AppColors.red,
+                    ),
+                  );
+                } catch (e) {
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(e.toString()),
+                      backgroundColor: AppColors.red,
+                    ),
+                  );
+                }
               },
               child: const Text(
                 'Remover Todas',

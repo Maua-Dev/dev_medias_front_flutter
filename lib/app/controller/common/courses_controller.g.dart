@@ -122,15 +122,14 @@ mixin _$CoursesController on CoursesControllerBase, Store {
     }
   }
 
+  late final _$deleteAllCurrentCoursesAsyncAction = AsyncAction(
+      'CoursesControllerBase.deleteAllCurrentCourses',
+      context: context);
+
   @override
-  void deleteAllCurrentCourses() {
-    final _$actionInfo = _$CoursesControllerBaseActionController.startAction(
-        name: 'CoursesControllerBase.deleteAllCurrentCourses');
-    try {
-      return super.deleteAllCurrentCourses();
-    } finally {
-      _$CoursesControllerBaseActionController.endAction(_$actionInfo);
-    }
+  Future<void> deleteAllCurrentCourses() {
+    return _$deleteAllCurrentCoursesAsyncAction
+        .run(() => super.deleteAllCurrentCourses());
   }
 
   @override

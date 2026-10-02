@@ -57,10 +57,33 @@ abstract class CoursesControllerBase with Store {
     loadedCourses = status;
   }
 
-  // delete all current courses
+  /// Limpa a home. Catálogo oficial: só Hive. Custom: DELETE na API + refetch
+  /// (evita matéria fantasma na lista de adicionar).
   @action
-  void deleteAllCurrentCourses() {
-    userController.deleteAllCurrentCourses();
+  Future<void> deleteAllCurrentCourses() async {
+    final catalog = allCourses;
+    final customs = <CourseModel>[];
+    if (catalog != null) {
+      for (final value in catalog.values) {
+        if (value is CourseModel && value.isCustom) {
+          customs.add(value);
+        }
+      }
+    }
+
+    Object? firstError;
+    for (final course in customs) {
+      try {
+        await service.deleteCustomCourse(course.code);
+      } catch (e) {
+        firstError ??= e;
+      }
+    }
+
+    await userController.deleteAllCurrentCourses();
+    await refreshAllSubjects();
+
+    if (firstError != null) throw firstError;
   }
 
   // Requisição de matérias

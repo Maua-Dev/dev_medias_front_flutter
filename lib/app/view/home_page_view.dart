@@ -107,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                                                         // <- Isso força o Stack a medir baseado no conteúdo mais alto
                                                         child: Stack(
                                                           children: [
-                                                            // Background do delete (vermelho)
+                                                            // Background do delete (vermelho) — filete sempre visível
                                                             Positioned.fill(
                                                               child: Container(
                                                                 margin:
@@ -130,17 +130,18 @@ class _HomePageState extends State<HomePage> {
                                                                     const EdgeInsets
                                                                         .only(
                                                                         right:
-                                                                            20),
+                                                                            10),
                                                                 child:
                                                                     const Icon(
                                                                   Icons.delete,
                                                                   color:
                                                                       AppColors
                                                                           .white,
+                                                                  size: 20,
                                                                 ),
                                                               ),
                                                             ),
-                                                            // Conteúdo principal (card)
+                                                            // Card deslocado ~10% à esquerda (hint de swipe)
                                                             Dismissible(
                                                               key: UniqueKey(),
                                                               direction:
@@ -148,59 +149,61 @@ class _HomePageState extends State<HomePage> {
                                                                       .endToStart,
                                                               confirmDismiss:
                                                                   (direction) async {
-                                                                final confirmed =
-                                                                    await showDialog<bool>(
-                                                                          context:
-                                                                              context,
-                                                                          builder:
-                                                                              (BuildContext context) {
-                                                                            return AlertDialog(
-                                                                              content: SizedBox(
-                                                                                height: course.isCustom ? 148 : 128,
-                                                                                child: Column(
-                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                  children: [
-                                                                                    const Text(
-                                                                                      "Remover matéria?",
-                                                                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.red),
-                                                                                    ),
-                                                                                    const SizedBox(height: 8),
-                                                                                    Text(
-                                                                                      course.isCustom
-                                                                                          ? "Excluir ${course.name}? Ela será removida permanentemente."
-                                                                                          : "Remover ${course.name} da sua lista? O catálogo oficial não é apagado.",
-                                                                                      style: const TextStyle(fontSize: 14),
-                                                                                    ),
-                                                                                  ],
+                                                                // Confirma só personalizada (delete permanente na API)
+                                                                if (course
+                                                                    .isCustom) {
+                                                                  final confirmed =
+                                                                      await showDialog<bool>(
+                                                                            context:
+                                                                                context,
+                                                                            builder:
+                                                                                (BuildContext context) {
+                                                                              return AlertDialog(
+                                                                                content: SizedBox(
+                                                                                  height: 148,
+                                                                                  child: Column(
+                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                    children: [
+                                                                                      const Text(
+                                                                                        "Excluir matéria?",
+                                                                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.red),
+                                                                                      ),
+                                                                                      const SizedBox(height: 8),
+                                                                                      Text(
+                                                                                        "Excluir ${course.name}? Ela será removida permanentemente.",
+                                                                                        style: const TextStyle(fontSize: 14),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
                                                                                 ),
-                                                                              ),
-                                                                              actions: <Widget>[
-                                                                                TextButton(
-                                                                                  style: TextButton.styleFrom(
-                                                                                      backgroundColor: AppColors.red,
-                                                                                      foregroundColor: AppColors.white,
-                                                                                      shape: RoundedRectangleBorder(borderRadius: Round.primary),
-                                                                                      minimumSize: const Size.fromHeight(50),
-                                                                                      padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 7)),
-                                                                                  onPressed: () => Navigator.of(context).pop(true),
-                                                                                  child: const Text("Excluir"),
-                                                                                ),
-                                                                                TextButton(
-                                                                                  style: TextButton.styleFrom(
-                                                                                      foregroundColor: AppColors.red,
-                                                                                      shape: RoundedRectangleBorder(borderRadius: Round.primary),
-                                                                                      minimumSize: const Size.fromHeight(50),
-                                                                                      padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 7)),
-                                                                                  onPressed: () => Navigator.of(context).pop(false),
-                                                                                  child: const Text("Cancelar"),
-                                                                                ),
-                                                                              ],
-                                                                            );
-                                                                          },
-                                                                        ) ??
-                                                                        false;
-                                                                if (!confirmed) {
-                                                                  return false;
+                                                                                actions: <Widget>[
+                                                                                  TextButton(
+                                                                                    style: TextButton.styleFrom(
+                                                                                        backgroundColor: AppColors.red,
+                                                                                        foregroundColor: AppColors.white,
+                                                                                        shape: RoundedRectangleBorder(borderRadius: Round.primary),
+                                                                                        minimumSize: const Size.fromHeight(50),
+                                                                                        padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 7)),
+                                                                                    onPressed: () => Navigator.of(context).pop(true),
+                                                                                    child: const Text("Excluir"),
+                                                                                  ),
+                                                                                  TextButton(
+                                                                                    style: TextButton.styleFrom(
+                                                                                        foregroundColor: AppColors.red,
+                                                                                        shape: RoundedRectangleBorder(borderRadius: Round.primary),
+                                                                                        minimumSize: const Size.fromHeight(50),
+                                                                                        padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 7)),
+                                                                                    onPressed: () => Navigator.of(context).pop(false),
+                                                                                    child: const Text("Cancelar"),
+                                                                                  ),
+                                                                                ],
+                                                                              );
+                                                                            },
+                                                                          ) ??
+                                                                          false;
+                                                                  if (!confirmed) {
+                                                                    return false;
+                                                                  }
                                                                 }
                                                                 try {
                                                                   await coursesController
@@ -229,14 +232,23 @@ class _HomePageState extends State<HomePage> {
                                                                 color: Colors
                                                                     .transparent,
                                                               ),
-                                                              child:
-                                                                  CurrentCourseCard(
-                                                                key:
-                                                                    UniqueKey(),
-                                                                index: index,
-                                                                finalScore:
-                                                                    finalScore,
-                                                                course: course,
+                                                              child: Padding(
+                                                                // ~10% à direita = filete vermelho de hint
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        right:
+                                                                            32),
+                                                                child:
+                                                                    CurrentCourseCard(
+                                                                  key:
+                                                                      UniqueKey(),
+                                                                  index: index,
+                                                                  finalScore:
+                                                                      finalScore,
+                                                                  course:
+                                                                      course,
+                                                                ),
                                                               ),
                                                             ),
                                                           ],

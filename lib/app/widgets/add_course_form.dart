@@ -129,7 +129,7 @@ class _AddCourseFormState extends State<AddCourseForm> {
             ElevatedButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  coursesController.deleteAllCurrentCourses();
+                  await coursesController.deleteAllCurrentCourses();
                   await userController.insertUserData(UserModel(
                       graduation: graduationController.text,
                       year: int.parse(yearController.text)));

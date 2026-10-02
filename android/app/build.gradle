@@ -58,7 +58,8 @@ android {
     defaultConfig {
         applicationId "com.dev_medias_front_rn_v2"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 35
+        // Play Console (ago/2026+): updates precisam de API 36 (Android 16)
+        targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

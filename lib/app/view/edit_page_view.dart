@@ -1,17 +1,14 @@
 import 'package:dev_medias_front_flutter/app/controller/edit_page_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/grade_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
-import 'package:dev_medias_front_flutter/app/service/grade_api_payload.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/measurements.dart';
 import 'package:dev_medias_front_flutter/app/widgets/grade_input.dart';
-import 'package:dev_medias_front_flutter/app/widgets/grade_input_row.dart';
 import 'package:dev_medias_front_flutter/app/widgets/common/navigation_top_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:dev_medias_front_flutter/app/utils/theme/app_colors.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class EditPage extends StatefulWidget {
   final CourseModel course;
@@ -23,33 +20,10 @@ class EditPage extends StatefulWidget {
 }
 
 class _EditPageState extends State<EditPage> {
-  final ScrollController _gradesScrollController = ScrollController();
-
-  static const _mediaBoxColor = Color(0xFFECE6F5);
-
   @override
   void initState() {
     initializeAsync();
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _gradesScrollController.dispose();
-    super.dispose();
-  }
-
-  bool get _hasNoGrades =>
-      (widget.course.assignments?.isEmpty ?? true) &&
-      (widget.course.exams?.isEmpty ?? true);
-
-  void _scrollGradesToBottom() {
-    if (!_gradesScrollController.hasClients) return;
-    _gradesScrollController.animateTo(
-      _gradesScrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 350),
-      curve: Curves.easeOut,
-    );
   }
 
   Future<void> initializeAsync() async {
@@ -99,7 +73,7 @@ class _EditPageState extends State<EditPage> {
                           prevPage: '/home',
                         ),
                 ),
-                // Cabeçalho Matéria (redesign)
+                // Cabeçalho Matéria
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Container(
@@ -109,9 +83,9 @@ class _EditPageState extends State<EditPage> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
+                          horizontal: 8, vertical: 4),
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Column(
@@ -119,346 +93,295 @@ class _EditPageState extends State<EditPage> {
                               children: [
                                 Text(
                                   widget.course.name,
-                                  maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.black,
-                                  ),
+                                      fontSize: 20, color: AppColors.black),
+                                  maxLines: 2,
+                                  softWrap: true,
                                 ),
-                                const SizedBox(height: 4),
-                                GestureDetector(
-                                  onTap: () => _showExamsCodeInfo(context),
-                                  child: Text(
-                                    '${widget.course.code} · ${hasExamsCode(widget.course) ? widget.course.examsCode! : 'Sem critério'}',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500,
-                                      fontStyle: hasExamsCode(widget.course)
-                                          ? FontStyle.normal
-                                          : FontStyle.italic,
-                                      color: AppColors.textFaded,
-                                    ),
-                                  ),
+                                Text(
+                                  widget.course.code,
+                                  style: const TextStyle(
+                                      fontSize: 12, color: AppColors.textFaded),
                                 ),
                               ],
                             ),
-                          ),
-                          IconButton(
-                            visualDensity: VisualDensity.compact,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            tooltip: hasStudyPlanPdf(widget.course)
-                                ? 'Abrir plano de ensino'
-                                : 'Plano de ensino indisponível',
-                            icon: Icon(
-                              LucideIcons.fileText,
-                              color: hasStudyPlanPdf(widget.course)
-                                  ? AppColors.red
-                                  : AppColors.gray,
-                              size: 26,
-                            ),
-                            onPressed: hasStudyPlanPdf(widget.course)
-                                ? () => _openStudyPlanPdf(widget.course)
-                                : null,
                           ),
                         ],
                       ),
                     ),
                   ),
                 ),
- 
-                // Menu Matéria (redesign)
+                // Menu Matéria
                 Observer(
                   builder: (_) => Container(
                       decoration: BoxDecoration(
-                          color: AppColors.white,
+                          color: const Color.fromRGBO(255, 255, 255, 1),
                           borderRadius: Round.primary),
+                      // Ternário necessário para carregar as cores das notas
                       child: editController.gradeRendered &&
                               editController.targetCalcInProgress == false
                           ? AnimatedContainer(
                               height: MediaQuery.of(context).size.height -
-                                  (isKeyboardVisible ? 520 : 400),
+                                  (isKeyboardVisible ? 500 : 352),
                               duration: const Duration(milliseconds: 300),
-                              child: Stack(
-                                children: [
-                                  SingleChildScrollView(
-                                    controller: _gradesScrollController,
-                                    padding: const EdgeInsets.fromLTRB(
-                                        20, 16, 20, 72),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            const Expanded(
-                                              child: Text(
-                                                'Suas notas',
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: AppColors.black,
-                                                ),
-                                              ),
-                                            ),
-                                            IconButton(
-                                              visualDensity:
-                                                  VisualDensity.compact,
-                                              padding: EdgeInsets.zero,
-                                              constraints:
-                                                  const BoxConstraints(),
-                                              tooltip: 'Definições da matéria',
-                                              icon: const Icon(
-                                                LucideIcons.bookOpen,
-                                                color: AppColors.red,
-                                                size: 22,
-                                              ),
-                                              onPressed: () {
-                                                _showCourseDefinitions(
-                                                    context, widget.course);
-                                              },
-                                            ),
-                                            const SizedBox(width: 4),
-                                            IconButton(
-                                              visualDensity:
-                                                  VisualDensity.compact,
-                                              padding: EdgeInsets.zero,
-                                              constraints:
-                                                  const BoxConstraints(),
-                                              tooltip: 'Limpar notas de meta',
-                                              icon: const Icon(
-                                                LucideIcons.pencil,
-                                                color: AppColors.red,
-                                                size: 22,
-                                              ),
-                                              onPressed: _hasNoGrades
-                                                  ? null
-                                                  : () {
-                                                      _showErasePopup(
-                                                          context,
-                                                          widget.course);
-                                                    },
-                                            ),
-                                          ],
-                                        ),
-                                        if (_hasNoGrades)
-                                          const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 40),
-                                            child: Center(
-                                              child: Text(
-                                                textAlign: TextAlign.center,
-                                                'Essa matéria não tem notas cadastradas.',
-                                                style: TextStyle(
-                                                  color: AppColors.textFaded,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        if (widget.course.exams!.isNotEmpty) ...[
-                                          const SizedBox(height: 16),
-                                          const Text(
-                                            'PROVAS',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                              letterSpacing: 0.8,
-                                              color: AppColors.textFaded,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          ...List.generate(
-                                            widget.course.exams!.length,
-                                            (index) {
-                                              final exam =
-                                                  widget.course.exams![index];
-                                              return Observer(
-                                                builder: (_) => GradeInputRow(
-                                                  name: exam.name,
-                                                  type: editController
-                                                              .gradeTypes[
-                                                          exam.name] ??
-                                                      'normal',
-                                                  controller: editController
-                                                          .gradeControllers[
-                                                      exam.name],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                        if (widget.course.exams!.isNotEmpty &&
-                                            widget.course.assignments!
-                                                .isNotEmpty)
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 8),
-                                            child: Divider(
-                                              height: 1,
-                                              color: AppColors.gray
-                                                  .withValues(alpha: 0.8),
-                                            ),
-                                          ),
-                                        if (widget
-                                            .course.assignments!.isNotEmpty) ...[
-                                          if (widget.course.exams!.isEmpty)
-                                            const SizedBox(height: 16),
-                                          const Text(
-                                            'TRABALHOS',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                              letterSpacing: 0.8,
-                                              color: AppColors.textFaded,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          ...List.generate(
-                                            widget.course.assignments!.length,
-                                            (index) {
-                                              final assignment = widget
-                                                  .course.assignments![index];
-                                              return Observer(
-                                                builder: (_) => GradeInputRow(
-                                                  name: assignment.name,
-                                                  type: editController
-                                                              .gradeTypes[
-                                                          assignment.name] ??
-                                                      'normal',
-                                                  controller: editController
-                                                          .gradeControllers[
-                                                      assignment.name],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                        if (!_hasNoGrades) ...[
-                                          const SizedBox(height: 12),
-                                          Divider(
-                                            height: 1,
-                                            color: AppColors.gray
-                                                .withValues(alpha: 0.8),
-                                          ),
-                                          const SizedBox(height: 16),
-                                          Observer(
-                                            builder: (_) {
-                                              final scoreValue =
-                                                  editController.finalScoreGrade;
-                                              final scoreType =
-                                                  editController.finalScoreType;
-                                              final scoreText = scoreValue == null
-                                                  ? '—'
-                                                  : scoreValue
-                                                      .toStringAsFixed(1)
-                                                      .replaceAll('.', ',');
-                                              final hasScore =
-                                                  scoreValue != null;
-                                              return Container(
-                                                width: double.infinity,
-                                                padding:
-                                                    const EdgeInsets.all(16),
-                                                decoration: BoxDecoration(
-                                                  color: _mediaBoxColor,
-                                                  borderRadius: Round.primary,
-                                                ),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    // Menu de notas se não tiver trabalhos e nem provas
+                                    ((widget.course.exams?.isEmpty ?? true) &&
+                                            (widget.course.assignments
+                                                    ?.isEmpty ??
+                                                true))
+                                        ? Padding(
+                                            padding: const EdgeInsets.all(16),
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
-                                                    const Text(
-                                                      'MÉDIA ATUAL',
-                                                      style: TextStyle(
-                                                        fontSize: 11,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        letterSpacing: 0.8,
-                                                        color:
-                                                            AppColors.textFaded,
+                                                    IconButton(
+                                                      icon: const Icon(
+                                                        LucideIcons.bookOpen,
+                                                        color: AppColors.red,
+                                                        size: 30,
                                                       ),
+                                                      onPressed: () {
+                                                        _showCourseDefinitions(
+                                                            context,
+                                                            widget.course);
+                                                      },
                                                     ),
-                                                    const SizedBox(height: 6),
-                                                    Text.rich(
-                                                      TextSpan(
-                                                        children: [
-                                                          TextSpan(
-                                                            text: scoreText,
-                                                            style: TextStyle(
-                                                              fontSize: 28,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                              color: scoreType ==
-                                                                      'normal'
-                                                                  ? AppColors
-                                                                      .black
-                                                                  : AppColors
-                                                                      .red,
-                                                            ),
-                                                          ),
-                                                          const TextSpan(
-                                                            text: ' de 10,0',
-                                                            style: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              color: AppColors
-                                                                  .textFaded,
-                                                            ),
-                                                          ),
-                                                        ],
+                                                    IconButton(
+                                                      icon: const Icon(
+                                                        LucideIcons.eraser,
+                                                        color: AppColors.gray,
+                                                        size: 30,
                                                       ),
-                                                    ),
-                                                    const SizedBox(height: 6),
-                                                    Text(
-                                                      hasScore
-                                                          ? 'Média calculada com as notas preenchidas.'
-                                                          : 'Preencha as notas para calcular sua média.',
-                                                      style: const TextStyle(
-                                                        fontSize: 13,
-                                                        color: AppColors
-                                                            .textFaded,
-                                                      ),
+                                                      onPressed: () {},
                                                     ),
                                                   ],
                                                 ),
+                                                const Padding(
+                                                  padding:
+                                                      EdgeInsets.only(top: 32),
+                                                  child: Center(
+                                                      child: Text(
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          "Essa matéria não tem notas cadastradas.")),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        : Container(),
+                                    // Menu de notas se tiver só provas
+                                    widget.course.exams!.isNotEmpty
+                                        ? Padding(
+                                            padding: const EdgeInsets.all(16),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                IconButton(
+                                                  icon: const Icon(
+                                                    LucideIcons.bookOpen,
+                                                    color: AppColors.red,
+                                                    size: 30,
+                                                  ),
+                                                  onPressed: () {
+                                                    _showCourseDefinitions(
+                                                        context, widget.course);
+                                                  },
+                                                ),
+                                                const Text("Provas",
+                                                    style: TextStyle(
+                                                        color: AppColors.black,
+                                                        fontSize: 20)),
+                                                IconButton(
+                                                  icon: const Icon(
+                                                    LucideIcons.eraser,
+                                                    color: AppColors.red,
+                                                    size: 30,
+                                                  ),
+                                                  onPressed: () {
+                                                    _showErasePopup(
+                                                        context, widget.course);
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        : Container(),
+                                    widget.course.exams!.isNotEmpty
+                                        ? Wrap(
+                                            runSpacing: 4,
+                                            spacing: 4,
+                                            alignment: WrapAlignment.center,
+                                            children: List.generate(
+                                                widget.course.exams?.length ??
+                                                    0, (index) {
+                                              return Observer(
+                                                builder: (_) => Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: GradeInput(
+                                                    name: widget.course
+                                                        .exams?[index].name,
+                                                    labelled: true,
+                                                    type: editController
+                                                                    .gradeTypes[
+                                                                widget
+                                                                    .course
+                                                                    .exams?[
+                                                                        index]
+                                                                    .name] !=
+                                                            null
+                                                        ? editController
+                                                                .gradeTypes[
+                                                            widget
+                                                                .course
+                                                                .exams?[index]
+                                                                .name]!
+                                                        : "normal",
+                                                    controller: editController
+                                                            .gradeControllers[
+                                                        widget
+                                                            .course
+                                                            .exams?[index]
+                                                            .name],
+                                                  ),
+                                                ),
                                               );
-                                            },
-                                          ),
-                                        ],
-                                      ],
-                                    ),
-                                  ),
-                                  Positioned(
-                                    right: 12,
-                                    bottom: 12,
-                                    child: Material(
-                                      color: AppColors.gray,
-                                      shape: const CircleBorder(),
-                                      child: InkWell(
-                                        customBorder: const CircleBorder(),
-                                        onTap: _scrollGradesToBottom,
-                                        child: const SizedBox(
-                                          width: 40,
-                                          height: 40,
-                                          child: Icon(
-                                            LucideIcons.arrowDown,
-                                            color: AppColors.white,
-                                            size: 20,
+                                            }))
+                                        : Container(),
+                                    // Menu de notas se tiver só trabalhos
+                                    widget.course.assignments!.isNotEmpty
+                                        ? Padding(
+                                            padding: const EdgeInsets.all(16),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                ((widget.course.assignments!
+                                                            .isNotEmpty) &&
+                                                        (widget.course.exams!
+                                                            .isEmpty))
+                                                    ? IconButton(
+                                                        icon: const Icon(
+                                                          LucideIcons.bookOpen,
+                                                          color: AppColors.red,
+                                                          size: 30,
+                                                        ),
+                                                        onPressed: () {
+                                                          _showCourseDefinitions(
+                                                              context,
+                                                              widget.course);
+                                                        },
+                                                      )
+                                                    : Container(),
+                                                const Text("Trabalhos",
+                                                    style: TextStyle(
+                                                        color: AppColors.black,
+                                                        fontSize: 20)),
+                                                widget.course.exams!.isEmpty
+                                                    ? IconButton(
+                                                        icon: const Icon(
+                                                          LucideIcons.eraser,
+                                                          color: AppColors.red,
+                                                          size: 30,
+                                                        ),
+                                                        onPressed: () {},
+                                                      )
+                                                    : Container(),
+                                              ],
+                                            ),
+                                          )
+                                        : Container(),
+                                    widget.course.assignments!.isNotEmpty
+                                        ? Wrap(
+                                            runSpacing: 4,
+                                            spacing: 4,
+                                            alignment: WrapAlignment.center,
+                                            children: List.generate(
+                                                widget.course.assignments!
+                                                    .length, (index) {
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: GradeInput(
+                                                  name: widget.course
+                                                              .assignments !=
+                                                          null
+                                                      ? widget
+                                                          .course
+                                                          .assignments![index]
+                                                          .name
+                                                      : "",
+                                                  labelled: true,
+                                                  type: editController
+                                                                  .gradeTypes[
+                                                              widget
+                                                                  .course
+                                                                  .assignments?[
+                                                                      index]
+                                                                  .name] !=
+                                                          null
+                                                      ? editController
+                                                              .gradeTypes[
+                                                          widget
+                                                              .course
+                                                              .assignments![
+                                                                  index]
+                                                              .name]!
+                                                      : "normal",
+                                                  controller: editController
+                                                          .gradeControllers[
+                                                      widget
+                                                          .course
+                                                          .assignments?[index]
+                                                          .name],
+                                                ),
+                                              );
+                                            }),
+                                          )
+                                        : Container(),
+                                    Column(
+                                      children: [
+                                        const Padding(
+                                          padding: EdgeInsets.only(
+                                              bottom: 16.0, top: 30),
+                                          child: Text("Média Final",
+                                              style: TextStyle(
+                                                  color: AppColors.black,
+                                                  fontSize: 20)),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 16.0),
+                                          child: GradeInput(
+                                            labelled: false,
+                                            controller: editController
+                                                .finalScoreController,
+                                            type: editController.finalScoreType,
+                                            enabled: false,
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                      ],
+                                    )
+                                  ],
+                                ),
                               ),
                             )
                           : SizedBox(
                               width: double.maxFinite,
-                              height: MediaQuery.of(context).size.height - 320,
+                              height: MediaQuery.of(context).size.height - 375,
                               child: const Center(
                                 child: SizedBox(
                                   width: 50,
@@ -472,10 +395,10 @@ class _EditPageState extends State<EditPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                  child: Row(
                     children: [
-                      ElevatedButton(
+                      Expanded(
+                        child: ElevatedButton(
                             onPressed: widget.course.assignments!.isEmpty &&
                                     widget.course.exams!.isEmpty
                                 ? () {}
@@ -669,19 +592,23 @@ class _EditPageState extends State<EditPage> {
                                           );
                                         });
                                   },
-                            style: ElevatedButton.styleFrom(
+                            style: TextButton.styleFrom(
                                 backgroundColor:
                                     widget.course.assignments!.isEmpty &&
                                             widget.course.exams!.isEmpty
                                         ? AppColors.red.withValues(alpha: 0.5)
                                         : AppColors.red,
-                                elevation: 0,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: Round.primary),
-                                minimumSize: const Size.fromHeight(52),
+                                minimumSize: const Size.fromHeight(50),
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 14, horizontal: 7)),
-                            child: Text(
+                                    vertical: 7, horizontal: 7)),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
                                     "Calcular média",
                                     style: TextStyle(
                                         color: widget.course.assignments!
@@ -689,12 +616,17 @@ class _EditPageState extends State<EditPage> {
                                                 widget.course.exams!.isEmpty
                                             ? AppColors.white.withValues(alpha: 0.5)
                                             : AppColors.white,
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w600),
+                                        fontSize: 16.sp),
                                   ),
-                            ),
-                      const SizedBox(height: 10),
-                      OutlinedButton(
+                                ],
+                              ),
+                            )),
+                      ),
+                      Container(
+                        width: 12,
+                      ),
+                      Expanded(
+                        child: ElevatedButton(
                             onPressed:
                                 widget.course.assignments!.isEmpty &&
                                         widget.course.exams!.isEmpty
@@ -940,42 +872,30 @@ class _EditPageState extends State<EditPage> {
                                               );
                                             });
                                       },
-                            style: OutlinedButton.styleFrom(
-                                backgroundColor: AppColors.white,
-                                foregroundColor: AppColors.black,
-                                side: BorderSide(
-                                  color: AppColors.gray.withValues(alpha: 0.9),
-                                ),
+                            style: TextButton.styleFrom(
+                                backgroundColor:
+                                    widget.course.assignments!.isEmpty &&
+                                            widget.course.exams!.isEmpty
+                                        ? AppColors.red.withValues(alpha: 0.5)
+                                        : AppColors.red,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: Round.primary),
-                                minimumSize: const Size.fromHeight(52),
+                                minimumSize: const Size.fromHeight(50),
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 14, horizontal: 7)),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  LucideIcons.crosshair,
-                                  size: 18,
-                                  color: (widget.course.assignments!.isEmpty &&
-                                          widget.course.exams!.isEmpty)
-                                      ? AppColors.red.withValues(alpha: 0.4)
-                                      : AppColors.red,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  "Definir meta de nota",
-                                  style: TextStyle(
-                                      color: (widget.course.assignments!.isEmpty &&
-                                              widget.course.exams!.isEmpty)
-                                          ? AppColors.black.withValues(alpha: 0.4)
-                                          : AppColors.black,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ],
-                            ),
-                            ),
+                                    vertical: 7, horizontal: 7)),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Text(
+                                "Definir meta",
+                                style: TextStyle(
+                                    color: widget.course.assignments!.isEmpty &&
+                                            widget.course.exams!.isEmpty
+                                        ? AppColors.white.withValues(alpha: 0.5)
+                                        : AppColors.white,
+                                    fontSize: 16.sp),
+                              ),
+                            )),
+                      ),
                     ],
                   ),
                 ),
@@ -1040,155 +960,13 @@ Future _showErasePopup(BuildContext context, CourseModel course) {
       });
 }
 
-Future<void> _openStudyPlanPdf(CourseModel course) async {
-  final url = course.studyPlanDownloadPdfUrl;
-  if (url == null || url.isEmpty) return;
-  final uri = Uri.parse(url);
-  await launchUrl(uri, mode: LaunchMode.externalApplication);
-}
-
-Future<void> _showExamsCodeInfo(BuildContext context) {
-  return showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        titlePadding: const EdgeInsets.fromLTRB(20, 16, 12, 0),
-        contentPadding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-        title: const Text(
-          'Critério de aprovação',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-            color: AppColors.red,
-          ),
-        ),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 10, left: 8, right: 8),
-                  child: Text(
-                    'O código (ex.: C4/2015) indica a família do critério. '
-                    'A estrutura esperada segue a tabela abaixo.',
-                    style: TextStyle(fontSize: 13, color: AppColors.textFaded),
-                  ),
-                ),
-                Table(
-                  columnWidths: const {
-                    0: FlexColumnWidth(1.2),
-                    1: FlexColumnWidth(1.6),
-                  },
-                  border: TableBorder(
-                    horizontalInside: BorderSide(
-                      color: AppColors.gray.withValues(alpha: 0.8),
-                    ),
-                  ),
-                  children: [
-                    const TableRow(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 8),
-                          child: Text(
-                            'Família',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
-                              color: AppColors.black,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 8),
-                          child: Text(
-                            'Estrutura',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
-                              color: AppColors.black,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    ...examsCodeReferenceRows.map(
-                      (row) => TableRow(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 7, horizontal: 8),
-                            child: Text(
-                              row.family,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.black,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 7, horizontal: 8),
-                            child: Text(
-                              row.structure,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: AppColors.textFaded,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(8, 10, 8, 4),
-                  child: Text(
-                    'Ex.: C4/2015 → trabalhos + 2 provas',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontStyle: FontStyle.italic,
-                      color: AppColors.textFaded,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text(
-              'Fechar',
-              style: TextStyle(fontSize: 16, color: AppColors.red),
-            ),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-Future<dynamic> _showCourseDefinitions(
-    BuildContext context, CourseModel course) {
-  final examWeightPct =
-      (normalizeCourseComponentWeight(course.examWeight) * 100).round();
-  final assignmentWeightPct =
-      (normalizeCourseComponentWeight(course.assignmentWeight) * 100).round();
-
+Future<dynamic> _showCourseDefinitions(context, CourseModel course) {
   return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           content: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.25,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1202,44 +980,14 @@ Future<dynamic> _showCourseDefinitions(
                         color: AppColors.red),
                   ),
                 ),
-                if (course.examsCode != null && course.examsCode!.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Text(
-                      "Critério: ${course.examsCode}",
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          color: AppColors.black),
-                    ),
-                  ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    children: [
-                      const Text(
-                        "Plano de Ensino",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: AppColors.black),
-                      ),
-                      if (hasStudyPlanPdf(course)) ...[
-                        const SizedBox(width: 8),
-                        IconButton(
-                          visualDensity: VisualDensity.compact,
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                          tooltip: 'Abrir PDF',
-                          icon: const Icon(
-                            Icons.picture_as_pdf,
-                            color: AppColors.red,
-                            size: 22,
-                          ),
-                          onPressed: () => _openStudyPlanPdf(course),
-                        ),
-                      ],
-                    ],
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    "Plano de Ensino",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: AppColors.black),
                   ),
                 ),
                 course.exams!.isEmpty && course.assignments!.isEmpty
@@ -1255,7 +1003,7 @@ Future<dynamic> _showCourseDefinitions(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Provas: $examWeightPct%",
+                              "Provas: ${course.examWeight}%",
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
@@ -1277,7 +1025,7 @@ Future<dynamic> _showCourseDefinitions(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Trabalhos: $assignmentWeightPct%",
+                            "Trabalhos: ${course.assignmentWeight}%",
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,

@@ -7,5 +7,7 @@ class GradeModel {
   Map<String, Object?> toJson() => {"name": name, "weight": weight};
 
   factory GradeModel.fromJson(Map<String, Object?> json) => GradeModel(
-      name: json["name"] as String, weight: json["weight"] as double);
+        name: json["name"] as String,
+        weight: (json["weight"] as num).toDouble(),
+      );
 }

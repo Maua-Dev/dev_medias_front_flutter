@@ -129,7 +129,7 @@ class _EditPageState extends State<EditPage> {
                                             onTap: () =>
                                                 _showExamsCodeInfo(context),
                                             child: const Icon(
-                                              LucideIcons.info,
+                                              LucideIcons.circleHelp,
                                               color: AppColors.red,
                                               size: 16,
                                             ),

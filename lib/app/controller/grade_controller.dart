@@ -42,6 +42,43 @@ abstract class GradeControllerBase with Store {
     box.put('grades', newGrades);
   }
 
+  void _appendGradeSlots({
+    required CourseModel course,
+    required Map<String, dynamic> grades,
+    required Map<String, dynamic> weights,
+    required List<Map<String, dynamic>> provasTenho,
+    required List<Map<String, dynamic>> trabalhosTenho,
+    List<Map<String, dynamic>>? provasQuero,
+    List<Map<String, dynamic>>? trabalhosQuero,
+    required bool treatNullAsZero,
+  }) {
+    void consume(dynamic grade, {required bool isExam}) {
+      final name = grade.name as String;
+      final peso = normalizeGradeWeight(weights[name] ?? grade.weight);
+      final raw = grades[name];
+      final isEmpty = raw == null;
+
+      if (isEmpty && !treatNullAsZero && provasQuero != null) {
+        final bucket = isExam ? provasQuero : trabalhosQuero!;
+        bucket.add({'peso': peso});
+        return;
+      }
+
+      final bucket = isExam ? provasTenho : trabalhosTenho;
+      bucket.add({
+        'valor': isEmpty ? 0.0 : (raw as num).toDouble(),
+        'peso': peso,
+      });
+    }
+
+    for (final exam in course.exams ?? <dynamic>[]) {
+      consume(exam, isExam: true);
+    }
+    for (final assignment in course.assignments ?? <dynamic>[]) {
+      consume(assignment, isExam: false);
+    }
+  }
+
   Map<String, dynamic> _buildTargetGradePayload({
     required Map<String, dynamic> grades,
     required Map<String, dynamic> weights,
@@ -49,34 +86,31 @@ abstract class GradeControllerBase with Store {
     required String courseCode,
   }) {
     final course = _course(courseCode);
-    final gradeMap = <String, dynamic>{
-      'provas_que_tenho': <Map<String, dynamic>>[],
-      'trabalhos_que_tenho': <Map<String, dynamic>>[],
-      'provas_que_quero': <Map<String, dynamic>>[],
-      'trabalhos_que_quero': <Map<String, dynamic>>[],
+    final provasTenho = <Map<String, dynamic>>[];
+    final trabalhosTenho = <Map<String, dynamic>>[];
+    final provasQuero = <Map<String, dynamic>>[];
+    final trabalhosQuero = <Map<String, dynamic>>[];
+
+    _appendGradeSlots(
+      course: course,
+      grades: grades,
+      weights: weights,
+      provasTenho: provasTenho,
+      trabalhosTenho: trabalhosTenho,
+      provasQuero: provasQuero,
+      trabalhosQuero: trabalhosQuero,
+      treatNullAsZero: false,
+    );
+
+    return {
+      'provas_que_tenho': provasTenho,
+      'trabalhos_que_tenho': trabalhosTenho,
+      'provas_que_quero': provasQuero,
+      'trabalhos_que_quero': trabalhosQuero,
       'media_desejada': targetGrade,
       'peso_prova': normalizeCourseComponentWeight(course.examWeight),
       'peso_trabalho': normalizeCourseComponentWeight(course.assignmentWeight),
     };
-
-    for (final item in grades.entries) {
-      final peso = normalizeGradeWeight(weights[item.key]);
-      final isExam = isExamGrade(item.key, course);
-      if (item.value == null) {
-        final bucket =
-            isExam ? 'provas_que_quero' : 'trabalhos_que_quero';
-        (gradeMap[bucket] as List).add({'peso': peso});
-      } else {
-        final bucket =
-            isExam ? 'provas_que_tenho' : 'trabalhos_que_tenho';
-        (gradeMap[bucket] as List).add({
-          'valor': (item.value as num).toDouble(),
-          'peso': peso,
-        });
-      }
-    }
-
-    return gradeMap;
   }
 
   Map<String, dynamic> _buildFinalScorePayload({
@@ -85,25 +119,34 @@ abstract class GradeControllerBase with Store {
     required String courseCode,
   }) {
     final course = _course(courseCode);
-    final gradeMap = <String, dynamic>{
-      'provas_que_tenho': <Map<String, dynamic>>[],
-      'trabalhos_que_tenho': <Map<String, dynamic>>[],
+    final provasTenho = <Map<String, dynamic>>[];
+    final trabalhosTenho = <Map<String, dynamic>>[];
+
+    _appendGradeSlots(
+      course: course,
+      grades: grades,
+      weights: weights,
+      provasTenho: provasTenho,
+      trabalhosTenho: trabalhosTenho,
+      treatNullAsZero: true,
+    );
+
+    return {
+      'provas_que_tenho': provasTenho,
+      'trabalhos_que_tenho': trabalhosTenho,
       'peso_prova': normalizeCourseComponentWeight(course.examWeight),
       'peso_trabalho': normalizeCourseComponentWeight(course.assignmentWeight),
     };
+  }
 
-    for (final item in grades.entries) {
-      final peso = normalizeGradeWeight(weights[item.key]);
-      final bucket = isExamGrade(item.key, course)
-          ? 'provas_que_tenho'
-          : 'trabalhos_que_tenho';
-      (gradeMap[bucket] as List).add({
-        'valor': item.value == null ? 0.0 : (item.value as num).toDouble(),
-        'peso': peso,
-      });
-    }
-
-    return gradeMap;
+  Map<String, dynamic> _errorResult({
+    required String message,
+    int? statusCode,
+  }) {
+    return {
+      'erro': message,
+      if (statusCode != null) 'statusCode': statusCode,
+    };
   }
 
   Future<Map<String, dynamic>> _postJson(
@@ -112,21 +155,30 @@ abstract class GradeControllerBase with Store {
   ) async {
     try {
       final response = await dio.post(url, data: body);
-      if (response.statusCode == 200) {
+      final statusCode = response.statusCode;
+      if (statusCode == 200) {
         if (response.data is Map) {
           return Map<String, dynamic>.from(response.data as Map);
         }
         final message = errorMessageFromApiBody(response.data);
-        return {'erro': message ?? 'Resposta inválida da API'};
+        return _errorResult(
+          message: message ?? 'Resposta inválida da API',
+          statusCode: statusCode,
+        );
       }
-      return {'erro': 'Erro na solicitação POST (${response.statusCode})'};
+      return _errorResult(
+        message: errorMessageFromApiBody(response.data) ??
+            'Erro na solicitação POST ($statusCode)',
+        statusCode: statusCode,
+      );
     } on DioException catch (e) {
+      final statusCode = e.response?.statusCode;
       final message = errorMessageFromApiBody(e.response?.data) ??
           e.message ??
           'Erro de rede';
-      return {'erro': message};
+      return _errorResult(message: message, statusCode: statusCode);
     } catch (e) {
-      return {'erro': 'Erro de rede: $e'};
+      return _errorResult(message: 'Erro de rede: $e');
     }
   }
 

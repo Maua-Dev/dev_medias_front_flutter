@@ -67,3 +67,56 @@ String? errorMessageFromApiBody(dynamic body) {
   }
   return null;
 }
+
+/// Status do algoritmo genético (contrato atual).
+const String geneticStatusExact = 'exact';
+const String geneticStatusClose = 'close';
+const String geneticStatusAlreadyAchieved = 'already_achieved';
+
+const String impossibleTargetMessage =
+    'Meta inatingível com as notas atuais. Tente baixar a meta ou revisar as notas e pesos lançados.';
+
+const String alreadyAchievedMessage =
+    'Você já atinge essa média com as notas lançadas. As lacunas foram preenchidas com 0.';
+
+const String closeSolutionMessage =
+    'Encontramos uma combinação próxima da meta (pode diferir um pouco).';
+
+/// Mapeia só as lacunas da resposta (`notas.provas` / `notas.trabalhos`)
+/// para os nomes das avaliações vazias, na mesma ordem do request.
+/// Retorna null se o tamanho não bater.
+Map<String, double>? mapGeneticGapsToGradeNames({
+  required List<String> emptyExamNames,
+  required List<String> emptyAssignmentNames,
+  required List<Map<String, dynamic>> provasMeta,
+  required List<Map<String, dynamic>> trabalhosMeta,
+}) {
+  if (emptyExamNames.length != provasMeta.length ||
+      emptyAssignmentNames.length != trabalhosMeta.length) {
+    return null;
+  }
+
+  final mapped = <String, double>{};
+  for (var i = 0; i < emptyExamNames.length; i++) {
+    final valor = provasMeta[i]['valor'];
+    if (valor is! num) return null;
+    mapped[emptyExamNames[i]] = valor.toDouble();
+  }
+  for (var i = 0; i < emptyAssignmentNames.length; i++) {
+    final valor = trabalhosMeta[i]['valor'];
+    if (valor is! num) return null;
+    mapped[emptyAssignmentNames[i]] = valor.toDouble();
+  }
+  return mapped;
+}
+
+String targetCalcUserMessage({
+  required int? statusCode,
+  String? apiMessage,
+}) {
+  if (statusCode == 404) return impossibleTargetMessage;
+  if (apiMessage != null && apiMessage.trim().isNotEmpty) {
+    return apiMessage;
+  }
+  return 'Erro ao calcular as notas. Tente novamente.';
+}

@@ -122,6 +122,40 @@ mixin _$EditPageController on EditPageControllerBase, Store {
     });
   }
 
+  late final _$targetCalcErrorMessageAtom = Atom(
+      name: 'EditPageControllerBase.targetCalcErrorMessage', context: context);
+
+  @override
+  String? get targetCalcErrorMessage {
+    _$targetCalcErrorMessageAtom.reportRead();
+    return super.targetCalcErrorMessage;
+  }
+
+  @override
+  set targetCalcErrorMessage(String? value) {
+    _$targetCalcErrorMessageAtom
+        .reportWrite(value, super.targetCalcErrorMessage, () {
+      super.targetCalcErrorMessage = value;
+    });
+  }
+
+  late final _$lastTargetCalcStatusAtom = Atom(
+      name: 'EditPageControllerBase.lastTargetCalcStatus', context: context);
+
+  @override
+  String? get lastTargetCalcStatus {
+    _$lastTargetCalcStatusAtom.reportRead();
+    return super.lastTargetCalcStatus;
+  }
+
+  @override
+  set lastTargetCalcStatus(String? value) {
+    _$lastTargetCalcStatusAtom.reportWrite(value, super.lastTargetCalcStatus,
+        () {
+      super.lastTargetCalcStatus = value;
+    });
+  }
+
   late final _$finalScoreCalcErrorAtom = Atom(
       name: 'EditPageControllerBase.finalScoreCalcError', context: context);
 
@@ -135,6 +169,24 @@ mixin _$EditPageController on EditPageControllerBase, Store {
   set finalScoreCalcError(bool value) {
     _$finalScoreCalcErrorAtom.reportWrite(value, super.finalScoreCalcError, () {
       super.finalScoreCalcError = value;
+    });
+  }
+
+  late final _$finalScoreCalcErrorMessageAtom = Atom(
+      name: 'EditPageControllerBase.finalScoreCalcErrorMessage',
+      context: context);
+
+  @override
+  String? get finalScoreCalcErrorMessage {
+    _$finalScoreCalcErrorMessageAtom.reportRead();
+    return super.finalScoreCalcErrorMessage;
+  }
+
+  @override
+  set finalScoreCalcErrorMessage(String? value) {
+    _$finalScoreCalcErrorMessageAtom
+        .reportWrite(value, super.finalScoreCalcErrorMessage, () {
+      super.finalScoreCalcErrorMessage = value;
     });
   }
 
@@ -304,7 +356,7 @@ mixin _$EditPageController on EditPageControllerBase, Store {
   }
 
   @override
-  dynamic setTargetCalcError(bool value) {
+  void setTargetCalcError(bool value) {
     final _$actionInfo = _$EditPageControllerBaseActionController.startAction(
         name: 'EditPageControllerBase.setTargetCalcError');
     try {
@@ -401,7 +453,10 @@ courseCode: ${courseCode},
 finalScoreType: ${finalScoreType},
 finalScoreGrade: ${finalScoreGrade},
 targetCalcError: ${targetCalcError},
+targetCalcErrorMessage: ${targetCalcErrorMessage},
+lastTargetCalcStatus: ${lastTargetCalcStatus},
 finalScoreCalcError: ${finalScoreCalcError},
+finalScoreCalcErrorMessage: ${finalScoreCalcErrorMessage},
 finalScoreController: ${finalScoreController},
 gradeTypes: ${gradeTypes},
 grades: ${grades},

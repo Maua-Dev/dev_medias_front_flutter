@@ -1,6 +1,7 @@
 import 'package:dev_medias_front_flutter/app/controller/common/courses_controller.dart';
 import 'package:dev_medias_front_flutter/app/controller/grade_controller.dart';
 import 'package:dev_medias_front_flutter/app/model/course.dart';
+import 'package:dev_medias_front_flutter/app/service/grade_api_payload.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 part 'edit_page_controller.g.dart';
@@ -32,7 +33,16 @@ abstract class EditPageControllerBase with Store {
   bool targetCalcError = false;
 
   @observable
+  String? targetCalcErrorMessage;
+
+  @observable
+  String? lastTargetCalcStatus;
+
+  @observable
   bool finalScoreCalcError = false;
+
+  @observable
+  String? finalScoreCalcErrorMessage;
 
   @observable
   TextEditingController finalScoreController = TextEditingController(text: "");
@@ -83,13 +93,20 @@ abstract class EditPageControllerBase with Store {
     targetGrade = grade;
   }
 
-  @action setTargetCalcError(bool value) {
+  @action
+  void setTargetCalcError(bool value) {
     targetCalcError = value;
+    if (!value) {
+      targetCalcErrorMessage = null;
+    }
   }
 
   @action
   void setFinalScoreCalcError(bool value) {
     finalScoreCalcError = value;
+    if (!value) {
+      finalScoreCalcErrorMessage = null;
+    }
   }
 
   bool _needsTargetFill(String gradeName) {
@@ -97,47 +114,42 @@ abstract class EditPageControllerBase with Store {
         gradeTypes[gradeName] != 'normal';
   }
 
-  int _filledExamsCount(CourseModel course) {
-    var count = 0;
-    for (final exam in course.exams ?? <dynamic>[]) {
-      if (!_needsTargetFill(exam.name as String)) {
-        count++;
-      }
-    }
-    return count;
+  void _failTargetCalc(String message) {
+    targetCalcError = true;
+    targetCalcErrorMessage = message;
+    lastTargetCalcStatus = null;
+    gradeRendered = true;
+    targetCalcInProgress = false;
   }
 
-  int _filledAssignmentsCount(CourseModel course) {
-    var count = 0;
-    for (final assignment in course.assignments ?? <dynamic>[]) {
-      if (!_needsTargetFill(assignment.name as String)) {
-        count++;
-      }
-    }
-    return count;
-  }
-
-  // Desenha as notas meta na tela
+  // Desenha as notas meta na tela (somente lacunas da resposta)
   @action
   bool renderTargetGrades(Map grades) {
     gradeRendered = false;
     targetCalcError = false;
+    targetCalcErrorMessage = null;
+    lastTargetCalcStatus = null;
 
-    if (grades.containsKey('erro') ||
-        grades['notas'] == null ||
-        grades['notas']['provas'] == null ||
-        grades['notas']['trabalhos'] == null) {
-      targetCalcError = true;
-      gradeRendered = true;
-      targetCalcInProgress = false;
+    if (grades.containsKey('erro')) {
+      _failTargetCalc(
+        targetCalcUserMessage(
+          statusCode: grades['statusCode'] as int?,
+          apiMessage: grades['erro']?.toString(),
+        ),
+      );
+      return false;
+    }
+
+    if (grades['notas'] == null ||
+        grades['notas']['provas'] is! List ||
+        grades['notas']['trabalhos'] is! List) {
+      _failTargetCalc('Resposta inválida do algoritmo. Tente novamente.');
       return false;
     }
 
     final course = coursesController.allCourses?[courseCode] as CourseModel?;
     if (course == null) {
-      targetCalcError = true;
-      gradeRendered = true;
-      targetCalcInProgress = false;
+      _failTargetCalc('Matéria não encontrada. Recarregue e tente novamente.');
       return false;
     }
 
@@ -152,51 +164,49 @@ abstract class EditPageControllerBase with Store {
       ),
     );
 
-    var provaQueroIndex = 0;
-    var trabalhoQueroIndex = 0;
-    final provasTenho = _filledExamsCount(course);
-    final trabalhosTenho = _filledAssignmentsCount(course);
-
+    final emptyExamNames = <String>[];
     for (final exam in course.exams ?? <dynamic>[]) {
       final name = exam.name as String;
-      if (!_needsTargetFill(name)) {
-        continue;
+      if (_needsTargetFill(name)) {
+        emptyExamNames.add(name);
       }
-      final responseIndex = provasTenho + provaQueroIndex;
-      if (responseIndex >= provasMeta.length) {
-        targetCalcError = true;
-        gradeRendered = true;
-        targetCalcInProgress = false;
-        return false;
-      }
-      final valor = (provasMeta[responseIndex]['valor'] as num).toDouble();
-      grades[name] = valor;
-      gradeControllers[name]!.text = '$valor';
-      gradeTypes[name] = 'targetcalc';
-      provaQueroIndex++;
     }
 
+    final emptyAssignmentNames = <String>[];
     for (final assignment in course.assignments ?? <dynamic>[]) {
       final name = assignment.name as String;
-      if (!_needsTargetFill(name)) {
-        continue;
+      if (_needsTargetFill(name)) {
+        emptyAssignmentNames.add(name);
       }
-      final responseIndex = trabalhosTenho + trabalhoQueroIndex;
-      if (responseIndex >= trabalhosMeta.length) {
-        targetCalcError = true;
-        gradeRendered = true;
-        targetCalcInProgress = false;
-        return false;
-      }
-      final valor = (trabalhosMeta[responseIndex]['valor'] as num).toDouble();
-      grades[name] = valor;
-      gradeControllers[name]!.text = '$valor';
-      gradeTypes[name] = 'targetcalc';
-      trabalhoQueroIndex++;
     }
 
-    finalScoreController.text = '$targetGrade';
-    finalScoreGrade = targetGrade;
+    final mapped = mapGeneticGapsToGradeNames(
+      emptyExamNames: emptyExamNames,
+      emptyAssignmentNames: emptyAssignmentNames,
+      provasMeta: provasMeta,
+      trabalhosMeta: trabalhosMeta,
+    );
+
+    if (mapped == null) {
+      _failTargetCalc(
+        'Não foi possível aplicar as notas necessárias. Tente novamente.',
+      );
+      return false;
+    }
+
+    final status = grades['status']?.toString();
+    lastTargetCalcStatus = status;
+
+    for (final entry in mapped.entries) {
+      this.grades[entry.key] = entry.value;
+      gradeControllers[entry.key]!.text = '${entry.value}';
+      gradeTypes[entry.key] = 'targetcalc';
+    }
+
+    final predictedAverage =
+        (grades['final_average'] as num?)?.toDouble() ?? targetGrade;
+    finalScoreController.text = '$predictedAverage';
+    finalScoreGrade = predictedAverage;
     finalScoreType = 'targetcalc';
     gradeRendered = true;
     targetCalcInProgress = false;
@@ -244,6 +254,11 @@ abstract class EditPageControllerBase with Store {
     });
     gradeControllers = ObservableMap<String, TextEditingController>.of({});
     gradeTypes = ObservableMap<String, String>.of({});
+    targetCalcError = false;
+    targetCalcErrorMessage = null;
+    lastTargetCalcStatus = null;
+    finalScoreCalcError = false;
+    finalScoreCalcErrorMessage = null;
   }
 
   // Calcula as metas de nota para cada avaliação de acordo com a meta inserida com o usuário
@@ -251,6 +266,7 @@ abstract class EditPageControllerBase with Store {
   Future<bool> calcTargetGrade(
       Map<String, dynamic> grades, Map<String, dynamic> weights) async {
     setTargetCalcError(false);
+    lastTargetCalcStatus = null;
 
     final filteredGrades = Map<String, dynamic>.from(grades);
     filteredGrades.forEach((key, value) {
@@ -283,6 +299,7 @@ abstract class EditPageControllerBase with Store {
       finalScoreController.text = "";
       finalScoreType = "normal";
     }
+    lastTargetCalcStatus = null;
     final formattedGrades = editController.formatGradesForSaving();
     gradeController.insertGrades(editController.getCourseCode(), formattedGrades);
   }
@@ -298,14 +315,24 @@ abstract class EditPageControllerBase with Store {
 
     if (result.containsKey('erro')) {
       finalScoreCalcError = true;
+      finalScoreCalcErrorMessage = result['erro']?.toString() ??
+          'Erro ao calcular a média. Tente novamente.';
       finalScoreGrade = null;
       finalScoreController.text = '';
       return false;
     }
 
-    finalScoreGrade = (result['media'] as num?)?.toDouble();
-    finalScoreController.text =
-        finalScoreGrade != null ? '$finalScoreGrade' : '';
+    final media = result['media'];
+    if (media is! num) {
+      finalScoreCalcError = true;
+      finalScoreCalcErrorMessage = 'Resposta inválida ao calcular a média.';
+      finalScoreGrade = null;
+      finalScoreController.text = '';
+      return false;
+    }
+
+    finalScoreGrade = media.toDouble();
+    finalScoreController.text = '$finalScoreGrade';
     finalScoreType = 'normal';
     return true;
   }
